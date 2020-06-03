@@ -1,0 +1,16 @@
+.header_bar{border-bottom:1px #cccccc solid;height:40px;z-index:99999;width:100%;top:0px}
+.headerBar{margin-left:280px;}
+.logo{background-color:#70041c;width:180px;float: left;height:40px}
+.logo p{text-align: center;vertical-align: middle;line-height: 40px;font-size: 18px;color: #ffffff;font-weight: 400px;}
+.headerBar{float: right;margin-top:5px;margin-right:40px;}
+.headerImg{float:left;border-radius: 15px;height:30px;width:30px;background-color: #b0b0b0}
+.userInfo{float: left;margin-left: 15px;margin-top:7px}
+.rightIcon{float: right;margin-right: 50px;margin-top:20px}
+.rightIcon img{margin-left: 15px;cursor: pointer}
+.rightIcon span{color: #b9bbca;margin-left: 15px}
+
+/*
+@media screen and (min-width:1500px){}
+@media screen and (min-width:1300px) and (max-width:1499px){}
+@media screen and (max-width:1299px){}
+*/

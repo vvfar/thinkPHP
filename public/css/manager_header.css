@@ -1,0 +1,40 @@
+.leftBar{
+    width:240px;
+    height:1275px;
+    background-color:#160509;
+    float: left;
+    position: fixed;
+    z-index:99999;
+}
+
+.leftbarAll{
+    list-style: none;
+    margin:0px;
+    padding: 0px;
+    margin-top: 40px;
+}
+
+.leftbarAll li{
+    width:240px;
+    height:4em;
+    font-size: 1.1em;
+    line-height: 4em;
+    vertical-align: middle;
+    font-weight: 400;
+    font-family: "Sim Hei";
+}
+
+.leftbarAll img{
+    margin-left: 35px;
+}
+
+.leftbarAll a{
+    margin-left: 20px;
+    color:#5f78a2
+}
+
+
+ul li a:hover{
+    text-decoration: none;
+    color:#ffffff;
+}

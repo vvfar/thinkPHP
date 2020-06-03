@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width,initial-scale=1">
+        <title>俞兆林_我的门户</title>
+        <link rel="shortcut icon" type="image/x-icon" href="favicon.ico" media="screen" />
+        <link href="/css/clientList.css" rel="stylesheet"/>
+        <link href="/lib/bootstrap-3.3.7-dist/css/bootstrap.css" rel="stylesheet"/>
+        <script src="/lib/bootstrap-3.3.7-dist/js/jquery-3.3.1.min.js"></script>
+    </head>
+    <body>
+        {include file="../application/index/view/common/header.html" /}
+        {include file="../application/index/view/common/leftBar.html" /}
+    
+        <div class="container">
+            <div class="search_bar">
+                <p>客户查询</p>
+                <select class="sel form-control">
+                    <option>公司名称</option>
+                    <option>店铺名称</option>
+                    <option>绑定KA</option>
+                </select>
+                <div class="input_search_info">
+                    <input type="text" class="form-control" placeholder="请输入公司名称"/>
+                    <input type="text" class="form-control" placeholder="请输入客户名称" style="display:none"/>
+                    <input type="text" class="form-control" placeholder="请输入绑定KA" style="display:none"/>
+                </div>
+                <div class="btn_search_info">
+                    <button type="button" class="btn btn-warning btn-sm">查询</button>
+                    <button type="button" class="btn btn-success btn-sm">下载</button>
+                </div>
+            </div>
+            <div class="content">
+                {include file="../application/index/view/component/tableList.html" /}
+            </div>
+        </div>
+    </body>
+
+    <style>
+        .container{margin-left: 200px;margin-top:60px}
+        .sel{width:110px;}
+        .search_bar p,.sel{float: left;margin-right: 10px;}
+        .search_bar p{position: relative;top:5px;}
+        .input_search_info{float: left;width:250px;}
+        .btn_search_info{position: relative;top:2px;margin-left:20px;float: left;margin-left: 10px;}
+        .btn_search_info button{margin-right:5px;}
+        .content{clear:both;}
+    </style>
+</html>

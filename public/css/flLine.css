@@ -1,0 +1,25 @@
+td{height: 35px;padding-left:10px;padding-right:10px;font-size: 0.7em;text-align: center}
+input{text-align: center;}
+@page { size: A4 landscape; }
+@media print {
+    .tb1,.tb2{
+        position:relative;
+        right:240px;
+    }
+
+    .nav,.leftBar,.header_bar,.sqd_st,.btn,.sf,.sqd_print,.sh_time,.fj{
+        display:none;
+    }
+
+    .sqd_bh{
+        position:relative;
+        right:210px;
+    }
+
+    form{
+        position:relative;
+        left:35px;
+        zoom: 125%;
+        font-size: 150%;
+    }
+}

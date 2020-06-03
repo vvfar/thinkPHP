@@ -1,0 +1,21 @@
+th{background-color:#409EFF;text-align: center;color:#ffffff}
+td{text-align: center;}
+.flList_div{margin-left: 180px;}
+.search_bar{clear: both;padding-bottom:20px;border-radius: 6px;position:relative;top:20px;margin-left:20px;}
+.search_bar_p1{font-size:14px;float:left;margin-top:5px;}
+.search_bar_s1{float: left;width:100px;margin-left:20px;}
+.search_bar_s2{float: left;width:135px;margin-left:10px;}
+.search_bar_t{float: left;margin-left:10px;width:180px;}
+.search_bar_p2{float: left;position:relative;top:6px;margin-left:5px;}
+.company_name{width:190px;float: left;margin-left: 10px;}
+.search_bar_btn{float: left;margin-left:10px;}
+.fy_span{margin-top:45px;margin-left:20px;width:1050px;}
+.fy_span h4 span{float:left;margin-right:5px;padding:5px}
+.fy_span a{float:right}
+.m1{float: left;margin-left:162px;margin-top: 35px;}
+.m2{float: left;margin-left:262px;margin-top: 35px;}
+.m3{float: left;margin-left:392px;margin-top: 35px;}
+.td1{width: 1050px;margin-top:72px;margin-left:20px;}
+.sbar{float:left;margin-top:35px;}
+.sbar2{float:left;margin-top:35px;margin-left:20px;}
+.pager li a:hover{background-color:#337ab7;color:#fff;}
