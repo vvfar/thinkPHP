@@ -254,7 +254,7 @@ $(document).ready(function(){
         $(".leftbar11Z").toggle();
         $(".leftbar13Z").toggle();
         
-    }else if(leftBar_path == "clientList"){
+    }else if(leftBar_path == "clientList.html" || leftBar_path == "addClientPage.html"){
         $(".leftbarAll li").css("background-color","#160509");
         $(".leftbar13").css("background-color","darkslateblue");
         $(".leftbar13 a").css("color","#ffffff");
@@ -269,8 +269,10 @@ $(document).ready(function(){
         $(".leftbar10Z").toggle();
         $(".leftbar11Z").toggle();
 
-        if(leftBar_path == "clientList"){
+        if(leftBar_path == "clientList.html"){
             $(".leftbar13Z2 a").css("color","#fff")
+        }else if(leftBar_path == "addClientPage.html"){
+            $(".leftbar13Z1 a").css("color","#fff")
         }
     }else{
 

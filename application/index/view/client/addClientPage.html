@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width,initial-scale=1">
+        <title>俞兆林_我的门户</title>
+        <link rel="shortcut icon" type="image/x-icon" href="favicon.ico" media="screen" />
+        <link href="/css/clientList.css" rel="stylesheet"/>
+        <link href="/lib/bootstrap-3.3.7-dist/css/bootstrap.css" rel="stylesheet"/>
+        <script src="/lib/bootstrap-3.3.7-dist/js/jquery-3.3.1.min.js"></script>
+    </head>
+    <body>
+        {include file="../application/index/view/common/header.html" /}
+        {include file="../application/index/view/common/leftBar.html" /}
+
+        <div class="container">
+            <form method="POST" action="/index.php/Index/client/addClientHandle">
+                <p style="font-size: 18px;">新增客户</p>
+                <div class="form-group hidden" style="clear: both;">
+                    <p style="width: 120px;font-size: 14px;float: left;margin-top: 22px;">id</p>
+                    <input type="text" class="form-control" name="id" value="" style="width: 250px;float: left;margin-top: 15px;">
+                </div>
+                <div class="form-group" style="clear: both;">
+                    <p style="width: 80px;font-size: 14px;float: left;margin-top: 22px;">客户名称</p>
+                    <input type="text" class="form-control" name="client" value="" placeholder="请输入客户名称" style="width: 250px;float: left;margin-top: 15px;">
+                </div>
+                <div class="form-group" style="clear: both;">
+                    <p style="width: 80px;font-size: 14px;float: left;margin-top: 22px;">店铺名称</p>
+                    <input type="text" class="form-control" name="storeName" value="" placeholder="请输入店铺名称" style="width: 250px;float: left;margin-top: 15px;">
+                </div>
+                <div class="form-group" style="clear: both;display: none;">
+                    <p style="width: 80px;font-size: 14px;float: left;margin-top: 22px;">事业部</p>
+                    {foreach $departments as $department}
+                        <input type="text" class="form-control" name="department" value="{$department.department}" placeholder="请输入事业部" style="width: 250px;float: left;margin-top: 15px;">
+                    {/foreach}
+                </div>
+                <div class="form-group" style="clear: both;">
+                    <p style="width: 80px;font-size: 14px;float: left;margin-top: 22px;">绑定KA</p>
+                    <input type="text" class="form-control" name="staff" value="" placeholder="请输入绑定KA" style="width: 250px;float: left;margin-top: 15px;">
+                </div>
+                <div class="form-group" style="clear: both;">
+                    <p style="width: 80px;font-size: 14px;float: left;margin-top: 22px;">联系电话</p>
+                    <input type="text" class="form-control" name="telephone" value="" placeholder="请输入联系电话" style="width: 250px;float: left;margin-top: 15px;">
+                </div>
+                <div class="form-group" style="clear: both;">
+                    <p style="width: 80px;font-size: 14px;float: left;margin-top: 22px;">地址</p>
+                    <input type="text" class="form-control" name="address" value="" placeholder="请输入地址" style="width: 250px;float: left;margin-top: 15px;">
+                </div>
+                <div class="form-group" style="clear: both;">
+                    <button class="btn btn-sm btn-success" style="margin-top:20px;">提交表单</button>
+                </div>
+            </form>
+        </div>
+    </body>
+</html>
+
+<style>
+    .container{margin-left: 200px;margin-top:60px}
+</style>
