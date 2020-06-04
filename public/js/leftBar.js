@@ -1,11 +1,12 @@
 //window.onload=function(){
 $(document).ready(function(){
+
     var leftBar_path=window.location.pathname;
 
     leftBar_path=leftBar_path.split("/");
     leftBar_path=leftBar_path.pop()
 
-    if(leftBar_path == "" || leftBar_path == "/" || leftBar_path == "dataQuery.php" || leftBar_path == "myWork.php"){
+    if(leftBar_path == "" || leftBar_path == "/" || leftBar_path == "dataQuery.php" || leftBar_path == "myWork.html"){
 
         $(".leftbarAll li").css("background-color","#160509");
         $(".leftbar0").css("background-color","darkslateblue");
@@ -23,7 +24,7 @@ $(document).ready(function(){
 
         if(leftBar_path ==  ""){
             $(".leftbar0Z1 a").css("color","#fff")
-        }else if(leftBar_path == "myWork.php"){
+        }else if(leftBar_path == "myWork.html"){
             $(".leftbar0Z2 a").css("color","#fff")
         }else if(leftBar_path == "dataQuery.php"){
             $(".leftbar0Z3 a").css("color","#fff")

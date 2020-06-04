@@ -12,7 +12,6 @@ class Common extends Controller
 
     public function header()
     {
-       
 
         return $this->fetch();
     }
