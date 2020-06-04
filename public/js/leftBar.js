@@ -6,7 +6,7 @@ $(document).ready(function(){
     leftBar_path=leftBar_path.split("/");
     leftBar_path=leftBar_path.pop()
 
-    if(leftBar_path == "" || leftBar_path == "/" || leftBar_path == "dataQuery.php" || leftBar_path == "myWork.html"){
+    if(leftBar_path == "" || leftBar_path == "/" || leftBar_path == "dataQuery.html" || leftBar_path == "myWork.html"){
 
         $(".leftbarAll li").css("background-color","#160509");
         $(".leftbar0").css("background-color","darkslateblue");
@@ -26,7 +26,7 @@ $(document).ready(function(){
             $(".leftbar0Z1 a").css("color","#fff")
         }else if(leftBar_path == "myWork.html"){
             $(".leftbar0Z2 a").css("color","#fff")
-        }else if(leftBar_path == "dataQuery.php"){
+        }else if(leftBar_path == "dataQuery.html"){
             $(".leftbar0Z3 a").css("color","#fff")
         }
 

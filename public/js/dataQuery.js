@@ -328,14 +328,14 @@ function initData(changeData,no){
             }
         })
     
-        /*
+        
     
         //第五个框
         $.ajax({
             type:"post",
             async:true,
             data:data,
-            url:"../../controller/index/dataQueryController5.php",
+            url:"/index.php/Index/index/dataQueryController5",
             dataType:"json",
             success:function(result){
                 if(result){
@@ -360,7 +360,7 @@ function initData(changeData,no){
             type:"post",
             async:true,
             data:data,
-            url:"../../controller/index/dataQueryController6.php",
+            url:"/index.php/Index/index/dataQueryController5",
             dataType:"json",
             success:function(result){
                 if(result){
@@ -379,7 +379,7 @@ function initData(changeData,no){
                 console.log("数据错误")
             }
         })
-        */
+        
         //第四个框
         var myChart=echarts.init(document.getElementById('data_body'),"light");
     
