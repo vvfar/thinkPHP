@@ -71,7 +71,7 @@ function initData(changeData,no){
     $.ajax({
         type:"post",
         async:true,
-        url:"../../controller/index/dataQueryControllerBar.php",
+        url:"/index.php/Index/index/dataQueryControllerBar",
         data:data,
         dataType:"json",
         success:function(result){
@@ -223,11 +223,12 @@ function initData(changeData,no){
         }
     })
 
+
     if(no !=6){
         $.ajax({
             type:"post",
             async:true,
-            url:"../../controller/index/dataQueryController1.php",
+            url:"/index.php/Index/index/dataQueryController1",
             data:data,
             dataType:"json",
             success:function(result){
@@ -248,12 +249,12 @@ function initData(changeData,no){
             }
         })
     
-    
+        
         //第二个框
         $.ajax({
             type:"post",
             async:true,
-            url:"../../controller/index/dataQueryController2.php",
+            url:"/index.php/Index/index/dataQueryController2",
             data:data,
             dataType:"json",
             success:function(result){
@@ -280,7 +281,7 @@ function initData(changeData,no){
             type:"post",
             async:true,
             data:data,
-            url:"../../controller/index/dataQueryController3.php",
+            url:"/index.php/Index/index/dataQueryController3",
             dataType:"json",
             success:function(result){
                 if(result){
@@ -327,7 +328,7 @@ function initData(changeData,no){
             }
         })
     
-        
+        /*
     
         //第五个框
         $.ajax({
@@ -378,7 +379,7 @@ function initData(changeData,no){
                 console.log("数据错误")
             }
         })
-    
+        */
         //第四个框
         var myChart=echarts.init(document.getElementById('data_body'),"light");
     
@@ -391,7 +392,7 @@ function initData(changeData,no){
             type:"post",
             async:true,
             data:data,
-            url:"../../controller/index/dataQueryController4.php",
+            url:"/index.php/Index/index/dataQueryController4",
             dataType:"json",
             success:function(result){
                 if(result[0].dateTime_xssj != null){
@@ -441,8 +442,10 @@ function initData(changeData,no){
     
             }
         })
+        
     }
     
+
 
 
 }

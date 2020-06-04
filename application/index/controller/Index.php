@@ -261,37 +261,27 @@ class Index extends Controller
         }
     
         $sqlstr1=\think\Db::name('store_data_sales')->field("sum(salesMoney)")->where("staff",$username)->where("date",">=",$dateStart)->where("date","<",$dateEnd)->select();
-
-        //$sqlstr1="select sum(salesMoney) from store_data_sales where staff='$username' and date >= '$dateStart' and date < '$dateEnd'";
-    
         $num1=$sqlstr1[0]["sum(salesMoney)"];
     
-        $sqlstr2=\think\Db::query("select sum(storeTarget)  from store_target where storeID =any (select storeID from store where staff='$username') and dateMonth='$dateMonth'");
-    
+        $sqlstr2=\think\Db::query("select sum(storeTarget)  from store_target where storeID =any (select storeID from store where staff='$username') and dateMonth='$dateMonth'");    
         $num2=$sqlstr2[0]["sum(storeTarget)"];
     
-        $sqlstr3=\think\Db::query("select sum(a.salesMoney) from store_data_sales a,store b where '$department' like concat('%',b.department,'%') and a.date >= '$dateStart' and a.date < '$dateEnd' and  a.storeID=b.storeID");
-    
+        $sqlstr3=\think\Db::query("select sum(a.salesMoney) from store_data_sales a,store b where '$department' like concat('%',b.department,'%') and a.date >= '$dateStart' and a.date < '$dateEnd' and  a.storeID=b.storeID");    
         $num3=$sqlstr3[0]["sum(a.salesMoney)"];
 
         $sqlstr4=\think\Db::query("select sum(storeTarget)  from store_target where storeID =any (select storeID from store where '$department' like concat('%',department,'%')) and dateMonth='$dateMonth'");
-    
         $num4=$sqlstr4[0]["sum(storeTarget)"];
     
         $sqlstr5=\think\Db::query("select sum(backMoney) from store_data_hk where staff='$username' and date >= '$dateStart' and date < '$dateEnd'");
-    
         $num5=$sqlstr5[0]["sum(backMoney)"];
     
         $sqlstr6=\think\Db::query("select sum(hkTarget)  from store_target where storeID =any (select storeID from store where staff='$username') and dateMonth='$dateMonth'");
-    
         $num6=$sqlstr6[0]["sum(hkTarget)"];
     
         $sqlstr7=\think\Db::query("select sum(a.backMoney) from store_data_hk a,store b where '$department' like concat('%',b.department,'%') and a.date >= '$dateStart' and a.date < '$dateEnd' and  a.storeID=b.storeID");
-    
         $num7=$sqlstr7[0]["sum(a.backMoney)"];
     
         $sqlstr8=\think\Db::query("select sum(hkTarget)  from store_target where storeID =any (select storeID from store where '$department' like concat('%',department,'%')) and dateMonth='$dateMonth'");
-    
         $num8=$sqlstr8[0]["sum(hkTarget)"];
     
         $num1=($num1=="")?0:$num1;
@@ -316,5 +306,895 @@ class Index extends Controller
     
         echo $data;
 
+    }
+
+    public function dataQuery(){
+
+        session_start();
+        $username=$_SESSION["username"];
+
+        $this->assign('username',$username);
+
+        return $this->fetch();
+    }
+
+    public function dataQueryControllerBar(){
+
+        session_start();
+        $username=$_SESSION["username"];
+
+        $user=\think\Db::name('user_form')->where('username',$username)->select();
+
+        $department=$user[0]["department"];
+        $newLevel=$user[0]["newLevel"];
+
+        $chooseOne=$this->request->post('chooseOne');
+        $chooseTwo=$this->request->post('chooseTwo');
+        $chooseThree=$this->request->post('chooseThree');
+        $chooseFour=$this->request->post('chooseFour');
+        $chooseFive=$this->request->post('chooseFive');
+        $chooseSix=$this->request->post('chooseSix');
+        $chooseSeven=$this->request->post('chooseSeven');
+        $username=$this->request->post('username');
+
+        //事业部控件
+        $department_list="[";
+
+        $sqlstr1="select distinct department from store where 1=1 ";
+
+        if(($newLevel !="" and $newLevel !="ADMIN") and strpos($my_department,'/') != true){
+            $sqlstr1=$sqlstr1."and department='$my_department'";
+        }
+
+        $sqlstr1=\think\Db::query($sqlstr1);
+
+        for($i=0;$i<sizeof($sqlstr1);$i++){
+            if(strpos($sqlstr1[$i]["department"],'/') != true and strpos($sqlstr1[$i]["department"],'事业管理部') == true){
+                $department_list=$department_list.'"'.$sqlstr1[$i]["department"].'",';  
+            }
+        }
+
+        $department_list = substr($department_list,0,strlen($department_list)-1);
+
+        $department_list=$department_list."]";
+
+        //平台控件
+        $pingtai_list="[";
+
+        $sqlstr2="select distinct pingtai from store where 1=1 ";
+
+        if($chooseTwo !="全部"){
+            $sqlstr2=$sqlstr2."and department='$chooseTwo' ";
+        }
+
+        if(($newLevel !="" and $newLevel !="ADMIN") and strpos($my_department,'/') != true){
+            if($newLevel =="M"){
+                $sqlstr2=$sqlstr2."and department='$my_department' ";
+            }else{
+                $sqlstr2=$sqlstr2."and staff='$username' ";
+            }
+        }
+        
+        $sqlstr2=\think\Db::query($sqlstr2);
+
+        for($i=0;$i<sizeof($sqlstr2);$i++){
+            $pingtai_list=$pingtai_list.'"'.$sqlstr2[$i]["pingtai"].'",';  
+        }
+
+        $pingtai_list = substr($pingtai_list,0,strlen($pingtai_list)-1);
+
+        $pingtai_list=$pingtai_list."]";
+
+
+        //类目控件
+        $category_list="[";
+
+        $sqlstr3="select distinct category from store where 1=1 ";
+
+        if($chooseTwo !="全部"){
+            $sqlstr3=$sqlstr3."and department='$chooseTwo'";
+        }
+
+        if(($newLevel !="" and $newLevel !="ADMIN") and strpos($my_department,'/') != true){
+            if($newLevel =="M"){
+                $sqlstr3=$sqlstr3."and department='$my_department' ";
+            }else{
+                $sqlstr3=$sqlstr3."and staff='$username' ";
+            }
+            
+        }
+
+        $sqlstr3=\think\Db::query($sqlstr3);
+
+        for($i=0;$i<sizeof($sqlstr3);$i++){
+            $category_list=$category_list.'"'.$sqlstr3[$i]["category"].'",';  
+        }
+
+        $category_list = substr($category_list,0,strlen($category_list)-1);
+
+        $category_list=$category_list."]";
+
+        //店铺控件
+        $store_list="[";
+
+        $sqlstr4="select distinct storeName from store where 1=1 ";
+
+        if($chooseTwo !="全部"){
+            $sqlstr4=$sqlstr4." and department='$chooseTwo' ";
+        }
+
+        if(($newLevel !="" and $newLevel !="ADMIN") and strpos($my_department,'/') != true){
+            if($newLevel =="M"){
+                $sqlstr4=$sqlstr4."and department='$my_department' ";
+            }else{
+                $sqlstr4=$sqlstr4."and staff='$username' ";
+            }
+            
+        }
+        
+        $sqlstr4=\think\Db::query($sqlstr4);
+
+        for($i=0;$i<sizeof($sqlstr4);$i++){
+            $store_list=$store_list.'"'.$sqlstr4[$i]["storeName"].'",';  
+        }
+
+        $store_list = substr($store_list,0,strlen($store_list)-1);
+
+        $store_list=$store_list."]";
+        
+        //业务员控件
+        $ywy_list="[";
+
+        $sqlstr5="select distinct username from user_form where (newLevel = 'KA' or newLevel = 'M') ";
+
+        if($chooseTwo !="全部"){
+            $sqlstr5=$sqlstr5." and department='$chooseTwo' ";
+        }
+
+        if(($newLevel !="" and $newLevel !="ADMIN") and strpos($my_department,'/') != true){
+            if($newLevel =="M"){
+                $sqlstr5=$sqlstr5."and department='$my_department' ";
+            }else{
+                $sqlstr5=$sqlstr5."and username='$username' ";
+            }
+            
+        }
+
+        $sqlstr5=\think\Db::query($sqlstr5);
+
+        for($i=0;$i<sizeof($sqlstr5);$i++){
+            $ywy_list=$ywy_list.'"'.$sqlstr5[$i]["username"].'",';  
+        }
+
+        $ywy_list = substr($ywy_list,0,strlen($ywy_list)-1);
+
+        $ywy_list=$ywy_list."]";
+
+        //日期控件
+        $date_list_1="[";
+
+        if($chooseOne == "销售额"){
+            if($chooseSeven == "日" or $chooseSeven == "全部"){
+                $sqlstr6="select distinct date as dateTime from store_data_sales ";
+            }elseif($chooseSeven == "月"){
+                $sqlstr6="select distinct left(date,7) as dateTime from store_data_sales ";
+            }elseif($chooseSeven == "年"){
+                $sqlstr6="select distinct left(date,4) as dateTime from store_data_sales ";
+            }
+            
+        }else{
+            if($chooseSeven == "日" or $chooseSeven == "全部"){
+                $sqlstr6="select distinct date as dateTime from store_data_hk ";
+            }elseif($chooseSeven == "月"){
+                $sqlstr6="select distinct left(date,7) as dateTime from store_data_hk ";
+            }elseif($chooseSeven == "年"){
+                $sqlstr6="select distinct left(date,4) as dateTime from store_data_sales ";
+            }else{
+                $sqlstr6="select distinct date as dateTime from store_data_hk ";
+            }
+        }
+
+
+        if($chooseTwo !="全部"){
+            $sqlstr6=$sqlstr6." where staff= any( select staff from store where department='$chooseTwo')";
+        }
+
+        $sqlstr6=\think\Db::query($sqlstr6);
+
+        $date_list="";
+        
+        for($i=0;$i<sizeof($sqlstr6);$i++){
+            $date_list=$date_list.'"'.$sqlstr6[$i]["dateTime"].'",';  
+        }
+
+        $date_list = substr($date_list,0,strlen($date_list)-1);
+
+        $date_list=$date_list_1.$date_list."]";
+
+
+
+        $data='[
+            {"name":"department","value":'.$department_list.'},
+            {"name":"pingtai","value":'.$pingtai_list.'},
+            {"name":"category","value":'.$category_list.'},
+            {"name":"storeName","value":'.$store_list.'},
+            {"name":"ywy","value":'.$ywy_list.'},
+            {"name":"time","value":["日","月","年"]},
+            {"name":"date","value":'.$date_list.'}
+        ]';
+
+        echo $data;
+    }
+
+    public function dataQueryController1(){
+        session_start();
+        $username=$_SESSION["username"];
+
+        $user=\think\Db::name('user_form')->where('username',$username)->select();
+
+        $department=$user[0]["department"];
+        $newLevel=$user[0]["newLevel"];
+
+        $chooseOne=$this->request->post('chooseOne');
+        $chooseTwo=$this->request->post('chooseTwo');
+        $chooseThree=$this->request->post('chooseThree');
+        $chooseFour=$this->request->post('chooseFour');
+        $chooseFive=$this->request->post('chooseFive');
+        $chooseSix=$this->request->post('chooseSix');
+        $chooseSeven=$this->request->post('chooseSeven');
+        $chooseEight=$this->request->post('chooseEight');
+
+        if($chooseEight=="默认"){
+            date_default_timezone_set("Asia/Shanghai");
+            $date=time();
+        }else{
+            $date=$chooseEight;
+        }
+    
+        if($chooseEight=="默认"){
+            $date1=date('Y-m-d');
+            $date2=date('Y-m-d', strtotime("-1 month"));
+            $date3=date('Y-m-d', strtotime("-1 year"));
+    
+            $dateMonth=date('Y-m');
+            $dateMonth2=date('Y-m', strtotime("-1 month"));
+            $dateMonth3=date('Y-m', strtotime("-1 year"));
+    
+            $dateYear=date('Y');
+            $dateYear2=date('Y', strtotime("-1 year"));
+            $dateYear3=date('Y', strtotime("-1 year"));
+        }else{
+            $date1=date('Y-m-d', strtotime("$date"));
+            $date2=date('Y-m-d', strtotime("$date -1 month"));
+            $date3=date('Y-m-d', strtotime("$date -1 year"));
+    
+            $dateMonth=$date;
+            $dateMonth2=date('Y-m', strtotime("$date -1 month"));
+            $dateMonth3=date('Y-m', strtotime("$date -1 year"));
+    
+            $dateYear=date('Y', strtotime("$date"));
+            $dateYear2=date('Y', strtotime("$date -1 year"));
+            $dateYear3=date('Y', strtotime("$date -1 year"));
+        }
+    
+    
+        //销售额&回款
+        if($chooseOne == "销售额"){
+            $sqlstr1="select sum(salesMoney) as num from store_data_sales where storeID= any(select storeID from store where 1=1 ";
+        }else if($chooseOne == "回款"){
+            $sqlstr1="select sum(backMoney) as num from store_data_hk where  storeID= any(select storeID from store where 1=1 ";
+        }
+    
+        //事业部
+        if($chooseTwo != "全部"){
+            $sqlstr1=$sqlstr1."and department='$chooseTwo' ";
+        }
+    
+        //平台
+        if($chooseThree != "全部"){
+            $sqlstr1=$sqlstr1."and pingtai='$chooseThree' ";
+        }
+    
+        //类目
+        if($chooseFour != "全部"){
+            $sqlstr1=$sqlstr1."and category='$chooseFour' ";
+        }
+    
+        //店铺
+        if($chooseFive != "全部"){
+            $sqlstr1=$sqlstr1."and storeName='$chooseFive' ";
+        }
+    
+        //业务员
+        if($chooseSix != "全部"){
+            $sqlstr1=$sqlstr1."and staff='$chooseSix' ";
+        }
+    
+        if($chooseSeven != "月" and $chooseSeven != "年"){
+            $chooseSeven = "日";
+        }
+        
+        $sqlstr1=$sqlstr1.") ";
+    
+        //时间段
+    
+        if($chooseSeven == "日"){
+            $sqlstr=$sqlstr1."and date='$date1' ";  //当期
+            $sqlstr2=$sqlstr1."and date='$date2' ";  //环比
+            $sqlstr3=$sqlstr1."and date='$date3' ";   //同比
+        }elseif($chooseSeven == "月"){
+            $sqlstr=$sqlstr1."and date like '%$dateMonth%' "; //当期
+            $sqlstr2=$sqlstr1."and date like '%$dateMonth2%' ";  //环比
+            $sqlstr3=$sqlstr1."and date like '%$dateMonth3%' ";   //同比
+        }elseif($chooseSeven == "年"){
+            $sqlstr=$sqlstr1."and date like '%$dateYear%' ";  //当期
+            $sqlstr2=$sqlstr1."and date like '%$dateYear2%' ";  //环比
+            $sqlstr3=$sqlstr1."and date like '%$dateYear3%' ";  //同比
+        }
+    
+        
+    
+        $sqlstr=\think\Db::query($sqlstr);
+        $num=$sqlstr[0]["num"];
+    
+        $sqlstr2=\think\Db::query($sqlstr2);
+        $num2=$sqlstr2[0]["num"];
+    
+        $sqlstr3=\think\Db::query($sqlstr3);
+        $num3=$sqlstr2[0]["num"];
+        
+        if($num3 !="" and $num !="" and $chooseSeven !="年"){
+            $tb=($num-$num3)/$num3*100;
+        }else{
+            $tb=0;
+        }
+    
+        if($num2 !="" and $num !=""){
+            $hb=($num-$num2)/$num2*100;
+        }else{
+            $hb=0;
+        }
+    
+        $data='[
+            {"name":"title","value":"'.$chooseOne.'"},
+            {"name":"time","value":"'.$chooseSeven.'"},
+            {"name":"num","value":"'.number_format($num, 2).'"},
+            {"name":"tb","value":"'.number_format($tb, 2).'"},
+            {"name":"hb","value":"'.number_format($hb, 2).'"}
+        ]';
+    
+        echo $data;
+    
+    }
+
+    public function dataQueryController2(){
+        session_start();
+        $username=$_SESSION["username"];
+
+        $user=\think\Db::name('user_form')->where('username',$username)->select();
+
+        $department=$user[0]["department"];
+        $newLevel=$user[0]["newLevel"];
+
+        $chooseOne=$this->request->post('chooseOne');
+        $chooseTwo=$this->request->post('chooseTwo');
+        $chooseThree=$this->request->post('chooseThree');
+        $chooseFour=$this->request->post('chooseFour');
+        $chooseFive=$this->request->post('chooseFive');
+        $chooseSix=$this->request->post('chooseSix');
+        $chooseSeven=$this->request->post('chooseSeven');
+        $chooseEight=$this->request->post('chooseEight');
+
+        if($chooseEight=="默认"){
+            date_default_timezone_set("Asia/Shanghai");
+            $date=time();
+        }else{
+            $date=$chooseEight;
+        }
+    
+        if($chooseEight=="默认"){
+            $date1=date('Y-m-d');
+            $date2=date('Y-m-d', strtotime("-1 month"));
+            $date3=date('Y-m-d', strtotime("-1 year"));
+    
+            $dateMonth=date('Y-m');
+            $dateMonth2=date('Y-m', strtotime("-1 month"));
+            $dateMonth3=date('Y-m', strtotime("-1 year"));
+    
+            $dateYear=date('Y');
+            $dateYear2=date('Y', strtotime("-1 year"));
+            $dateYear3=date('Y', strtotime("-1 year"));
+        }else{
+            $date1=date('Y-m-d', strtotime("$date"));
+            $date2=date('Y-m-d', strtotime("$date -1 month"));
+            $date3=date('Y-m-d', strtotime("$date -1 year"));
+    
+            $dateMonth=date('Y-m', strtotime("$date"));
+            $dateMonth2=date('Y-m', strtotime("$date -1 month"));
+            $dateMonth3=date('Y-m', strtotime("$date -1 year"));
+    
+            $dateYear=date('Y', strtotime("$date -1 year"));
+            $dateYear2=date('Y', strtotime("$date -1 year"));
+            $dateYear3=date('Y', strtotime("$date -1 year"));
+        }
+    
+        //销售额&回款
+        if($chooseOne == "销售额"){
+            $sqlstr1="select sum(salesMoney) as num from store_data_sales  where storeID= any(select storeID from store where 1=1 ";
+        }else if($chooseOne == "回款"){
+            $sqlstr1="select sum(backMoney) as num from store_data_hk where storeID= any(select storeID from store  where 1=1 ";
+        }
+    
+        //事业部
+        if($chooseTwo != "全部"){
+            $sqlstr1=$sqlstr1." and department ='$department' ";
+        }
+    
+        //平台
+        if($chooseThree != "全部"){
+            $sqlstr1=$sqlstr1."and pingtai='$chooseThree' ";
+        }
+    
+        //类目
+        if($chooseFour != "全部"){
+            $sqlstr1=$sqlstr1."and category='$chooseFour' ";
+        }
+    
+        //店铺
+        if($chooseFive != "全部"){
+            $sqlstr1=$sqlstr1."and storeName='$chooseFive' ";
+        }
+    
+        //业务员
+        if($chooseSix != "全部"){
+            $sqlstr1=$sqlstr1."and staff='$chooseSix' ";
+        }
+    
+        $sqlstr1=$sqlstr1.") ";
+    
+        if($chooseSeven != "月" and $chooseSeven != "年"){
+            $chooseSeven = "日";
+        }
+        
+        //时间段
+        if($chooseSeven == "日"){
+            $sqlstr_sj=$sqlstr1."and date='$date1' ";  //当期
+            $sqlstr_sjhb=$sqlstr1."and date='$date2' ";  //环比
+            $sqlstr__sjtb=$sqlstr1."and date='$date3' ";   //同比
+        }elseif($chooseSeven == "月"){
+            $sqlstr_sj=$sqlstr1."and date like '%$dateMonth%' "; //当期
+            $sqlstr_sjhb=$sqlstr1."and date like '%$dateMonth2%' ";  //环比
+            $sqlstr__sjtb=$sqlstr1."and date like '%$dateMonth3%' ";   //同比
+        }elseif($chooseSeven == "年"){
+            $sqlstr_sj=$sqlstr1."and date like '%$dateYear%' ";  //当期
+            $sqlstr_sjhb=$sqlstr1."and date like '%$dateYear2%' ";  //环比
+            $sqlstr__sjtb=$sqlstr1."and date like '%$dateYear3%' ";  //同比
+        }
+    
+        $sqlstr_sj=\think\Db::query($sqlstr_sj);
+
+        $num=$sqlstr_sj[0]["num"];
+    
+        //销售额目标&回款目标
+        if($chooseOne == "销售额"){
+            $sqlstr2="select sum(storeTarget) as num_t from store_target where 1=1 ";
+        }else if($chooseOne == "回款"){
+            $sqlstr2="select sum(hkTarget) as num_t from store_target where 1=1 ";
+        }
+    
+        //事业部
+        if($chooseTwo != "全部"){
+            $sqlstr2=$sqlstr2."and a.department='$chooseTwo' ";
+        }
+    
+        //平台
+        if($chooseThree != "全部"){
+            $sqlstr2=$sqlstr2."and a.pingtai='$chooseThree' ";
+        }
+    
+        //类目
+        if($chooseFour != "全部"){
+            $sqlstr2=$sqlstr2."and a.category='$chooseThree' ";
+        }
+    
+        //店铺
+        if($chooseFive != "全部"){
+            $sqlstr2=$sqlstr2."and a.storeName='$chooseFive' ";
+        }
+    
+        //业务员
+        if($chooseSix != "全部"){
+            $sqlstr2=$sqlstr2."and a.staff='$chooseFour' ";
+        }
+    
+        if($chooseSeven != "月" and $chooseSeven != "年"){
+            $chooseSeven = "日";
+        }
+        
+    
+       //时间段
+        if($chooseSeven == "日"){
+            $sqlstr=$sqlstr2."and dateMonth like '%$dateMonth%' ";  //当期
+            $sqlstr2_=$sqlstr2."and dateMonth like '%$dateMonth2%' ";  //环比
+            $sqlstr3_=$sqlstr2."and dateMonth like '%$dateMonth3%' ";   //同比
+        }elseif($chooseSeven == "月"){
+            $sqlstr=$sqlstr2."and dateMonth like '%$dateMonth%' "; //当期
+            $sqlstr2_=$sqlstr2."and dateMonth like '%$dateMonth2%' ";  //环比
+            $sqlstr3_=$sqlstr2."and dateMonth like '%$dateMonth3%' ";   //同比
+        }elseif($chooseSeven == "年"){
+            $sqlstr=$sqlstr2."and dateMonth like '%$dateYear%' ";  //当期
+            $sqlstr2_=$sqlstr2."and dateMonth like '%$dateYear2%' ";  //环比
+            $sqlstr3_=$sqlstr2."and dateMonth like '%$dateYear3%' ";  //同比
+        }
+       
+    
+        //当期
+        $sqlstr=\think\Db::query($sqlstr);
+    
+        $num_t=0;
+    
+        if($chooseSeven == "日"){
+            $num_t=$sqlstr[0]["num_t"]/30;
+        }elseif($chooseSeven == "月"){
+            $num_t=$sqlstr[0]["num_t"];
+        }elseif($chooseSeven == "年"){
+            $num_t=$sqlstr[0]["num_t"];
+        }
+    
+        if($num_t !=0){
+            $percent=number_format($num/$num_t, 2);
+        }else{
+            $percent="100";
+        }
+
+       
+        //环比
+        $sqlstr_sjhb=\think\Db::query($sqlstr_sjhb);
+        
+        $num=0;
+    
+        $num=$sqlstr_sjhb[0]["num"];
+    
+        $sqlstr2_1=\think\Db::query($sqlstr2_);
+        
+        $num_t2=0;
+    
+        $num_t2=$sqlstr2_1[0]["num_t"];
+    
+        if($num_t2 !=0){
+            $percent2=number_format($num/$num_t2, 2);
+        }else{
+            $percent2="100";
+        }
+    
+        //同比
+        $sqlstr_sjtb=\think\Db::query($sqlstr__sjtb);
+        
+        $num=0;
+    
+        $num=$sqlstr_sjtb[0]["num"];
+
+        $sqlstr3_=\think\Db::query($sqlstr3_);
+    
+    
+        $num_t3=0;
+    
+        $sqlstr2_=\think\Db::query($sqlstr2_);
+        
+        
+        $num_t3=$sqlstr2_[0]["num_t"];
+        
+        if($num_t3 !=0){
+            $percent3=number_format($num/$num_t3, 2);
+        }else{
+            $percent3="100";
+        }
+        
+        if($percent2!=0){
+            $tb=number_format(($percent-$percent3)/$percent3*100,2);
+        }else{
+            $tb="0.00";
+        }
+        
+        if($percent2!=0){
+            $hb=number_format(($percent-$percent2)/$percent2*100,2);
+        }else{
+            $hb="0.00";
+        }
+        
+    
+        $data='[
+            {"name":"title","value":"完成比"},
+            {"name":"time","value":"'.$chooseSeven.'"},
+            {"name":"num","value":"'.$percent.'%"},
+            {"name":"tb","value":"'.$tb.'"},
+            {"name":"hb","value":"'.$hb.'"}
+        ]';
+    
+        echo $data;
+    }
+
+    public function dataQueryController3(){
+        session_start();
+        $username=$_SESSION["username"];
+
+        date_default_timezone_set("Asia/Shanghai");
+        $date1=date('Y-m-d', time());
+        $dateMonth=date('Y-m', time());
+        $dateYear=date('Y', time());
+
+        $user=\think\Db::name('user_form')->where('username',$username)->select();
+
+        $department=$user[0]["department"];
+        $newLevel=$user[0]["newLevel"];
+
+        $chooseOne=$this->request->post('chooseOne');
+        $chooseTwo=$this->request->post('chooseTwo');
+        $chooseThree=$this->request->post('chooseThree');
+        $chooseFour=$this->request->post('chooseFour');
+        $chooseFive=$this->request->post('chooseFive');
+        $chooseSix=$this->request->post('chooseSix');
+        $chooseSeven=$this->request->post('chooseSeven');
+        $chooseEight=$this->request->post('chooseEight');
+
+        //销售额&回款
+        if($chooseOne == "销售额"){
+            $sqlstr1="select sum(b.salesMoney) as num,a.staff from store a,store_data_sales b where a.storeID=b.storeID ";
+        }else if($chooseOne == "回款"){
+            $sqlstr1="select sum(b.backMoney) as num,a.staff from store a,store_data_hk b where a.storeID=b.storeID ";
+        }
+
+        //事业部
+        if($chooseTwo != "全部"){
+            $sqlstr1=$sqlstr1." and a.department='$chooseTwo' ";
+        }
+
+        //平台
+        if($chooseThree != "全部"){
+            $sqlstr1=$sqlstr1."and a.pingtai='$chooseThree' ";
+        }
+
+        //类目
+        if($chooseFour != "全部"){
+            $sqlstr1=$sqlstr1."and a.category='$chooseFour' ";
+        }
+
+        //店铺
+        if($chooseFive != "全部"){
+            $sqlstr1=$sqlstr1."and a.storeName='$chooseFive' ";
+        }
+
+        //业务员
+        if($chooseSix != "全部"){
+            $sqlstr1=$sqlstr1."and a.staff='$chooseSix' ";
+        }
+
+        if($chooseSeven != "月" and $chooseSeven != "年"){
+            $chooseSeven = "日";
+        }
+
+        //时间段
+        if($chooseEight=="默认"){
+            if($chooseSeven == "日"){
+                $sqlstr1=$sqlstr1." and b.date='$date1' ";
+            }elseif($chooseSeven == "月"){
+                $sqlstr1=$sqlstr1." and b.date like '%$dateMonth%' ";
+            }elseif($chooseSeven == "年"){
+                $sqlstr1=$sqlstr1." and b.date like '%$dateYear%' ";
+            }
+        }else{
+            $sqlstr1=$sqlstr1." and b.date like '%$chooseEight%' "; //当期
+        }
+
+        $sqlstr1=$sqlstr1." group by a.staff order by ";
+        
+        if($chooseOne == "销售额"){
+            $sqlstr1=$sqlstr1." sum(b.salesMoney) ";
+        }else if($chooseOne == "回款"){
+            $sqlstr1=$sqlstr1." sum(b.backMoney) ";
+        }
+        
+        $sqlstr1=$sqlstr1." desc limit 0,5";
+
+        $sqlstr1=\think\Db::query($sqlstr1);
+        
+        $staff_list1='[';
+        $staff_list_str="";
+
+        $number_list1='[';
+        $number_list_str="";
+
+        for($i=0;$i<sizeof($sqlstr1);$i++){
+            $number_list_str=$number_list_str.'"'.$chooseOne.'：￥'.number_format($sqlstr1[$i]["num"],2).'",';
+            $staff_list_str=$staff_list_str.'"'.$sqlstr1[$i]["staff"].'",';
+        }
+
+        $staff_list_str = substr($staff_list_str,0,strlen($staff_list_str)-1);
+        $number_list_str = substr($number_list_str,0,strlen($number_list_str)-1);
+
+        $staff_list=$staff_list1.$staff_list_str.']';
+        $number_list=$number_list1.$number_list_str.']';
+
+        $tb=0;
+        $hb=0;
+
+        $data='[
+            {"name":"title","value":"业绩排名"},
+            {"name":"time","value":"'.$chooseSeven.'"},
+            {"name":"rank","value":'.$staff_list.'},
+            {"name":"number","value":'.$number_list.'}
+        ]';
+
+        echo $data;
+    
+    }
+
+    public function dataQueryController4(){
+        session_start();
+        $username=$_SESSION["username"];
+
+        date_default_timezone_set("Asia/Shanghai");
+
+        $date1=date('Y-m-d', time());
+        $dateMonth=date('Y-m', time());
+        $dateYear=date('Y', time());
+
+
+        $user=\think\Db::name('user_form')->where('username',$username)->select();
+
+        $department=$user[0]["department"];
+        $newLevel=$user[0]["newLevel"];
+
+        $chooseOne=$this->request->post('chooseOne');
+        $chooseTwo=$this->request->post('chooseTwo');
+        $chooseThree=$this->request->post('chooseThree');
+        $chooseFour=$this->request->post('chooseFour');
+        $chooseFive=$this->request->post('chooseFive');
+        $chooseSix=$this->request->post('chooseSix');
+        $chooseSeven=$this->request->post('chooseSeven');
+        $chooseEight=$this->request->post('chooseEight');
+    
+        $data=[];
+
+        if($chooseEight=="默认"){
+            if($chooseSeven=="日"){
+                $chooseEight=$date1;
+            }elseif($chooseSeven=="月"){
+                $chooseEight=$dateMonth;
+            }else{
+                $chooseEight=$dateYear;
+            }
+        }
+    
+        $object=$chooseOne;
+    
+        if($chooseEight=="默认"){
+            if($chooseSeven=="日" or $chooseSeven=="全部"){
+                if($chooseOne=="销售额"){
+                    $sqlstr1="select sum(salesMoney) as num,date from store_data_sales where  storeID= any(select storeID from store where 1=1 ";
+                }else if($chooseOne == "回款"){
+                    $sqlstr1="select sum(backMoney) as num,date from store_data_hk where storeID= any(select storeID from store where 1=1  ";
+                }
+        
+            }elseif($chooseSeven=="月"){
+                if($chooseOne=="销售额"){
+                    $sqlstr1="select sum(salesMoney) as num,left(date,7) as month from store_data_sales where storeID= any(select storeID from store where 1=1  ";
+                }else if($chooseOne == "回款"){
+                    $sqlstr1="select sum(backMoney) as num,left(date,7) as month from store_data_hk where storeID= any(select storeID from store where 1=1  ";
+                }
+            }elseif($chooseSeven=="年"){
+                if($chooseOne=="销售额"){
+                    $sqlstr1="select sum(salesMoney) as num,left(date,7) as month from store_data_sales where storeID= any(select storeID from store where 1=1  ";
+                }else if($chooseOne == "回款"){
+                    $sqlstr1="select sum(backMoney) as num,left(date,7) as month from store_data_hk where storeID= any(select storeID from store where 1=1  ";
+                }
+            }
+        }else{
+            if($chooseSeven=="日" or $chooseSeven=="月"){
+                $sqlstr1="select sum(salesMoney) as num,date from store_data_sales where  storeID= any(select storeID from store where 1=1 ";
+            }else{
+                $sqlstr1="select sum(salesMoney) as num,left(date,7) as month from store_data_sales where storeID= any(select storeID from store where 1=1  ";
+            }
+        }
+        
+    
+        //事业部
+        if($chooseTwo != "全部"){
+            $sqlstr1=$sqlstr1."and department='$chooseTwo' ";
+        }
+    
+        //平台
+        if($chooseThree != "全部"){
+            $sqlstr1=$sqlstr1."and pingtai='$chooseThree' ";
+        }
+    
+        //类目
+        if($chooseFour != "全部"){
+            $sqlstr1=$sqlstr1."and category='$chooseFour' ";
+        }
+    
+        //店铺
+        if($chooseFive != "全部"){
+            $sqlstr1=$sqlstr1."and storeName='$chooseFive' ";
+        }
+    
+        //业务员
+        if($chooseSix != "全部"){
+            $sqlstr1=$sqlstr1."and staff='$chooseSix' ";
+        }
+    
+        $sqlstr1=$sqlstr1.") ";
+    
+    
+        if($chooseSeven=="日" or $chooseSeven=="全部"){
+            $sqlstr1=$sqlstr1." and date_sub('".$chooseEight."', INTERVAL 30 DAY) < date  group by date limit 0,30";
+        }elseif($chooseSeven=="月"){
+            $sqlstr1=$sqlstr1." and date like '%".$chooseEight."%' group by date";
+        }elseif($chooseSeven=="年"){
+            $sqlstr1=$sqlstr1." and left(date,7) like '%".$chooseEight."%' group by left(date,7)";
+        }
+        
+    
+        $sqlstr1=\think\Db::query($sqlstr1);
+    
+        for($i=0;$i<sizeof($sqlstr1);$i++){
+    
+            $str='{"line":"'.$chooseOne.'","dateTime_xssj":"'.$sqlstr1[$i]["date"].'","number_xssj":"'.round($sqlstr1[$i]["num"]/10000,2).'","object_xssj":"'.$object.'"}';
+    
+            array_push($data,$str);
+            
+        }
+    
+        
+        if(sizeof($data)==0){
+            $str='{"line":"'.$chooseOne.'","dateTime_xssj":"暂无数据","number_xssj":"0","object_xssj":"'.$object.'"}';
+    
+            array_push($data,$str);
+        }
+    
+    
+        echo "[".implode(",",$data)."]";
+
+    }
+
+    public function dataQueryController5(){
+        session_start();
+        $username=$_SESSION["username"];
+
+        $user=\think\Db::name('user_form')->where('username',$username)->select();
+
+        $department=$user[0]["department"];
+        $newLevel=$user[0]["newLevel"];
+
+        $chooseOne=$this->request->post('chooseOne');
+        $chooseTwo=$this->request->post('chooseTwo');
+        $chooseThree=$this->request->post('chooseThree');
+        $chooseFour=$this->request->post('chooseFour');
+        $chooseFive=$this->request->post('chooseFive');
+        $chooseSix=$this->request->post('chooseSix');
+        $chooseSeven=$this->request->post('chooseSeven');
+        $chooseEight=$this->request->post('chooseEight');
+
+        
+    
+    }
+
+    public function dataQueryController6(){
+        session_start();
+        $username=$_SESSION["username"];
+
+        $user=\think\Db::name('user_form')->where('username',$username)->select();
+
+        $department=$user[0]["department"];
+        $newLevel=$user[0]["newLevel"];
+
+        $chooseOne=$this->request->post('chooseOne');
+        $chooseTwo=$this->request->post('chooseTwo');
+        $chooseThree=$this->request->post('chooseThree');
+        $chooseFour=$this->request->post('chooseFour');
+        $chooseFive=$this->request->post('chooseFive');
+        $chooseSix=$this->request->post('chooseSix');
+        $chooseSeven=$this->request->post('chooseSeven');
+        $chooseEight=$this->request->post('chooseEight');
     }
 }
