@@ -8,33 +8,43 @@ class Index extends Controller
     public function index(){
 
         session_start();
-        $username=$_SESSION["username"];
 
-        $department=\think\Db::query("select department from user_form where username='$username'");
-        $newLevel=\think\Db::query("select newLevel from user_form where username='$username'");
+        if(isset($_SESSION["username"])){
+            $username=$_SESSION["username"];
 
-        $news_dt=\think\Db::name('news')->field('id,title,time')->limit(4)->where('newsType','公司动态')->select();
-        $news_ggl=\think\Db::name('news')->field('id,title,time')->limit(10)->where('newsType','公司公告')->select();
-        $files=\think\Db::name('files')->field('id,title,fileName,createUser,time')->limit(7)->select();
+            $department=\think\Db::query("select department from user_form where username='$username'");
+            $newLevel=\think\Db::query("select newLevel from user_form where username='$username'");
 
-        $this->assign('username',$username);
-        $this->assign('news_dt',$news_dt);
-        $this->assign('files',$files);
-        $this->assign('news_ggl',$news_ggl);
+            $news_dt=\think\Db::name('news')->field('id,title,time')->limit(4)->where('newsType','公司动态')->select();
+            $news_ggl=\think\Db::name('news')->field('id,title,time')->limit(10)->where('newsType','公司公告')->select();
+            $files=\think\Db::name('files')->field('id,title,fileName,createUser,time')->limit(7)->select();
 
-        return $this->fetch();
+            $this->assign('username',$username);
+            $this->assign('news_dt',$news_dt);
+            $this->assign('files',$files);
+            $this->assign('news_ggl',$news_ggl);
+
+            return $this->fetch();
+        }else{
+            return $this->redirect('/index.php/Index/Login/login');
+        }
     }
 
     public function myWork(){
 
         session_start();
-        $username=$_SESSION["username"];
-        $fileName="";
 
-        $this->assign('username',$username);
-        $this->assign('fileName',$fileName);
+        if(isset($_SESSION["username"])){
+            $username=$_SESSION["username"];
+            $fileName="";
 
-        return $this->fetch();
+            $this->assign('username',$username);
+            $this->assign('fileName',$fileName);
+
+            return $this->fetch();
+        }else{
+            return $this->redirect('/index.php/Index/Login/login');
+        }
     }
 
     public function myWorkController1(){
@@ -311,11 +321,16 @@ class Index extends Controller
     public function dataQuery(){
 
         session_start();
-        $username=$_SESSION["username"];
 
-        $this->assign('username',$username);
+        if(isset($_SESSION["username"])){
+            $username=$_SESSION["username"];
 
-        return $this->fetch();
+            $this->assign('username',$username);
+
+            return $this->fetch();
+        }else{
+            return $this->redirect('/index.php/Index/Login/login');
+        }
     }
 
     public function dataQueryControllerBar(){

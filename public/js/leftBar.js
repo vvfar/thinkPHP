@@ -30,7 +30,7 @@ $(document).ready(function(){
             $(".leftbar0Z3 a").css("color","#fff")
         }
 
-    }else if(leftBar_path ==  "writeSX.php" || leftBar_path ==  "companyManger2.php" || leftBar_path ==  "zhangmu.php"  || leftBar_path ==  "zhangmu2.php" || leftBar_path ==  "zhangmu3.php" || leftBar_path ==  "sx_line.php" || leftBar_path ==  "sxmb.php"  || leftBar_path ==  "companyManger1_edit.php" || leftBar_path == "expireSX.php"    || leftBar_path == "timeSX.php"|| leftBar_path == "sx_cw.php" || leftBar_path == "ZFSX.php" || leftBar_path ==  "sx_line2.php" || leftBar_path ==  "djLoad.php"){
+    }else if(leftBar_path ==  "write_sx.html" || leftBar_path ==  "companyManger2.php" || leftBar_path ==  "dsh_sx.html"  || leftBar_path ==  "dhk_sx.html" || leftBar_path ==  "ywc_sx.html" || leftBar_path ==  "sx_line.php" || leftBar_path ==  "sxmb.php"  || leftBar_path ==  "companyManger1_edit.php" || leftBar_path == "expireSX.php"    || leftBar_path == "timeSX.php"|| leftBar_path == "sx_cw.php" || leftBar_path == "ZFSX.php" || leftBar_path ==  "sx_line2.php" || leftBar_path ==  "djLoad.php"){
 
         $(".leftbarAll li").css("background-color","#160509");
         $(".leftbar1").css("background-color","darkslateblue");
@@ -46,15 +46,15 @@ $(document).ready(function(){
         $(".leftbar11Z").toggle();
         $(".leftbar13Z").toggle();
 
-        if(leftBar_path ==  "zhangmu.php" || leftBar_path ==  "sx_cw.php"){
+        if(leftBar_path ==  "dsh_sx.html" || leftBar_path ==  "sx_cw.php"){
             $(".leftbar1Z1 a").css("color","#fff")
-        }else if(leftBar_path == "writeSX.php" || leftBar_path ==  "djLoad.php"){
+        }else if(leftBar_path == "write_sx.html" || leftBar_path ==  "djLoad.php"){
             $(".leftbar1Z2 a").css("color","#fff")
         }else if(leftBar_path == "companyManger2.php"){
             $(".leftbar1Z3 a").css("color","#fff")
-        }else if(leftBar_path ==  "zhangmu2.php" || leftBar_path ==  "expireSX.php" || leftBar_path ==  "timeSX.php"){
+        }else if(leftBar_path ==  "dhk_sx.html" || leftBar_path ==  "expireSX.php" || leftBar_path ==  "timeSX.php"){
             $(".leftbar1Z4 a").css("color","#fff")
-        }else if(leftBar_path ==  "zhangmu3.php" || leftBar_path ==  "ZFSX.php"){
+        }else if(leftBar_path ==  "ywc_sx.html" || leftBar_path ==  "ZFSX.php"){
             $(".leftbar1Z5 a").css("color","#fff")
         }
         
@@ -133,7 +133,7 @@ $(document).ready(function(){
             $(".leftbar6Z3 a").css("color","#fff")
         }
 
-    }else if(leftBar_path == "contract.php" || leftBar_path == "w_contract.php" || leftBar_path == "contractList.php" || leftBar_path == "contract_line.php" || leftBar_path == "contract_query.php" || leftBar_path == "newSQ.php" || leftBar_path == "sq_line.php"  || leftBar_path == "w_sq.php"  || leftBar_path ==  "sqList.php"  || leftBar_path ==  "contractAddition.php" ||  leftBar_path == "contract_AddList.php" ||  leftBar_path == "w_contractAdd.php"){
+    }else if(leftBar_path == "contract.html" || leftBar_path == "w_contract.html" || leftBar_path == "d_contract.html" || leftBar_path == "contract_line.php" || leftBar_path == "contract_query.php" || leftBar_path == "newSQ.php" || leftBar_path == "sq_line.php"  || leftBar_path == "w_sq.php"  || leftBar_path ==  "sqList.php"  || leftBar_path ==  "contractAddition.php" ||  leftBar_path == "contract_AddList.php" ||  leftBar_path == "w_contractAdd.php"){
         $(".leftbarAll li").css("background-color","#160509");
         $(".leftbar7").css("background-color","darkslateblue");
         $(".leftbar7 a").css("color","#ffffff");
@@ -148,11 +148,11 @@ $(document).ready(function(){
         $(".leftbar11Z").toggle();
         $(".leftbar13Z").toggle();
 
-        if(leftBar_path ==  "contractList.php" || leftBar_path ==  "sqList.php" ||  leftBar_path == "contract_AddList.php"){
+        if(leftBar_path ==  "d_contract.html" || leftBar_path ==  "sqList.php" ||  leftBar_path == "contract_AddList.php"){
             $(".leftbar7Z1 a").css("color","#fff")
-        }else if(leftBar_path == "contract.php" || leftBar_path == "newSQ.php" || leftBar_path ==  "contractAddition.php"){
+        }else if(leftBar_path == "contract.html" || leftBar_path == "newSQ.php" || leftBar_path ==  "contractAddition.php"){
             $(".leftbar7Z2 a").css("color","#fff")
-        }else if(leftBar_path == "w_contract.php" || leftBar_path == "w_sq.php" ||  leftBar_path == "w_contractAdd.php"){
+        }else if(leftBar_path == "w_contract.html" || leftBar_path == "w_sq.php" ||  leftBar_path == "w_contractAdd.php"){
             $(".leftbar7Z3 a").css("color","#fff")
         }
 

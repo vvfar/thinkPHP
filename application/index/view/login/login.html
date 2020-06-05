@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width,initial-scale=1">
+        <title>{$title}</title>
+        <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" media="screen" />
+        <link href="\lib\bootstrap-3.3.7-dist\css\bootstrap.css" rel="stylesheet"/>
+        <link href="\css\login.css" rel="stylesheet"/>
+        <script src="\lib\bootstrap-3.3.7-dist\js\jquery-3.3.1.min.js"></script>
+        <script src="\js\login.js"></script>
+    </head>
+    <body class="log_body">
+        <div class="login_content">
+            <img src="\images\timg.jpg">
+
+            <form class="log_form" method="post" action="/index.php/Index/Login/loginHandle">
+                <h4>账号登陆</h4>
+                <hr>
+                <div class="form-group">
+                    <p>用户名</p>
+                    <input type="text" placeholder="请输入用户名" class="form-control" name="username"/>
+                </div>
+                <div class="form-group group1">
+                    <p>密码</p>
+                    <input type="password" placeholder="请输入密码" class="form-control" name="password"/>
+                </div>
+                <div class="form-group group2">
+                    <button class="btn btn-default" type="submit">点击登陆</button>
+                    <button class="btn btn-default reset" type="button">忘记密码</button>
+                </div>
+            </form>
+        </div>
+    </body>
+</html>
