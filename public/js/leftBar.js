@@ -133,7 +133,7 @@ $(document).ready(function(){
             $(".leftbar6Z3 a").css("color","#fff")
         }
 
-    }else if(leftBar_path == "contract.html" || leftBar_path == "w_contract.html" || leftBar_path == "d_contract.html" || leftBar_path == "contract_line.php" || leftBar_path == "contract_query.php" || leftBar_path == "newSQ.php" || leftBar_path == "sq_line.php"  || leftBar_path == "w_sq.php"  || leftBar_path ==  "sqList.php"  || leftBar_path ==  "contractAddition.php" ||  leftBar_path == "contract_AddList.php" ||  leftBar_path == "w_contractAdd.php"){
+    }else if(leftBar_path == "contract.html" || leftBar_path == "w_contract.html" || leftBar_path == "d_contract.html" || leftBar_path == "contract_line.html" || leftBar_path == "contract_query.php" || leftBar_path == "newSQ.php" || leftBar_path == "sq_line.php"  || leftBar_path == "w_sq.php"  || leftBar_path ==  "sqList.php"  || leftBar_path ==  "contractAddition.php" ||  leftBar_path == "contract_AddList.php" ||  leftBar_path == "w_contractAdd.php"){
         $(".leftbarAll li").css("background-color","#160509");
         $(".leftbar7").css("background-color","darkslateblue");
         $(".leftbar7 a").css("color","#ffffff");

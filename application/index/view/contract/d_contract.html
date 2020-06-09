@@ -4,12 +4,12 @@
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width,initial-scale=1">
-        <title>俞兆林_店铺合同</title>
+        <title>{$title}</title>
         <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" media="screen" />
         <link href="\lib\bootstrap-3.3.7-dist\css\bootstrap.css" rel="stylesheet"/>
         <link href="\lib\bootstrap-3.3.7-dist\css\bootstrap-datetimepicker.min.css" rel="stylesheet" media="screen"/>
-        <link href="\css/leftbar.css" rel="stylesheet"/>
-        <link href="\css/header.css" rel="stylesheet"/>
+        <link href="\css\leftbar.css" rel="stylesheet"/>
+        <link href="\css\header.css" rel="stylesheet"/>
         <script src="\lib\flotr2\flotr2.min.js"></script>
         <script src="\lib\bootstrap-3.3.7-dist\js\jquery-3.3.1.min.js"></script>
         <script src="\lib\bootstrap-3.3.7-dist\js\bootstrap.min.js"></script>
@@ -91,7 +91,7 @@
                     <span class="label label-success" style="margin-left:5px;position:relative;top:30px;">第<?=$page?>页</span>
                 </h4>
             
-                <table class="table table-responsive table-bordered table-hover" style="width:1000px;margin-top:50px;margin-left:30px;margin-bottom:0px;">
+                <table class="table table-responsive table-bordered table-hover" style="width:1030px;margin-top:50px;margin-left:30px;margin-bottom:0px;">
                     <tr>
                         <th>序号</th>
                         <th>合同编号</th>
@@ -103,11 +103,11 @@
                         <th>登记日期</th>
                     </tr>
                 
-                    {foreach $contracts as $contract}
+                    {foreach name="contracts" item="contract" key="index"}
                         <tr>
-                            <td><?=$i+($page-1)*$pagesize?></td>
-                            <td><a href="contract_line.php?id={$contract.id}&option=合同">{$contract.no}</a></td>
-                            <td>{$contract.company}</td>
+                            <td>{$pagesize*($page-1) + $index+1}</td>
+                            <td><a href="/index.php/Index/Contract/contract_line.html?id={$contract.id}">{$contract.no}</a></td>
+                            <td class="category"><p style="margin:0">{$contract.company}</p></td>
                             <td class="category"><p style="margin:0">{$contract.pingtai}</p></td>
                             <td class="category"><p style="margin:0">{$contract.category}</p></td>
                             <td class="department"><p style="margin:0">{$contract.department}</p></td>
@@ -133,7 +133,7 @@
                         ?>&contractID=<?=$contractID?>&clientName=<?=$clientName?>&status=已审核">下一页</a></li>
                     </ul>
 
-                    <div style="float:left;margin-left:530px;width:321px;">
+                    <div style="float:left;margin-left:560px;width:321px;">
                         <ul class="pagination" style="float:right">
                             <li><a href="<?php echo $_SERVER['PHP_SELF']?>?page=1">&laquo;</a></li>
                             <?php
@@ -173,19 +173,18 @@
                             
                             <li><a href="<?php echo $_SERVER['PHP_SELF']?>?page=<?php echo $pagecount; ?>&contractID=<?=$contractID?>&clientName=<?=$clientName?>&status=已审核">&raquo;</a></li>
                         </ul>
-                    </div>
-                
+                    </div>    
                 </div>
             </div>
         </div>
-
     </body>
 </html>
 
 <style>
     th{
-        background-color:lightsalmon;
+        background-color:rgb(67, 64, 255);
         text-align: center;
+        color:#ffffff
     }
 
     td{
@@ -229,20 +228,20 @@
     $("#query_contract").click(function(){
         if($("#optionID").val()=="1"){
             contractID=$("#contractID").val();
-            window.location.href="contractList.php?contractID=" +contractID + "&clientName=" + "&status=已审核";
+            window.location.href="/index.php/Index/contract/d_contract.html?contractID=" +contractID + "&clientName=" + "&status=已审核";
         }else if($("#optionID").val()=="2"){
             clientName=$("#clientName").val();
-            window.location.href="contractList.php?contractID=" + "&clientName=" + clientName + "&status=已审核";
+            window.location.href="/index.php/Index/contract/d_contract.html?contractID=" + "&clientName=" + clientName + "&status=已审核";
         }
     })
 
     $("#download_contract").click(function(){
         if($("#optionID").val()=="1"){
             contractID=$("#contractID").val();
-            window.location.href="../../controller/contract/contract_download.php?contractID=" +contractID + "&clientName=" + "&status=已审核";
+            window.location.href="/index.php/Index/contract/contract_download?contractID=" +contractID + "&clientName=" + "&status=已审核";
         }else if($("#optionID").val()=="2"){
             clientName=$("#clientName").val();
-            window.location.href="../../controller/contract/contract_download.php?contractID=" + "&clientName=" + clientName + "&status=已审核";
+            window.location.href="/index.php/Index/contract/contract_download?contractID=" + "&clientName=" + clientName + "&status=已审核";
         }
     })
 </script>

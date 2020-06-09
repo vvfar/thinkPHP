@@ -1,0 +1,26 @@
+.container{margin-left: 180px;margin-top:40px}
+.title{margin-top: 30px;margin-left:30px;}
+.title button{float:left}
+.contractNo{font-size: 16px;float:left;margin-top:5px;margin-left:10px;width:670px}
+.dateTime{font-size: 16px;float:left;}
+.content{clear:both;margin-left:30px;position:relative;top:15px;}
+.re_date{border-bottom:1px solid #ddd;padding:5px;float:left}
+.edit_button{float:left;margin-left:725px;}
+.delete_button{float:left;margin-left:10px}
+.base_info{clear:both;width:1025px;}
+.p1{float:left;margin-top:20px;}
+.p1_right{float:right;margin-top:20px;}
+.p2{float:left}
+.p3{float:left;margin-left:20px;}
+.tb1{width:1030px;margin-top:50px}
+th{text-align: center}
+td{text-align: center;width:150px;height:40px;line-height:40px;vertical-align: middle}
+.btn_option{width:1030px;}
+.decline{float:right}
+.agree{float:right;margin-right:10px;}
+.edit{float:right}
+.note p{margin-top:10px;}
+.title2{margin-top: 20px;}
+.pager li a:hover{background-color:#337ab7;color:#fff}
+ul{list-style: none;margin:0;padding:0}
+.notice ul li{float: left;width:250px}

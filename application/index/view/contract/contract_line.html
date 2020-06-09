@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width,initial-scale=1">
+        <title>{$title}</title>
+        <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" media="screen" />
+        <link href="\css\leftbar.css" rel="stylesheet"/>
+        <link href="\css\header.css" rel="stylesheet"/>
+        <link href="\lib\bootstrap-3.3.7-dist\css\bootstrap.css" rel="stylesheet"/>
+        <link href="\css\contract_line.css" rel="stylesheet"/>
+        <script src="\lib\bootstrap-3.3.7-dist\js\jquery-3.3.1.min.js"></script>
+        <script src="\lib\bootstrap-3.3.7-dist\js\bootstrap.min.js"></script>
+    </head>
+    <body>
+        {include file="../application/index/view/common/header.html" /}
+        {include file="../application/index/view/common/leftBar.html" /}
+
+        <div class="container">
+            
+            <div class="title"> 
+                {if($contract_item.status =="审核拒绝")}
+                    <button class="btn btn-sm btn-danger">已拒绝</button>
+                {elseif($contract_item.status !="已归档")}
+                    <button class="btn btn-sm btn-warning">待归档</button>
+                {else\}
+                    <button class="btn btn-sm btn-success">已归档</button>
+                {/if}
+
+                <p class="contractNo">合同编号：{$contract_item.no}</p>
+                <p class="dateTime">合同期限：从 {$contract_item.input_time} 到 {$contract_item.input_time2}</p>
+            </div>
+
+            <div class="content">
+                <div>
+                    <p class="re_date">登记日期：{$contract_item.re_date}</p>
+
+                    {if($department=="商业运营部" or $newLevel == "ADMIN")}
+                        <button class="btn btn-sm btn-info edit_button" onclick="changeContract()">修改合同</button>
+                        <button class="btn btn-sm btn-danger delete_button" onclick="delContract()">删除合同</button>
+                    {/if}
+                </div>
+
+                <div class="base_info">
+                    <p class="p1">基本信息：</p>
+                    <div class="p1_right">
+                        <p class="p2">所属事业部：{$contract_item.department}</p>
+                        <p class="p3">业务员：{$contract_item.shr}</p>
+                    </div>
+                </div>
+
+                <table class="table table-responsive table-bordered table-hover tb1">
+                    <tr>
+                        <th>公司名称</th>
+                        <td colspan="7">{$contract_item.company}</td>
+                    </tr>
+                    <tr>
+                        <th>店铺名称</th>
+                        <td colspan="7">{$contract_item.store}</td>
+                    </tr>
+                    <tr>
+                        <th>授权平台</th>
+                        <td colspan="2">{$contract_item.pingtai}</td>
+                        <th>授权类目</th>
+                        <td colspan="3">{$contract_item.category}</td>
+                    </tr>
+                    <tr>
+                        <th>保证金</th>
+                        <td colspan="2">
+                            <span>{$contract_item.money}</span>
+
+                            {if($contract_item.ismoney == "是")}
+                                <span>(共享)</span>
+                            {else}
+                                <span>(不共享)</span>
+                            {/if}
+                        </td>
+                        <th>销售额</th>
+                        <td>
+                            <span>{$contract_item.sales}万</span>
+                            
+                            {if($contract_item.issales == "是")}
+                                <span>(共享)</span>
+                            {else}
+                                <span>(不共享)</span>
+                            {/if}
+                            
+                        </td>
+                        <th>服务费</th>
+                        <td>
+                            <span>{$contract_item.service}万</span>
+                            
+                            {if($contract_item.isservice == "是")}
+                                <span>(共享)</span>
+                            {else}
+                                <span>(不共享)</span>
+                            {/if}
+                        </td>
+                    </tr>
+                </table>
+                
+                <div class="btn_option">
+                    {if($department == "商业运营部" and $contract_item.status == "待归档")}
+                        <button class="btn btn-sm btn-danger decline" id="no">拒绝</button>
+                        <button class="btn btn-sm btn-success agree" id="yes">同意</button>
+                    {elseif(($contract_item.status=="审核拒绝" or $contract_item.status == "待归档") and $username == $contract_item.shr)}
+                        <button class="btn btn-sm btn-info edit" id="edit">重新编辑</button>
+                    {/if}
+                </div>
+                
+                <div class="note">
+                    <p>备注信息：</p>
+                    <p>{$contract_item.note}</p>
+                    <p>原合同编号：</p>
+                    
+                    {if($count==0)}
+                        <p>{$contract_item.oldNo}</p>
+                    {else}
+                        <p><a href="contract_line.php?no={$contract_item.oldNo}">{$contract_item.oldNo}</a></p>
+                    {/if}
+                </div>
+
+                <p class="title2">主合同店铺列表：</p>
+
+                <table class="table table-responsive table-bordered table-hover" style="width:1030px;margin-top:10px;">
+                    
+                    <tr>
+                        <th>公司名称</th>
+                        <th>店铺名称</th>
+                        <th>授权平台</th>
+                        <th>授权类目</th>
+                        <th>保证金</th>
+                        <th>是否共享保证金</th>
+                        <th>销售额（万）</th>
+                        <th>是否共享销售额</th>
+                        <th>服务费（万）</th>
+                        <th>是否共享服务费</th>
+                    </tr>
+
+                    {foreach $contracts_all as $contract_all}
+                        <tr>
+                            <td>{$contract_all.company}</td>
+                            <td>{$contract_all.store}</td>
+                            <td>{$contract_all.pingtai}</td>
+                            <td>{$contract_all.category}</td>
+                            <td>{$contract_all.money}</td>
+                            <td>{$contract_all.ismoney}</td>
+                            <td>{$contract_all.sales}</td>
+                            <td>{$contract_all.issales}</td>
+                            <td>{$contract_all.service}</td>
+                            <td>{$contract_all.isservice}</td>
+                        </tr>
+                    {/foreach}
+                </table>
+            </div>
+        </div>
+    </body>
+</html>
+
+<script>
+
+    $("#edit").click(function(){
+        window.location.href="/index.php/Index/Contract/contract.html?id={$contract_item.id}"
+    })
+
+    $("#yes").click(function(){
+        window.location.href="/index.php/Index/Contract/add_contract_handle?id={$contract_item.id}&progress=4"
+    })
+
+    $("#no").click(function(){
+        window.location.href="/index.php/Index/Contract/add_contract_handle?id={$contract_item.id}&progress=5"
+    })
+
+    var changeContract=function(){
+        window.location.href="/index.php/Index/Contract/contract.html?id={$contract_item.id}&option=0"
+    }
+
+    var delContract=function(){
+        window.location.href="/index.php/Index/Contract/add_contract_handle?id={$contract_item.id}&progress=6"
+    }
+</script>
+

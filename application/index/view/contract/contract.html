@@ -30,84 +30,104 @@
                 
                 <!--<button style="float:left;margin-left:360px;position:relative;top:20px" class="btn btn-success btn-sm" data-toggle="modal" data-target="#myModal2">批量上传</button>-->
                 
-                <form method="POST" action="">
+                <form method="POST" action="/index.php/Index/Contract/add_contract_handle/progress/1">
                     <div class="form-group hidden" style="clear: both;">
                         <p style="width: 120px;font-size: 14px;float: left;margin-top: 22px;">id</p>
-                        <input type="text" class="form-control" name="id" value="" style="width: 250px;float: left;margin-top: 15px;">
+                        <input type="text" class="form-control" name="id" value="{$contract_info.id}" style="width: 250px;float: left;margin-top: 15px;">
                     </div>
                     <div class="form-group" style="clear: both;">
                         <p style="width: 120px;font-size: 14px;float: left;margin-top: 22px;">合同编号</p>
-                        <input type="text" class="form-control" name="no" value="" placeholder="请输入合同编号" style="width: 250px;float: left;margin-top: 15px;">
+                        <input type="text" class="form-control" name="no" value="{$contract_info.no}" placeholder="请输入合同编号" style="width: 250px;float: left;margin-top: 15px;">
                     </div>
                     <div class="form-group" style="clear: both;">
                         <p style="width: 120px;font-size: 14px;float: left;margin-top: 22px;">合同类型</p>
                         <select class="form-control" style="width: 250px;float: left;margin-top: 15px;" name="contractType" id="contractType">
-                            <option>经销商合同</option>
-                            <option>供应商合同</option>
+                            {if($contract_info.contractType=="供应商合同")}
+                                <option>经销商合同</option>
+                                <option selected>供应商合同</option>
+                            {else\}
+                                <option>经销商合同</option>
+                                <option>供应商合同</option>
+                            {/if}
                         </select>
                     </div>
                     <div class="form-group" style="clear: both;">
                         <p style="width: 120px;font-size: 14px;float: left;margin-top: 22px;">公司名称</p>
-                        <input type="text" class="form-control" name="company" value="" placeholder="请输入公司名称" style="width: 250px;float: left;margin-top: 15px;">
+                        <input type="text" class="form-control" name="company" value="{$contract_info.company}" placeholder="请输入公司名称" style="width: 250px;float: left;margin-top: 15px;">
                     </div>
                     <div class="form-group store_name" style="clear: both;">
                         <p style="width: 120px;font-size: 14px;float: left;margin-top: 22px;">店铺名</p>
-                        <input type="text" class="form-control" name="store" value="" placeholder="请输入店铺名" style="width: 250px;float: left;margin-top: 15px;">
+                        <input type="text" class="form-control" name="store" value="{$contract_info.store}" placeholder="请输入店铺名" style="width: 250px;float: left;margin-top: 15px;">
                     </div>
                     <div class="form-group store_pingtai" style="clear: both;">
                         <p style="width: 120px;font-size: 14px;float: left;margin-top: 22px;">授权平台</p>
-                        <input type="text" class="form-control" name="pingtai" value="" placeholder="请输入授权平台" style="width: 250px;float: left;margin-top: 15px;">
+                        <input type="text" class="form-control" name="pingtai" value="{$contract_info.pingtai}" placeholder="请输入授权平台" style="width: 250px;float: left;margin-top: 15px;">
                     </div>
                     <div class="form-group" style="clear: both;">
                         <p style="width: 120px;font-size: 14px;float: left;margin-top: 22px;">授权类目</p>
-                        <input type="text" class="form-control" name="category" value="" placeholder="请输入授权类目" style="width: 250px;float: left;margin-top: 15px;">
+                        <input type="text" class="form-control" name="category" value="{$contract_info.category}" placeholder="请输入授权类目" style="width: 250px;float: left;margin-top: 15px;">
                     </div>
                     <div class="form-group" style="clear: both;">
                         <p style="width: 120px;font-size: 14px;float: left;margin-top: 22px;">保证金</p>
-                        <input type="text" class="form-control" name="money" value="" placeholder="请输入保证金" style="width: 250px;float: left;margin-top: 15px;"  oninput="value=value.replace(/[^\d.]/g,'')">
+                        <input type="text" class="form-control" name="money" value="{$contract_info.money}" placeholder="请输入保证金" style="width: 250px;float: left;margin-top: 15px;"  oninput="value=value.replace(/[^\d.]/g,'')">
                     </div>
                     <div class="form-group" style="clear: both;">
                         <p style="width: 120px;font-size: 14px;float: left;margin-top: 22px;">是否共享保证金</p>
                         <select class="form-control" style="width: 250px;float: left;margin-top: 15px;" name="ismoney">
-                            <option>是</option>
-                            <option selected>否</option>
+                            {if($contract_info.ismoney=="否")}
+                                <option>是</option>
+                                <option selected>否</option>
+                            {else\}
+                                <option>是</option>
+                                <option>否</option>
+                            {/if}
                         </select>
                     </div>
                     <div class="form-group" style="clear: both;">
                         <p style="width: 120px;font-size: 14px;float: left;margin-top: 22px;">销售额指标（万）</p>
-                        <input type="text" class="form-control" name="sales" value="" placeholder="请输入销售额" style="width: 250px;float: left;margin-top: 15px;" oninput="value=value.replace(/[^\d.]/g,'')">
+                        <input type="text" class="form-control" name="sales" value="{$contract_info.sales}" placeholder="请输入销售额" style="width: 250px;float: left;margin-top: 15px;" oninput="value=value.replace(/[^\d.]/g,'')">
                     </div>
                     <div class="form-group" style="clear: both;">
                         <p style="width: 120px;font-size: 14px;float: left;margin-top: 22px;">是否共享销售额</p>
                         <select class="form-control" style="width: 250px;float: left;margin-top: 15px;" name="issales">
-                            <option selected>是</option>
-                            <option>否</option>
+                            {if($contract_info.issales=="否")}
+                                <option>是</option>
+                                <option selected>否</option>
+                            {else\}
+                                <option>是</option>
+                                <option>否</option>
+                            {/if}
                         </select>
                     </div>
                     <div class="form-group" style="clear: both;">
                         <p style="width: 120px;font-size: 14px;float: left;margin-top: 22px;">服务费指标（万）</p>
-                        <input type="text" class="form-control" name="service" value="" placeholder="请输入服务费" style="width: 250px;float: left;margin-top: 15px;"  oninput="value=value.replace(/[^\d.]/g,'')">
+                        <input type="text" class="form-control" name="service" value="{$contract_info.service}" placeholder="请输入服务费" style="width: 250px;float: left;margin-top: 15px;"  oninput="value=value.replace(/[^\d.]/g,'')">
                     </div>
                     <div class="form-group" style="clear: both;">
                         <p style="width: 120px;font-size: 14px;float: left;margin-top: 22px;">是否共享服务费</p>
                         <select class="form-control" style="width: 250px;float:left;margin-top: 15px;" name="isservice">
-                            <option selected>是</option>
-                            <option>否</option>
+                            {if($contract_info.isservice=="否")}
+                                <option>是</option>
+                                <option selected>否</option>
+                            {else\}
+                                <option>是</option>
+                                <option>否</option>
+                            {/if}
                         </select>
                     </div>
                     <div class="form-group" style="clear: both;">
                         <p style="width: 120px;font-size: 14px;float: left;margin-top: 22px;">关联原合同</p>
-                        <input type="text" class="form-control" name="oldNo" value="" placeholder="请输入原合同编号" style="width: 250px;float: left;margin-top: 15px;">
+                        <input type="text" class="form-control" name="oldNo" value="{$contract_info.oldNo}" placeholder="请输入原合同编号" style="width: 250px;float: left;margin-top: 15px;">
                     </div>
                     <div class="form-group" style="clear: both;">
                         <p style="width: 120px;font-size: 14px;float: left;margin-top: 22px;">备注</p>
-                        <input type="text" class="form-control" name="note" value="" placeholder="请输入备注" style="width: 250px;float: left;margin-top: 15px;">
+                        <input type="text" class="form-control" name="note" value="{$contract_info.note}" placeholder="请输入备注" style="width: 250px;float: left;margin-top: 15px;">
                     </div>
                     <div class="form-group" style="clear: both;">
                         <p style="width: 120px;font-size: 14px;float: left;margin-top: 22px;">合同日期</p>
                         
                         <div style="float: left;width:180px;margin-top: 15px;" class="input-group date form_datetime" data-date="" data-date-format="dd MM yyyy" data-link-field="dtp_input2" data-link-format="yyyy-mm-dd">
-                            <input class="form-control" id="input_time" name="input_time" size="16" type="text" value="" readonly>
+                            <input class="form-control" id="input_time" name="input_time" size="16" type="text" value="{$contract_info.input_time}" readonly>
                             <span class="input-group-addon"><span class="glyphicon glyphicon-remove"></span></span>
                             <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
                         </div>
@@ -115,7 +135,7 @@
                         <p style="float: left;position:relative;top:20px;margin-left:5px;"> 到 </p>
 
                         <div style="float: left;margin-left:10px;width:180px;margin-top: 15px;" class="input-group date form_datetime" data-date="" data-date-format="dd MM yyyy" data-link-field="dtp_input2" data-link-format="yyyy-mm-dd">
-                            <input class="form-control" id="input_time2" name="input_time2" size="16" type="text" value="" readonly>
+                            <input class="form-control" id="input_time2" name="input_time2" size="16" type="text" value="{$contract_info.input_time2}" readonly>
                             <span class="input-group-addon"><span class="glyphicon glyphicon-remove"></span></span>
                             <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
                         </div>
