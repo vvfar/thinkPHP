@@ -14,7 +14,7 @@ $(document).ready(function(){
             $.ajax({
                 type:"get",
                 async:false,
-                url:"../../controller/fl/fldj.php?fl=" +encodeURIComponent(fl),
+                url:"/index.php/Index/fl/fldj?fl=" +encodeURIComponent(fl),
                 //dataType:"json",
                 success:function(result){
                     

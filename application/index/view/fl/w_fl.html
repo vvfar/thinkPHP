@@ -57,9 +57,9 @@
             <div class="clearfix">
                 <div class="fy_span clearfix">
                     <h4>
-                        <span class="label label-info">共<?=$total?>条</span>
-                        <span class="label label-warning">共<?=$pagecount?>页</span>
-                        <span class="label label-success">第<?=$page?>页</span>
+                        <span class="label label-info">共{$total}条</span>
+                        <span class="label label-warning">共{$pagecount}页</span>
+                        <span class="label label-success">第{$page}页</span>
                     </h4>
                 </div>
 
@@ -78,18 +78,18 @@
                     {foreach name="fls" item="fl" key="index"}
                         <tr>
                             <td>{$pagesize*($page-1) + $index+1}</td>
-                            
+
                             {if($fl.key==0 and ($fl.status == "义乌打包发货" or $fl.status == "商业运营归档单据" or $fl.status == "已归档单据"))}
                                 {if($newLevel == "ADMIN")}
-                                    <td><a href="flLine.php?id={$fl.id}" style="color:red" target="_blank">{$fl.no}</a></td>
+                                    <td><a href="/index.php/Index/fl/fl_line.html?id={$fl.id}" style="color:red" target="_blank">{$fl.no}</a></td>
                                 {else\}
                                     <td>{$fl.no}</td>
                                 {/if}
                             {else\}
                                 {if($username == $fl.shr)}
-                                    <td><a href="flLine.php?id={$fl.id}" style="color:red" target="_blank">{$fl.no}</a></td>
+                                    <td><a href="/index.php/Index/fl/fl_line.html?id={$fl.id}" style="color:red" target="_blank">{$fl.no}</a></td>
                                 {else\}
-                                    <td><a href="flLine.php?id={$fl.id}" style="color:green" target="_blank">{$fl.no}</a></td>
+                                    <td><a href="/index.php/Index/fl/fl_line.html?id={$fl.id}" style="color:green" target="_blank">{$fl.no}</a></td>
                                 {/if}
                             {/if}
 
@@ -118,7 +118,7 @@
                         ?>&status=<?=$status2?>&time=<?=$time?>&input_time=<?=$input_time?>&input_time2=<?=$input_time2?>&clientName=<?=$clientName?>">下一页</a></li>
                     </ul>
 
-                    <div style="float:left;margin-left:580px;width:321px;">
+                    <div style="float:left;margin-left:560px;width:321px;">
                         <ul class="pagination" style="float:right;margin-top:0px">
                             <li><a href="<?php echo $_SERVER['PHP_SELF']?>?page=1&status=<?=$status2?>&time=<?=$time?>&input_time=<?=$input_time?>&input_time2=<?=$input_time2?>&clientName=<?=$clientName?>">&laquo;</a></li>
                             <?php

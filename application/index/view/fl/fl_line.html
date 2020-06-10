@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width,initial-scale=1">
+        <title>{$title}</title>
+        <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" media="screen" />
+        <link href="\css\leftbar.css" rel="stylesheet"/>
+        <link href="\css\header.css" rel="stylesheet"/>
+        <link href="\css\flLine.css" rel="stylesheet"/>
+        <link href="\lib\bootstrap-3.3.7-dist\css\bootstrap.css" rel="stylesheet"/>
+        <script src="\lib\bootstrap-3.3.7-dist\js\jquery-3.3.1.min.js"></script>
+        <script src="\lib\bootstrap-3.3.7-dist\js\bootstrap.min.js"></script>
+    </head>
+    <body>
+        {include file="../application/index/view/common/header.html" /}
+        {include file="../application/index/view/common/leftBar.html" /}
+            
+        <div style="margin-left: 180px;margin-top:50px;">
+            
+            <div style="float:left;width:1040px;margin-top:20px;">
+                <div style="float:left;">
+                    <div class="sqd_st" style="margin-left:40px;float:left;">
+                        <p>申请单状态：{$fl_line.status_pop}</p>
+                    </div>
+
+                    <div class="sqd_bh" style="margin-left:10px;float:left;">
+                        <p style="float: left;">申请单编号:{$fl_line.no}</p>
+                    </div>
+
+                    <div class="sqd_print" style="margin-left:10px;float:left;">
+                        <p style="float: left;">
+                            <span>义乌是否已打印：</span>
+                            {if $fl_line.isprint==1}
+                                <span>是</span>
+                            {else\}
+                                <span>否</span>
+                            {/if}
+                        </p>
+                    </div>
+                </div>
+
+                <div style="float:right;">
+                    {if($newLevel == "ADMIN")}
+                        <button type="button" class="btn btn-warning btn-sm" style="float:left;" id="backEdit">退回单据</button>
+                        <button type="button" class="btn btn-danger btn-sm" style="float:left;margin-left:10px;" data-toggle="modal" data-target="#myModal">作废单据</button>
+                    {else}
+                        <button type="button" class="btn btn-success btn-sm" onclick="printPage()">打印辅料单</button>
+                    {/if}
+                </div>
+            </div>
+
+            <table class="tb1" border="1" cellspacing="0" style="clear:both;position: relative;top:20px;margin-left:40px;width:1000px;margin-bottom:30px;">
+                <tr>
+                    <td colspan="4" style="width:147px;">申请单位</td>
+                    <td colspan="4" style="width:147px;">{$fl_line.no}</td>
+                    <td colspan="4" style="width:147px;">申请人</td>
+                    <td colspan="6" style="width:205px;">{$fl_line.people}</td>
+                    <td colspan="6" style="width:147px;">申请部门</td>
+                    <td colspan="4" style="width:135px;">{$fl_line.department}</td>
+                    <td colspan="4" style="width:135px;">申请日期</td>
+                    <td colspan="4" style="width:135px;">{$fl_line.date}</td>
+                </tr>
+                <tr>
+                    <td colspan="4">收货地址</td>
+                    <td colspan="4">{$fl_line.address}</td>
+                    <td colspan="4">联系人</td>
+                    <td colspan="6">{$fl_line.connection}</td>
+                    <td colspan="6">联系电话</td>
+                    <td colspan="4">{$fl_line.phone}</td>
+                    <td colspan="4">运输方式</td>
+                    <td colspan="4">{$fl_line.driving}</td>
+                </tr>
+                <tr>
+                    <td colspan="12">基本信息</td>
+                    <td colspan="12">服务费用</td>
+                    <td colspan="12">辅料费用</td>
+                </tr>    
+                <tr>
+                    <td colspan="3">序号</td>
+                    <td colspan="3">品类</td>
+                    <td colspan="3">货号</td>
+                    <td colspan="3">品名</td>
+                    <td colspan="3">申请数量</td>
+                    <td colspan="3">{$fl_line.ishs}</td>
+                    <td colspan="3">费率 /<br>单价</td>
+                    <td colspan="3">服务费<br>小计</td>
+                    <td colspan="3">辅料名称</td>
+                    <td colspan="3">单价</td>
+                    <td colspan="3">辅料数量</td>
+                    <td colspan="3">辅料小计</td>
+                </tr>
+                
+                <?php
+                    for($i=0;$i<=$hd_count-1;$i++){
+                ?>
+                    <tr class="tr<?=$i?>">
+                        <td colspan="3"><?=$i+1?></td>
+                        <td colspan="3">{$categorys[$i]}</td>
+                        <td colspan="3">{$productNos[$i]}</td>
+                        <td colspan="3">{$productNames[$i]}</td>
+                        <td colspan="3" class="sqsl">{$amounts[$i]}</td>
+                        <td colspan="3" class="bzjg">{$prices[$i]}</td>
+                        <td colspan="3" class="fldj">{$flss[$i]}</td>
+                        <td colspan="3" class="fwfxj">{$fwfxjs[$i]}</td>
+                        <td colspan="3">{$flsName[$i]}</td>
+                        <td colspan="3" class="dj">{$djs[$i]}</td>
+                        <td colspan="3" class="sl">{$sls[$i]}</td>
+                        <td colspan="3" class="flfxj">{$flfxjs[$i]}</td>
+                    </tr>
+
+                <?php
+                    }
+                ?>
+
+                <tr>
+                    <td colspan="12">申请数量合计</td>
+                    <td colspan="3" id="hj">{$fl_line.hd_sqslhj}</td>
+                    <td colspan="6">服务费合计</td>
+                    <td colspan="3" id="fwfhj">{$fl_line.hd_fwfhj}</td>
+                    <td colspan="3">税点</td>
+                    <td colspan="3" class="sd">{$fl_line.sd}</td>
+                    <td colspan="3" id="flslhj">{$fl_line.hd_flsl}</td>
+                    <td colspan="3" id="flfhj" style="display:none"></td>
+                    <td colspan="3" id="fwfhjhs">{$fl_line.hd_flfhjsh}</td>
+                </tr>
+                <tr>
+                    <td colspan="12">服务费辅料费总计</td>
+                    <td colspan="12" id="fwfflfhj">{$fl_line.hd_fwfflfzj}</td>
+                    <td colspan="6">结款方式</td>
+                    <td colspan="6">{$fl_line.jkfs}</td>
+                </tr>
+                {if($department=="义乌部")}
+                    {if($fl_line.status_pop=="义乌打包发货" or $fl_line.status_pop=="商业运营归档单据")}
+                        <tr>
+                            <td colspan="6">物流方式</td>
+                            <td colspan="6"><input type="text" value="{$fl_line.wlfs}" style="width: 90%;" name="wlfs" id="wlfs"/></td>
+                            <td colspan="6">物流单号</td>
+                            <td colspan="6"><input type="text" value="{$fl_line.wlno}" style="width: 90%;" name="wlno" id="wlno"/></td>
+                            <td colspan="6">物流费用</td>
+                            <td colspan="6"><input type="text" value="{$fl_line.wlprice}" style="width: 90%;" name="wlprice" id="wlprice"/></td>
+                        </tr>
+                        <tr>
+                            <td colspan="6">备注</td>
+                            <td colspan="30"><input type="text" value="{$fl_line.note}" style="width: 98%;" name="note" id="note"/></td>
+                        </tr>
+                    {else\}
+                        <tr>
+                            <td colspan="6">物流方式</td>
+                            <td colspan="6">{$fl_line.wlfs}</td>
+                            <td colspan="6">物流单号</td>
+                            <td colspan="6">{$fl_line.wlno}</td>
+                            <td colspan="6">物流费用</td>
+                            <td colspan="6">{$fl_line.wlprice}</td>
+                        </tr>
+                        <tr>
+                            <td colspan="6">备注</td>
+                            <td colspan="30">{$fl_line.note}</td>
+                        </tr>
+                    {/if}
+                {else\}
+                    <tr>
+                        <td colspan="6">物流方式</td>
+                        <td colspan="6">{$fl_line.wlfs}</td>
+                        <td colspan="6">物流单号</td>
+                        <td colspan="6">{$fl_line.wlno}</td>
+                        <td colspan="6">物流费用</td>
+                        <td colspan="6">{$fl_line.wlprice}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="6">备注</td>
+                        <td colspan="30">{$fl_line.note}</td>
+                    </tr>
+                {/if}
+
+                <tr>
+                    <td colspan="6">授信编号</td>
+
+
+                    {if($sx_filesName !=[])}
+                        <td colspan="6"><a href="../../common/file/sx_file/{$sx_filesName.fileName}" target="_blank">{$sx_info.sqid}</a></td>
+                    {else\}
+                        <td colspan="6">{$sx_info.sqid}</td>
+                    {/if}
+                    
+                    <td colspan="6">使用授信金额</td>
+                    <td colspan="6">{$sx_info.nowUseMoney}</td>
+                    <td colspan="6">可使用额度</td>
+                    <td colspan="6">{$sx_info.nowUseMoney+$sx_info.newMoney}</td>
+                </tr>
+            </table>
+                    
+            <div style="width:1040px;">
+
+                {if($fl_line.status_pop == $username)}
+                    {if($department == "商业运营部" and $status_pop=="商业运营归档单据" )}
+                        <button type="button" class="btn btn-info btn-sm" id="yes" style="float:right;margin-left:50px;">已记录</button>
+                    {elseif($status_pop !="待KA审核单据")}
+                        {if($department=="财务部")}
+                            <button type="button" class="btn btn-danger btn-sm" id="no" style="float:right;margin-left:10px;">拒绝</button>
+                            <button type="button" class="agree_yzm btn btn-success btn-sm" style="float:right;"  data-toggle="modal" data-target="#myModal2">同意</button>
+                        {else\}
+                            <button type="button" class="btn btn-danger btn-sm" id="no" style="float:right;margin-left:10px;">拒绝</button>
+                            <button type="button" class="btn btn-success btn-sm" id="yes" style="float:right;">同意</button>
+                        {/if}
+                    {/if}
+                    
+                    {if($department=="义乌部" and $fl_line.status_pop=="商业运营归档单据")}
+                        <button type="button" class="btn btn-info btn-sm" id="edit_YW" style="float:right;margin-left:37px;">修改单据</button>
+                    {/if}
+
+                    {if(sizeof($shr_arr2)==0)}
+                        {if($fl_line.status_shift == $username)}
+                            <div style="width:105px">
+                                <button type="button" class="btn btn-info btn-sm" id="yes4" style="float:right;">修改单据</button>
+                            </div>
+                        {/if}
+                    {/if}
+
+                        
+                    {if($fl_line.status_pop=="待KA审核单据" and $fl_line.department==$department)}
+                        {if($fl_line.people == $username)}
+                            <button type="button" class="btn btn-info btn-sm" id="yes4" style="float:right;margin-left:37px;">修改单据</button>
+                        {/if}
+                    {/if}
+                {/if}
+            </div>
+
+            
+            <div style="clear:both;margin-left:40px;" class="sh_time">
+                <p style="margin-top:80px;">单据审核过程：</p>
+                    <?php for($i=0;$i<sizeof($allTimes);$i++){?>
+                        <ul style="clear:both">
+                            <li style="width:200px;float:left;margin-top:2px;">状态：{$statuss[$i]}</li>
+                            <li style="width:200px;float:left;margin-top:2px;">审核人：{$shr_arrs[$i]}</li>
+                            <li style="width:200px;float:left;margin-top:2px;">审核时间：<?=$allTimes[$i]?></li>
+                        </ul>
+                    <?php } ?>
+            </div>
+        </div>
+
+        <!-- 作废模态框 -->
+        <form method="POST" action="../../controller/fl/zffl.php" enctype="multipart/form-data">
+            <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 class="modal-title" id="myModalLabel">
+                                作废单据
+                            </h4>
+                        </div>
+                        
+                        <div class="modal-body" style="height: 270px;">
+                            <input style="display:none" type="text" name="id" value="{$fl_line.Id}"/>
+                            <p>备注</p>
+                            <textarea class="form-control" cols="10" rows="10" name="zf_note"></textarea>
+                        </div>
+                        
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-danger">作废</button>
+                            <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                        </div> 
+                    </div>
+                </div>
+            </div>
+        </form>
+
+        <!-- 财务短信验证码模态框 -->
+        <form method="POST" action="../../controller/fl/flLiucheng.php?id={$fl_line.Id}&option=1" enctype="multipart/form-data">
+            <div class="modal fade" id="myModal2" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="top:20%;left:20%">
+                <div class="modal-dialog">
+                    <div class="modal-content" style="width:400px;">
+                        <div class="modal-header">
+                            <h4 class="modal-title" id="myModalLabel">
+                                短信验证码
+                            </h4>
+                        </div>
+                        
+                        <div class="modal-body" style="height: 150px;">
+                            <p>发送验证码手机：<span id="phone">{$phone.phone}</span></p>
+                            <span id="yzm" style="display:none"></span>
+                            <p style="margin-top:20px;">请输入短信验证码：</p>
+                            <div style="margin-top:10px;">    
+                                <input type="text" placeholder="请输入短信验证码" class="form-control" name="yzm" id="user_yzm" style="width:200px;float:left"/>
+                                <button type="button" class="agree_yzm btn btn-sm btn-info" style="float:left;margin-top:2px;margin-left:10px;">重新发送</button>      
+                                <!--<span style="float:left;margin-top:7px;margin-left:20px;">60s</span>-->
+                            </div>                        
+                        </div>
+                        
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-success" id="submit_yzm">确认</button>
+                            <button type="submit" class="btn btn-success" id="hd_submit_yzm" style="display:none">确认</button>
+                            <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                        </div> 
+                    </div>
+                </div>
+            </div>
+        </form>
+        </div>
+    </body>
+</html>
+
+<script>
+    {if($fl_line.shr_pop ==$username and $department != "义乌部" and $fl_line.status_pop !="义乌打包发货")}
+            $("#yes").click(function(){
+                window.location.href="../../controller/fl/flLiucheng.php?id={$fl_line.Id}&option=1"
+            })
+        
+            $("#no").click(function(){
+                window.location.href="../../controller/fl/flLiucheng.php?id={$fl_line.Id}&option=0"
+            })
+    {else\}
+            $("#yes").click(function(){
+
+                wlfs=$("#wlfs").val()
+                wlno=$("#wlno").val()
+                wlprice=$("#wlprice").val()
+                note=$("#note").val()
+
+                window.location.href="../../controller/fl/flLiucheng.php?id={$fl_line.Id}&option=3&wlfs=" + wlfs + "&wlno=" + wlno + "&wlprice=" + wlprice + "&note=" + note
+            })
+        
+            $("#no").click(function(){
+                window.location.href="../../controller/fl/flLiucheng.php?id={$fl_line.Id}&option=0"
+            })
+    {/if}
+   
+   $("#yes4").click(function(){
+        window.location.href="../../controller/fl/flLiucheng.php?id={$fl_line.Id}&option=6"
+    })
+
+    $("#edit_YW").click(function(){
+        wlfs=$("#wlfs").val()
+        wlno=$("#wlno").val()
+        wlprice=$("#wlprice").val()
+        note=$("#note").val()
+
+        window.location.href="../../controller/fl/flLiucheng.php?id={$fl_line.Id}&option=8&wlfs=" + wlfs + "&wlno=" + wlno + "&wlprice=" + wlprice + "&note=" + note
+    })
+
+    $(".agree_yzm").click(function(){
+        
+        phone=$("#phone").html()
+
+        $.ajax({
+            type:"get",
+            async:true,
+            url:"../../controller/fl/fl_yzm.php?phone=" + phone,
+            dataType:"json",
+            success:function(result){
+                $("#yzm").html(result)
+                alert("发送成功！")
+            }
+        })
+    })
+
+    $("#submit_yzm").click(function(){
+        user_yzm=$("#user_yzm").val();
+        sys_yzm=$("#yzm").html();
+
+        if(user_yzm !=sys_yzm){
+            alert("验证码错误！")
+        }else{
+            $("#hd_submit_yzm").click()
+        }
+    })
+
+
+
+    //打印页面
+    var printPage= function(){
+
+        //页面打印缩放比例设置
+        //document.getElementsByTagName('form').style.zoom=2;
+        var xmlhttp;
+        if(window.ActiveXObject){
+            xmlhttp=new ActiveXObject('Microsoft.XMLHTTP');
+        }else{
+            xmlhttp=new XMLHttpRequest();
+        }
+
+        xmlhttp.open("GET","../../controller/fl/isPrint.php?id={$fl_line.Id}&department={$department}",true);
+
+        xmlhttp.onreadystatechange=function(){
+            
+            if(xmlhttp.readyState==4 && xmlhttp.status ==200){
+
+                var msg=xmlhttp.responseText;
+                if(msg==0){
+                    //alert("打印订单！")
+                }else{
+                    //alert("打印失败！")                    
+                }
+            }
+        }
+        
+        xmlhttp.send(null);
+
+
+        window.print();
+        
+    }
+
+    $("#backEdit").click(function(){
+        window.location.href="../../controller/fl/flLiucheng.php?id={$fl_line.Id}&option=0"
+    })
+
+</script>

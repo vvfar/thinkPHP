@@ -5,7 +5,7 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width,initial-scale=0.8">
         <meta name="renderer" content=webkit>
-        <title>俞兆林_辅料申请</title>
+        <title>{$title}</title>
         <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" media="screen" />
         <link href="/lib\bootstrap-3.3.7-dist\css\bootstrap.css" rel="stylesheet"/>
         <link href="/lib\bootstrap-3.3.7-dist\css\bootstrap-datetimepicker.min.css" rel="stylesheet" media="screen"/>
@@ -13,15 +13,295 @@
         <link href="/css/header.css" rel="stylesheet"/>
         <link href="/css/flsq.css" rel="stylesheet"/>
         <script src="/lib\bootstrap-3.3.7-dist\js\jquery-3.3.1.min.js"></script>
-        <script src="/js/flsq.js?v=6"></script>
+        <script src="/js/flsq.js"></script>
         <script src="/lib\bootstrap-3.3.7-dist\js\bootstrap.min.js"></script>
         <script src="/lib\bootstrap-3.3.7-dist\js\bootstrap-datetimepicker.js"></script>
     </head>
     <body>
         {include file="../application/index/view/common/header.html" /}
         {include file="../application/index/view/common/leftBar.html" /}
+        <?php error_reporting(E_ALL || ~E_NOTICE) ?>
         
         <div class="flsq_div" style="margin-top:50px;">
+            <div class="nav nav-pills" style="float:left;margin-top:10px;margin-left:30px;">
+                <li role="presentation" class="active"><a href="#">新增辅料</a></li>
+                <li role="presentation"><a href="saveFL.php">已保存</a></li>
+            </div>
+
+            <form action="../../../controller/fl/addFLSQD.php?no=1" method="POST" onkeydown="if(event.keyCode==13)return false;" enctype="multipart/form-data" onSubmit="return submitOnce(this)">
+        
+                <div class="sqdbh" style="float:left">
+                    <p style="margin:0">申请单编号</p>
+                    <input type="hidden" value="{$fl_info.Id}" name="my_id" id="my_id">
+                    <input type="text" value="{$fl_info.no}" placeholder="请填写申请单编号" name="no" id="no_input" readonly/>
+                </div>
+                
+                {if($fl_info.Id=="")}
+                    <button type="reset" class="btn btn-danger btn-sm" style="float:left;margin-left:695px;margin-top:-10px">重置表单</button>
+                {else\}
+                    <button type="reset" id="delete" class="btn btn-danger btn-sm" style="float:right;margin-right:50px;margin-top:-10px">删除表单</button>
+                {/if}
+                
+
+                <table class="tb1" border="1" cellspacing="0" cellpadding="0">
+                    <tr>
+                        <td>申请单位</td>
+                        <td><input type="text" value="{$fl_info.company}" placeholder="请填写申请单位" class="w6" name="company"/></td>
+                        <td>部门</td>
+                        <td><input type="text" value="{$fl_info.department}" class="w7" name="department" readonly="readonly"/></td>
+                        <td>申请人</td>
+                        <td><input type="text" value="{$fl_info.people}" class="w8" name="people" readonly="readonly"/></td>
+                        <td>申请日期</td>
+                        <td><input type="text" value="{$fl_info.date}" style="width:150px;" name="date" readonly="readonly"/></td>
+                    </tr>
+                    <tr>
+                        <td>收货地址</td>
+                        <td><input type="text" value="{$fl_info.address}" placeholder="请填写收货地址" class="w6" name="address"/></td>
+                        <td>联系人</td>
+                        <td><input type="text" value="{$fl_info.connection}" placeholder="请填写联系人" class="w7" name="connection"/></td>
+                        <td>联系电话</td>
+                        <td><input type="text" value="{$fl_info.phone}" placeholder="请填写联系电话" class="w8" name="phone" maxlength="13"/></td>
+                        <td>运输方式</td>
+                        <td>
+                            <select style="height: 20px;width:150px;text-align:center; text-align-last:center;" id="driving" name="driving">
+                                <option></option>
+                                {foreach $fl_wlfss as $fl_wlfs}
+                                    {if($fl_wlfs==$fl_info.driving)}
+                                        <option selected>{$fl_wlfs.name}</option>
+                                    {else\}
+                                        <option>{$fl_wlfs.name}</option>
+                                    {/if}
+                                {/foreach}
+                            </select>
+                        </td>
+                    </tr>
+                </table>
+                <table  class="tb2" border="1" cellspacing="0" cellpadding="0">
+                    <tr>
+                        <td colspan="4">基本信息</td>
+                        <td colspan="4">服务费用</td>
+                        <td colspan="4">辅料费用</td>
+                    </tr>
+                    <tr>
+                        <td>序号</td>
+                        <td>品类</td>
+                        <td>货号</td>
+                        <td>品名</td>
+                        <td>申请数量</td>
+                        <td>
+                            <select style="height: 20px;width:80%" name="ishs">
+                                {if($fl_info.ishs=="含税包装价格")}
+                                    <option selected="selected">含税包装价格</option>
+                                    <option>不含税包装价格</option>
+                                {else\}
+                                    <option>含税包装价格</option>
+                                    <option selected="selected">不含税包装价格</option>
+                                {/if}
+                            </select>
+                        </td>
+                        <td>费率 / 单价</td>
+                        <td style="width:80px;">服务费小计</td>
+                        <td style="width:80px;">辅料名称</td>
+                        <td>单价</td>
+                        <td>辅料数量</td>
+                        <td style="width:80px;">辅料小计</td>
+                    </tr>
+                    <tr>
+                        {if($fl_info.Id=="")}
+                            <td style="width:80px"><button type="button" class="btn btn-success btn-xs" id="addLine" style="width:32px;padding:2px;">
+                                添加
+                                {if($fl_info.hd_count<2)}
+                                    <p id="count" style="display:none">1</p></button>
+                                {else\}
+                                    <p id="count" style="display:none">{$fl_info.hd_count-2}</p></button>
+                                {/if}
+                                <button type="button" class="btn btn-danger btn-xs" id="delLine" style="width:32px;padding:2px;">
+                                    删除
+                                    {if($fl_info.hd_count<2)}
+                                        <p id="count" style="display:none">1</p></button>
+                                    {else\}    
+                                        <p id="count" style="display:none">{$fl_info.hd_count-2}</p></button>
+                                    {/if}
+                            </td>
+                        {else\}
+                            <td><button type="button" class="btn btn-success btn-xs" id="addLine2">
+                                    添加
+                                    {if($fl_info.hd_count<2)}
+                                        <p id="count" style="display:none">1</p></button>
+                                    {else\}
+                                        <p id="count" style="display:none">{$fl_info.hd_count-2}</p></button>
+                                    {/if}
+                                <button type="button" class="btn btn-danger btn-xs" id="delLine2" style="clear:both">
+                                    删除
+                                    {if($fl_info.hd_count<2)}
+                                        <p id="count" style="display:none">1</p></button>
+                                    {else\}
+                                        <p id="count" style="display:none">{$fl_info.hd_count-2}</p></button>
+                                    {/if}
+                            </td>
+                        {/if}                  
+                        <td colspan="11" class="tdNote">注意：当一个流程内有多个品类需要辅料时，每个品类项下的辅料填写完成以后（含防伪标）方可填写下一个品类的辅料，不可合并填写。</td>
+                    </tr>
+                    <?php
+                        if($hd_count ==1){
+                            $hd_count =2;
+                        }
+                        
+                        for($i=0;$i<$hd_count-1;$i++){
+                            for($i=0;$i<20;$i++){
+                                if($hd_count >2){
+                                    if($i<$hd_count){
+                                        ?>
+                                        <tr class="tr<?=$i?>">
+                                        <?php
+                                    }else{
+                                        ?>
+                                        <tr class="tr<?=$i?> hidden">
+                                        <?php  
+                                    }
+                                }elseif($hd_count ==2 && !isset($_GET['id'])){
+                                    if($i<$hd_count-1){
+                                        ?>
+                                        <tr class="tr<?=$i?>">
+                                        <?php
+                                    }else{
+                                        ?>
+                                        <tr class="tr<?=$i?> hidden">
+                                        <?php  
+                                    }
+                                }elseif($hd_count ==2 && isset($_GET['id'])){
+                                    if($i<$hd_count){
+                                        ?>
+                                        <tr class="tr<?=$i?>">
+                                        <?php
+                                    }else{
+                                        ?>
+                                        <tr class="tr<?=$i?> hidden">
+                                        <?php  
+                                    }
+                                }else{
+                                    if($hd_count >2){
+                                        if($i<$hd_count){
+                                            ?>
+                                            <tr class="tr<?=$i?>">
+                                            <?php
+                                        }else{
+                                            ?>
+                                            <tr class="tr<?=$i?> hidden">
+                                            <?php  
+                                        }
+                                    }
+                                }
+                                ?>
+                    
+                                <td><?=$i+1?></td>
+                                
+                                <td><input type="text" value="{$categorys[$i]}" name="category{$i}"/></td>
+                                <td><input type="text" value="{$productNos[$i]}" name="productNo{$i}"/></td>
+                                <td><input type="text" value="{$productNames[$i]}" name="productName{$i}"/></td>
+                                <td class="sqsl"><input type="text" value="{$amounts[$i]}" name="amount{$i}"/></td>
+                                <td class="bzjg"><input type="text" value="{$prices[$i]}" name="price{$i}"/></td>
+                                <td class="fldj"><input type="text" value="{$flss[$i]}" name="fls{$i}"/></td>
+                                <td class="fwfxj">{$fwfxjs[$i]}</td>
+                                <td class="flno">
+                                    <select style="width: 80%;height: 20px;text-align:center; text-align-last:center;" name="flsName{$i}">
+                                        <option></option>
+                                        {foreach $fl_names as $fl_name}
+                                            {if($fl_name==$flsNames[$i])}
+                                                <option selected="selected">{$fl_name.fl_name}</option>
+                                            {else\}
+                                                <option>{$fl_name.fl_name}</option>
+                                            {/if}
+                                        {/foreach}
+                                    </select>
+                                </td>
+                                <td class="dj"><input type="text" value="{$djs[$i]}" name="dj{$i}" readonly/></td>
+                                <td class="sl"><input type="text" value="{$sls[$i]}" name="sl{$i}"/></td>
+                                <td class="flfxj">{$flfxjs[$i]}</td>
+                            </tr>
+
+                            <?php
+                            }
+                        }
+                    ?>
+                    
+                    <tr>
+                        <td colspan="4">申请数量合计</td>
+                        <td id="hj">{$fl_info.hd_sqslhj}</td>
+                        <td colspan="2">服务费合计</td>
+                        <td id="fwfhj">{$fl_info.hd_fwfhj}</td>
+                        <td>税点</td>
+                        <td class="sd"><input type="text" value="{$fl_info.sd}" name="sd"/></td>
+                        <td id="flslhj">{$fl_info.hd_flsl}</td>
+                        <td id="flfhj" style="display:none"></td>
+                        <td id="fwfhjhs">{$fl_info.hd_flfhjsh}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="4">服务费辅料费总计</td>
+                        <td colspan="4" id="fwfflfhj">{$fl_info.hd_fwfflfzj}</td>
+                        <td colspan="1">结款方式</td>
+                        <td colspan="3">
+                            <select style="height: 20px;width:94%;text-align:center; text-align-last:center;" name="jkfs">
+                                <option></option>
+                                {foreach $fl_jkfss as $fl_jkfs}
+                                    {if($fl_jkfs==$fl_info.jkfs)}
+                                        <option selected>{$fl_jkfs.name}</option>
+                                    {else\}
+                                        <option>{$fl_jkfs.name}</option>
+                                    {/if}
+                                {/foreach}
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">物流方式</td>
+                        <td colspan="2"><input type="text" value="{$fl_info.wlfs}" name="wlfs"/></td>
+                        <td colspan="2">物流单号</td>
+                        <td colspan="2"><input type="text" value="{$fl_info.wlno}" name="wlno"/></td>
+                        <td colspan="2">物流费用</td>
+                        <td colspan="2"><input type="text" value="{$fl_info.wlprice}" name="wlprice"/></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">备注</td>
+                        <td colspan="10"><input type="text" value="{$fl_info.note}" name="note" style="width:96%"/></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">授信编号</td>
+                        <td colspan="2">
+                            <select name="sxid" style="height:20px;width:80%" id="sxid">
+                                <option></option>
+                                {foreach $fl_sxInfos as $fl_sxInfo}
+                                    <option>{$fl_sxInfo}</option>  
+                                {/foreach}
+                            </select>
+                        </td>
+                        <td colspan="2">使用授信金额</td>
+                        <td colspan="2"><input colspan="2" type="text" value="{$fl_info.nowUseMoney}" name="sxmoney"/></td>
+                        <td colspan="2">可使用额度</td>
+                        <td colspan="2">￥<span colspan="2" id="newMoney"></span></td>
+                    </tr>
+                    <!-- 隐藏表单用于数据提交 -->
+                    <tr class="hidden">
+                        <td><input type="text"  name="hd_sqslhj" id="hd_sqslhj"/></td>
+                        <td><input type="text"  name="hd_fwfhj" id="hd_fwfhj"/></td>
+                        <td><input type="text"  name="hd_flsl" id="hd_flsl"/></td>
+                        <td><input type="text"  name="hd_flfhjsh" id="hd_flfhjsh"/></td>
+                        <td><input type="text"  name="hd_fwfflfzj" id="hd_fwfflfzj"/></td>
+                        <td><input type="text"  name="hd_count" id="hd_count"/></td>
+                        <td><input type="id"  name="id" value="{$fl_info.Id}" id="hd_count"/></td>
+                    </tr>
+                    
+                </table>
+                
+                <!-- 判断状态，保存0，提交1 -->
+                <input type="hidden"  name="option" value="1" id="option"/>
+
+                <div style="clear:both">
+                    <button type="button" class="btn btn-success btn-sm mt20 ml20" id="submit">点击提交</button>
+                    <button type="button" class="btn btn-info btn-sm mt20 ml20" id="save" style="margin-left:10px;">一键保存</button>
+                    <button type="submit" class="btn btn-success btn-sm hidden" id="hd_submit">隐藏提交</button>
+                </div>
+            </form>
         </div>
     </body>
 </html>

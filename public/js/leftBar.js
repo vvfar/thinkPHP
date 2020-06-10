@@ -110,7 +110,7 @@ $(document).ready(function(){
         if(leftBar_path ==  "center.php"){
             $(".leftbar5Z1 a").css("color","#fff")
         }
-    }else if(leftBar_path == "flsq.php" ||  leftBar_path == "saveFL.php" || leftBar_path == "flList.php" ||  leftBar_path == "flLine.php" ||  leftBar_path == "flDone.php" ||  leftBar_path == "flListQuery.php" || leftBar_path == "oldflDone.php" || leftBar_path == "oldflLine.php" || leftBar_path == "oldflListQuery.php"){
+    }else if(leftBar_path == "flsq.html" ||  leftBar_path == "saveFL.php" || leftBar_path == "w_fl.html" ||  leftBar_path == "d_fl.html" ||  leftBar_path == "old_fl.html" ||  leftBar_path == "flListQuery.php" || leftBar_path == "oldflLine.php" || leftBar_path == "oldflListQuery.php"){
         $(".leftbarAll li").css("background-color","#160509");
         $(".leftbar6").css("background-color","darkslateblue");
         $(".leftbar6 a").css("color","#ffffff");
@@ -125,11 +125,11 @@ $(document).ready(function(){
         $(".leftbar11Z").toggle();
         $(".leftbar13Z").toggle();
 
-        if(leftBar_path ==  "flsq.php" ||  leftBar_path == "saveFL.php"){
+        if(leftBar_path ==  "flsq.html" ||  leftBar_path == "saveFL.php"){
             $(".leftbar6Z1 a").css("color","#fff")
-        }else if(leftBar_path == "flList.php"){
+        }else if(leftBar_path == "w_fl.html"){
             $(".leftbar6Z2 a").css("color","#fff")
-        }else if(leftBar_path == "flDone.php" || leftBar_path == "oldflDone.php"){
+        }else if(leftBar_path == "d_fl.html" || leftBar_path == "oldflDone.php"){
             $(".leftbar6Z3 a").css("color","#fff")
         }
 
