@@ -193,10 +193,11 @@
                     
             <div style="width:1040px;">
 
-                {if($fl_line.status_pop == $username)}
-                    {if($department == "商业运营部" and $status_pop=="商业运营归档单据" )}
+                {if($fl_line.shr_pop == $username)}
+                
+                    {if($department == "商业运营部" and $fl_line.status_pop=="商业运营归档单据" )}
                         <button type="button" class="btn btn-info btn-sm" id="yes" style="float:right;margin-left:50px;">已记录</button>
-                    {elseif($status_pop !="待KA审核单据")}
+                    {elseif($fl_line.status_pop !="待KA审核单据")}
                         {if($department=="财务部")}
                             <button type="button" class="btn btn-danger btn-sm" id="no" style="float:right;margin-left:10px;">拒绝</button>
                             <button type="button" class="agree_yzm btn btn-success btn-sm" style="float:right;"  data-toggle="modal" data-target="#myModal2">同意</button>
@@ -210,7 +211,7 @@
                         <button type="button" class="btn btn-info btn-sm" id="edit_YW" style="float:right;margin-left:37px;">修改单据</button>
                     {/if}
 
-                    {if(sizeof($shr_arr2)==0)}
+                    {if(sizeof($statuss)==0)}
                         {if($fl_line.status_shift == $username)}
                             <div style="width:105px">
                                 <button type="button" class="btn btn-info btn-sm" id="yes4" style="float:right;">修改单据</button>
@@ -304,11 +305,11 @@
 <script>
     {if($fl_line.shr_pop ==$username and $department != "义乌部" and $fl_line.status_pop !="义乌打包发货")}
             $("#yes").click(function(){
-                window.location.href="../../controller/fl/flLiucheng.php?id={$fl_line.Id}&option=1"
+                window.location.href="/index.php/Index/fl/fl_liucheng.html?id={$fl_line.Id}&option=1"
             })
         
             $("#no").click(function(){
-                window.location.href="../../controller/fl/flLiucheng.php?id={$fl_line.Id}&option=0"
+                window.location.href="/index.php/Index/fl/fl_liucheng.html?id={$fl_line.Id}&option=0"
             })
     {else\}
             $("#yes").click(function(){
@@ -318,11 +319,11 @@
                 wlprice=$("#wlprice").val()
                 note=$("#note").val()
 
-                window.location.href="../../controller/fl/flLiucheng.php?id={$fl_line.Id}&option=3&wlfs=" + wlfs + "&wlno=" + wlno + "&wlprice=" + wlprice + "&note=" + note
+                window.location.href="/index.php/Index/fl/fl_liucheng.html?id={$fl_line.Id}&option=3&wlfs=" + wlfs + "&wlno=" + wlno + "&wlprice=" + wlprice + "&note=" + note
             })
         
             $("#no").click(function(){
-                window.location.href="../../controller/fl/flLiucheng.php?id={$fl_line.Id}&option=0"
+                window.location.href="/index.php/Index/fl/fl_liucheng.html?id={$fl_line.Id}&option=0"
             })
     {/if}
    

@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width,initial-scale=0.5">
+        <title>{$title}</title>
+        <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" media="screen" />
+        <link href="/lib\bootstrap-3.3.7-dist\css\bootstrap.css" rel="stylesheet"/>
+        <link href="/lib\bootstrap-3.3.7-dist\css\bootstrap-datetimepicker.min.css" rel="stylesheet" media="screen"/>
+        <link href="/css\leftbar.css" rel="stylesheet"/>
+        <link href="/css\header.css" rel="stylesheet"/>
+        <link href="/css\flList.css" rel="stylesheet"/>
+        <script src="/lib\bootstrap-3.3.7-dist\js\jquery-3.3.1.min.js"></script>
+        <script src="/js\flList.js"></script>
+        <script src="/lib\bootstrap-3.3.7-dist\js\bootstrap.min.js"></script>
+        <script src="/lib\bootstrap-3.3.7-dist\js\bootstrap-datetimepicker.js"></script>
+    </head>
+    <body>
+        {include file="../application/index/view/common/header.html" /}
+        {include file="../application/index/view/common/leftBar.html" /}
+
+        <div class="flList_div" style="margin-top:50px;">
+            <div class="nav nav-pills" style="float:left;margin-top:10px;margin-left:20px;">
+                <li role="presentation"><a href="/index.php/Index/fl/flsq.html">新增辅料</a></li>
+                <li role="presentation" class="active"><a href="#">已保存</a></li>
+            </div>
+
+            <div class="clearfix">
+                <div class="fy_span clearfix">
+                    <h4 style="margin-top:20px;">
+                        <span class="label label-info">共{$total}条</span>
+                        <span class="label label-warning">共{$pagecount}页</span>
+                        <span class="label label-success">第{$page}页</span>
+                    </h4>
+                </div>
+
+                <table class="table table-responsive table-bordered table-hover td1">
+                    <tr>
+                        <th>序号</th>
+                        <th>编号</th>
+                        <th>公司</th>
+                        <th>申请人</th>
+                        <th>流程开始日期</th>
+                        <th>状态</th>
+                        <th>审核人</th>
+                    </tr>
+                        
+                    {foreach name="fls" item="fl" key="index"}
+                        <tr>
+                            <td>{$pagesize*($page-1) + $index+1}</td>
+                            <td><a href="/index.php/Index/fl/fl_line.html?id={$fl.id}" target="_blank">{$fl.no}</a></td>
+                            <td>{$fl.company}</td>
+                            <td>{$fl.people}</td>
+                            <td>{$fl.date}</td>
+                            <td>{$fl.status}</td>
+                            <td>{$fl.shr}</td>
+                        </tr>
+                    {/foreach}
+                </table>
+                
+                <div style="margin-left: 20px;">
+                    <ul class="pager" style="float:left;width:150px;margin-top:0px">
+                        <li><a href="<?php echo $_SERVER['PHP_SELF']?>?page=<?php
+                            if($page>1)
+                                echo $page-1;
+                            else
+                                echo 1;  
+                        ?>&status=<?=$status2?>&time=<?=$time?>&input_time=<?=$input_time?>&input_time2=<?=$input_time2?>&clientName=<?=$clientName?>">上一页</a></li>
+                        <li><a href="<?php echo $_SERVER['PHP_SELF']?>?page=<?php
+                            if($page<$pagecount)
+                                echo $page+1;
+                            else
+                                echo $pagecount;  
+                        ?>&status=<?=$status2?>&time=<?=$time?>&input_time=<?=$input_time?>&input_time2=<?=$input_time2?>&clientName=<?=$clientName?>">下一页</a></li>
+                    </ul>
+
+                    <div style="float:left;margin-left:560px;width:321px;">
+                        <ul class="pagination" style="float:right;margin-top:0px">
+                            <li><a href="<?php echo $_SERVER['PHP_SELF']?>?page=1&status=<?=$status2?>&time=<?=$time?>&input_time=<?=$input_time?>&input_time2=<?=$input_time2?>&clientName=<?=$clientName?>">&laquo;</a></li>
+                            <?php
+                                if($pagecount<=5){
+                                    for($i=1;$i<=$pagecount;$i++){
+                                        if($i==$page){
+                                            ?>
+                                                <li  class="active"><a href="<?php echo $_SERVER['PHP_SELF']?>?page=<?=$i?>&status=<?=$status2?>&time=<?=$time?>&input_time=<?=$input_time?>&input_time2=<?=$input_time2?>&clientName=<?=$clientName?>"><?=$i?></a></li>
+                                            <?php
+                                        }else{
+                                            ?>
+                                                <li><a href="<?php echo $_SERVER['PHP_SELF']?>?page=<?=$i?>&status=<?=$status2?>&time=<?=$time?>&input_time=<?=$input_time?>&input_time2=<?=$input_time2?>&clientName=<?=$clientName?>"><?=$i?></a></li>
+                                            <?php
+                                        }
+                                    }
+                                }else{
+                                    for($i=1;$i<=$pagecount;$i++){
+                                        if($i==$page){
+                                            ?>
+                                                <li  class="active"><a href="<?php echo $_SERVER['PHP_SELF']?>?page=<?=$i?>&status=<?=$status2?>&time=<?=$time?>&input_time=<?=$input_time?>&input_time2=<?=$input_time2?>&clientName=<?=$clientName?>"><?=$i?></a></li>
+                                            <?php
+                                        }elseif(($i>=$page-2 or $i<=$page+2) and $page !=$pagecount){
+                                            ?>
+                                                <li><a href="<?php echo $_SERVER['PHP_SELF']?>?page=<?=$i?>&status=<?=$status2?>&time=<?=$time?>&input_time=<?=$input_time?>&input_time2=<?=$input_time2?>&clientName=<?=$clientName?>"><?=$i?></a></li>
+                                            <?php
+                                        }
+                                    }
+                                }
+                                
+                            ?>
+
+                            <li><a href="<?php echo $_SERVER['PHP_SELF']?>?page=<?php echo $pagecount; ?>&status=<?=$status2?>&time=<?=$time?>&input_time=<?=$input_time?>&input_time2=<?=$input_time2?>&clientName=<?=$clientName?>">&raquo;</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
