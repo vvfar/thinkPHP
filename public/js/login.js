@@ -7,6 +7,6 @@ $(document).ready(function(){
     }
 
     $(".reset").click(function(){
-        alert("请联系信息技术部！")
+        window.location.href="/index.php/Index/login/forget_pwd.html";
     })
 })

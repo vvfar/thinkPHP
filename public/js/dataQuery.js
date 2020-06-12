@@ -1,5 +1,16 @@
 window.onload=function(){
     initData()
+
+    $("#no").click(function(){
+        $(".store1").css("display","none")
+        $(".store2").css("display","")
+    })
+
+    $("#yes").click(function(){
+        $(".store2").css("display","none")
+        $(".store1").css("display","")
+    })
+
 }
 
 
@@ -29,24 +40,24 @@ function initData(changeData,no){
         chooseTwo="全部"
     }
 
-    if(chooseThree==null){
+    if(chooseThree==null || no==1){
         chooseThree="全部"
     }
 
-    if(chooseFour==null){
+    if(chooseFour==null || no==1){
         chooseFour="全部"
     }
 
-    if(chooseFive==null){
+    if(chooseFive==null || no==1){
         chooseFive="全部"
     }
 
-    if(chooseSix==null){
+    if(chooseSix==null || no==1){
         chooseSix="全部"
     }
 
     if(chooseSeven==null){
-        chooseSeven="全部"
+        chooseSeven="日"
     }
 
     if(chooseEight==null){
@@ -64,6 +75,7 @@ function initData(changeData,no){
         chooseSix:chooseSix,
         chooseSeven:chooseSeven,
         chooseEight:chooseEight,
+        username:username,
     }
 
     console.log(JSON.stringify(data))
@@ -100,7 +112,7 @@ function initData(changeData,no){
                         })
                     }
                     
-                    if(no==undefined){
+                    if(no==1 || no==undefined){
                         $("#chooseThree").html(function(){
                             str="<option>全部</option>"
 
@@ -119,7 +131,7 @@ function initData(changeData,no){
                         })
                     }
 
-                    if(no==undefined){
+                    if(no==1 || no==undefined){
                         $("#chooseFour").html(function(){
                             str="<option>全部</option>"
 
@@ -138,7 +150,7 @@ function initData(changeData,no){
                         })
                     }
 
-                    if(no==undefined){
+                    if(no==1 || no==undefined){
                         $("#chooseFive").html(function(){
                             str="<option>全部</option>"
 
@@ -157,7 +169,8 @@ function initData(changeData,no){
                         })
                     }
 
-                    if(no==undefined){
+                    if(no==1 || no==undefined){
+                        
                         $("#chooseSix").html(function(){
                             str="<option>全部</option>"
 
@@ -330,6 +343,7 @@ function initData(changeData,no){
     
         
     
+
         //第五个框
         $.ajax({
             type:"post",
@@ -354,13 +368,39 @@ function initData(changeData,no){
                 console.log("数据错误")
             }
         })
+
+
+        //第七个框
+       $.ajax({
+        type:"post",
+        async:true,
+        data:data,
+        url:"/index.php/Index/index/dataQueryController7",
+        dataType:"json",
+        success:function(result){
+            if(result){
+                for(var i=0;i<result.length;i++){
+                    $("#title7").html(result[0].value)
+                    $("#mytime7").html(result[1].value)
+                    $("#num7").html(result[2].value)
+                    $("#tb7").html(result[3].value)
+                    $("#hb7").html(result[4].value)
+                    
+                }
+            }
+        },
+
+        error:function(XMLHttpRequest, textStatus, errorThrown){
+            console.log("数据错误")
+        }
+    })
     
         //第六个框
         $.ajax({
             type:"post",
             async:true,
             data:data,
-            url:"/index.php/Index/index/dataQueryController5",
+            url:"/index.php/Index/index/dataQueryController6",
             dataType:"json",
             success:function(result){
                 if(result){

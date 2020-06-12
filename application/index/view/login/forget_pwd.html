@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width,initial-scale=1">
+        <title>{$title}</title>
+        <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" media="screen" />
+        <link href="\lib\bootstrap-3.3.7-dist\css\bootstrap.css" rel="stylesheet"/>
+        <link href="/css/header.css" rel="stylesheet"/>
+        <link href="/css/leftbar.css" rel="stylesheet"/>
+        <script src="\lib\bootstrap-3.3.7-dist\js\jquery-3.3.1.min.js"></script>
+        <script src="\js\login.js"></script>
+        <script src="/js/header.js"></script>
+        <script src="/lib/layui/layui.js"></script>
+    </head>
+    <body>
+        <div class="header_bar" style="position:fixed;background-color:#fff;z-index:99999;width:100%;">
+            <div class="logo" style="position: fixed;background-color:white;border-right: 1px solid #ccc;">
+                
+                <img src="/images/logo.png" style="width:60px;margin-left:20px;float:left;margin-top:-10px;"/>
+                <p style="float:left;color:rgb(108,19,24);margin-left:10px;font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;font-weight: bold;">CRM平台</p>
+            </div>
+
+            <div class="headerBar">
+                <div class="headerImg"><img src="/images/icon2.png" width="100%" height="100%" style="border-radius:100%; overflow:hidden;"/></div>
+                <div class="userInfo">
+                    <p>
+                        <span id="time"></span>
+                        <span id="username">员工</span>
+                    </p>
+                </div>         
+            </div>
+        </div>
+        <div class="leftBar">
+            <ul class="leftbarAll">
+                <li class="leftbar5" style="background-color:darkslateblue;"><i class="layui-icon layui-icon-user"></i><a href="#" style="color:#fff">重置密码</a></li>
+            </ul>
+        </div>
+        <div style="margin-left: 180px;">
+            <div style="margin-left:40px;margin-top:70px">
+                <h4>重置密码</h4>
+                <hr>
+                <form method="post" action="/index.php/Index/login/resetPwd">
+                    <div class="form-group" style="clear: both;">
+                        <p style="width: 120px;font-size: 14px;float: left;margin-top: 22px;">用户名</p>
+                        <input type="text" class="form-control" id="nameInput" name="username" value="" placeholder="请输入用户名" style="width: 220px;float: left;margin-top: 15px;">
+                    </div>
+                    <div class="form-group" style="clear: both;">
+                        <p style="width: 120px;font-size: 14px;float: left;margin-top: 22px;">手机号</p>
+                        <input type="text" class="form-control" id="phoneInput" name="phone" placeholder="手机号系统自动获取"  value="" style="width: 220px;float: left;margin-top: 15px;" readOnly>
+                    </div>
+                    <div class="form-group" style="clear: both;">
+                        <p style="width: 120px;font-size: 14px;float: left;margin-top: 22px;">新密码</p>
+                        <input type="text" class="form-control" id="newPwd1" name="newPwd1" placeholder="请输入新密码" value="" style="width: 220px;float: left;margin-top: 15px;">
+                    </div>
+                    <div class="form-group" style="clear: both;">
+                        <p style="width: 120px;font-size: 14px;float: left;margin-top: 22px;">确认密码</p>
+                        <input type="text" class="form-control" id="newPwd2" name="newPwd2" placeholder="请输入确认密码" value="" style="width: 220px;float: left;margin-top: 15px;">
+                    </div>
+                    <div class="form-group" style="clear: both;">
+                        <p style="width: 120px;font-size: 14px;float: left;margin-top: 22px;">验证码</p>
+                        <input type="text" class="form-control" id="yzm" name="yzm" placeholder="请输入验证码" value="" style="width: 120px;float: left;margin-top: 15px;">
+                        <button class="btn btn-sm btn-info" type="button" id="btnYzm" style="margin-left:10px;margin-top:17px;width:90px;">发送验证码</button>
+                        <p id="isPost" style="display: none;">否</p>
+                    </div>
+                    <div style="clear: both;">
+                        <button id="submit" type="button" class="btn btn-success btn-sm">提交信息</button>
+                        <button id="hd_submit" type="submit" class="btn btn-success btn-md" style="display:none">提交信息</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </body>
+</html>
+
+<script>
+    $("#nameInput").change(function(){
+        username=$(this).val();
+
+        $.ajax({
+            type:"get",
+            async:false,
+            url:"/index.php/Index/login/getPhone?username=" + username,
+            //dataType:"json",
+            success:function(phone){
+                
+                if(phone !=""){
+                    $("#phoneInput").val(phone)
+                }
+            }
+        })
+    })
+
+    $("#btnYzm").click(function(){
+        phone=$("#phoneInput").val()
+
+        if(phone !=""){
+            $.ajax({
+                type:"get",
+                async:true,
+                url:"/index.php/Index/login/getYzm?phone=" + phone,
+                //dataType:"json",
+                success:function(yzm){
+                    
+                    var len=5;
+                    var a=true;
+
+                    var time = setInterval(function() {
+                        
+                        $("#btnYzm").html(len +"秒后重发");
+
+                        $("#btnYzm").attr("disabled", a);
+
+                        len=len-1;
+
+                        if ($("#btnYzm").html() == '0秒后重发') {
+                            clearInterval(time);
+                            a = false;
+                            $("#btnYzm").attr("disabled", a);
+                            $("#btnYzm").html("重新发送");
+                        }
+                    }, 1000);
+
+                    
+                    $("#isPost").html("是");
+                },
+
+                error:function(){
+                    alert("验证码发送失败！");
+                }
+            })
+        }else{
+            alert("手机号不能为空！");
+        }  
+    })
+
+    $("#submit").click(function(){
+        postForm=false;
+        msg="";
+
+        newPwd1=$("#newPwd1").val();
+        newPwd2=$("#newPwd2").val();
+
+        if($.trim(newPwd1) == "" || $.trim(newPwd2) == "" || $.trim(nameInput) == "" || $.trim(phoneInput) == ""){
+            msg="输入框不能为空！";
+        }else if($("#isPost").html()=="否"){
+            msg="验证码未发送！";
+        }else{
+            if($.trim(newPwd1) != $.trim(newPwd2)){
+                msg="新密码与确认密码不一致！";
+            }else{
+                if(newPwd1.length<8){
+                    msg="新密码小于8位！";
+                }else{
+                    reg=/^(?=.*[a-zA-Z])(?=.*[1-9])(?=.*[\W]).{8,}$/;
+
+                    if(reg.test(newPwd1)){
+                        msg="";
+                        postForm=true;
+                    }else{
+                        msg="密码必须包含字母、数字以及特殊字符！";
+                    }
+
+                }
+            }
+        }
+
+        if(postForm==true){
+            $("#hd_submit").click();
+        }else{
+            alert(msg)
+        }
+
+        
+        
+    })
+</script>

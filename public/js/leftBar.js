@@ -10,6 +10,9 @@ $(document).ready(function(){
 
         $(".leftbarAll li").css("background-color","#160509");
         $(".leftbar0").css("background-color","darkslateblue");
+        
+        $(".leftbar0 i").css("color","#ffffff");
+
         $(".leftbar0 a").css("color","#ffffff");
         $(".leftbar1Z").toggle();
         $(".leftbar2Z").toggle();
@@ -35,6 +38,9 @@ $(document).ready(function(){
         $(".leftbarAll li").css("background-color","#160509");
         $(".leftbar1").css("background-color","darkslateblue");
         $(".leftbar1 a").css("color","#ffffff");
+
+        $(".leftbar1 i").css("color","#ffffff");
+
         $(".leftbar0Z").toggle();
         $(".leftbar2Z").toggle();
         $(".leftbar5Z").toggle();
@@ -63,6 +69,9 @@ $(document).ready(function(){
         $(".leftbarAll li").css("background-color","#160509");
         $(".leftbar2").css("background-color","darkslateblue");
         $(".leftbar2 a").css("color","#ffffff");
+
+        $(".leftbar2 i").css("color","#ffffff");
+
         $(".leftbar0Z").toggle();
         $(".leftbar1Z").toggle();
         $(".leftbar5Z").toggle();
@@ -88,14 +97,24 @@ $(document).ready(function(){
         $(".leftbarAll li").css("background-color","#160509");
         $(".leftbar3").css("background-color","darkslateblue");
         $(".leftbar3 a").css("color","#ffffff");
+        
+        $(".leftbar3 i").css("color","#ffffff");
+
     }else if(leftBar_path == "uploadInfo.php"){
         $(".leftbarAll li").css("background-color","#160509");
         $(".leftbar4").css("background-color","darkslateblue");
         $(".leftbar4 a").css("color","#ffffff");
+
+        $(".leftbar4 i").css("color","#ffffff");
+
     }else if(leftBar_path == "center.php"){
         $(".leftbarAll li").css("background-color","#160509");
         $(".leftbar5").css("background-color","darkslateblue");
         $(".leftbar5 a").css("color","#ffffff");
+
+        
+        $(".leftbar5 i").css("color","#ffffff");
+
         $(".leftbar0Z").toggle();
         $(".leftbar1Z").toggle();
         $(".leftbar2Z").toggle();
@@ -114,6 +133,8 @@ $(document).ready(function(){
         $(".leftbarAll li").css("background-color","#160509");
         $(".leftbar6").css("background-color","darkslateblue");
         $(".leftbar6 a").css("color","#ffffff");
+        
+        $(".leftbar6 i").css("color","#ffffff");
         $(".leftbar0Z").toggle();
         $(".leftbar1Z").toggle();
         $(".leftbar2Z").toggle();
@@ -137,6 +158,9 @@ $(document).ready(function(){
         $(".leftbarAll li").css("background-color","#160509");
         $(".leftbar7").css("background-color","darkslateblue");
         $(".leftbar7 a").css("color","#ffffff");
+
+        $(".leftbar7 i").css("color","#ffffff");
+
         $(".leftbar0Z").toggle();
         $(".leftbar1Z").toggle();
         $(".leftbar2Z").toggle();
@@ -160,6 +184,9 @@ $(document).ready(function(){
         $(".leftbarAll li").css("background-color","#160509");
         $(".leftbar8").css("background-color","darkslateblue");
         $(".leftbar8 a").css("color","#ffffff");
+
+        $(".leftbar8 i").css("color","#ffffff");
+
         $(".leftbar0Z").toggle();
         $(".leftbar1Z").toggle();
         $(".leftbar2Z").toggle();
@@ -181,6 +208,9 @@ $(document).ready(function(){
         $(".leftbarAll li").css("background-color","#160509");
         $(".leftbar9").css("background-color","darkslateblue");
         $(".leftbar9 a").css("color","#ffffff");
+        
+        $(".leftbar9 i").css("color","#ffffff");
+        
         $(".leftbar0Z").toggle();
         $(".leftbar1Z").toggle();
         $(".leftbar2Z").toggle();
@@ -199,6 +229,8 @@ $(document).ready(function(){
         }
     
     }else if(leftBar_path ==  "apcMeeting.php" || leftBar_path ==  "viewMeeting.php"  || leftBar_path ==  "willMeeting.php"   || leftBar_path ==  "viewMeetingDetail.php"){
+        $(".leftbar10 i").css("color","#ffffff");
+        
         $(".leftbar0Z").toggle();
         $(".leftbar1Z").toggle();
         $(".leftbar2Z").toggle();
@@ -221,6 +253,10 @@ $(document).ready(function(){
         $(".leftbarAll li").css("background-color","#160509");
         $(".leftbar11").css("background-color","darkslateblue");
         $(".leftbar11 a").css("color","#ffffff");
+
+        $(".leftbar11 i").css("color","#ffffff");
+
+
         $(".leftbar0Z").toggle();
         $(".leftbar1Z").toggle();
         $(".leftbar2Z").toggle();
@@ -243,6 +279,10 @@ $(document).ready(function(){
         $(".leftbarAll li").css("background-color","#160509");
         $(".leftbar12").css("background-color","darkslateblue");
         $(".leftbar12 a").css("color","#ffffff");
+
+        $(".leftbar12 i").css("color","#ffffff");
+
+
         $(".leftbar0Z").toggle();
         $(".leftbar1Z").toggle();
         $(".leftbar2Z").toggle();
@@ -259,6 +299,9 @@ $(document).ready(function(){
         $(".leftbarAll li").css("background-color","#160509");
         $(".leftbar13").css("background-color","darkslateblue");
         $(".leftbar13 a").css("color","#ffffff");
+        
+        $(".leftbar13 i").css("color","#ffffff");
+        
         $(".leftbar0Z").toggle();
         $(".leftbar1Z").toggle();
         $(".leftbar2Z").toggle();
@@ -280,6 +323,9 @@ $(document).ready(function(){
         $(".leftbarAll li").css("background-color","#160509");
         $(".leftbar12").css("background-color","darkslateblue");
         $(".leftbar12 a").css("color","#ffffff");
+
+        $(".leftbar12 i").css("color","#ffffff");
+        
         $(".leftbar0Z").toggle();
         $(".leftbar1Z").toggle();
         $(".leftbar2Z").toggle();

@@ -340,7 +340,7 @@ class Index extends Controller
 
         $user=\think\Db::name('user_form')->where('username',$username)->select();
 
-        $department=$user[0]["department"];
+        $my_department=$user[0]["department"];
         $newLevel=$user[0]["newLevel"];
 
         $chooseOne=$this->request->post('chooseOne');
@@ -357,7 +357,7 @@ class Index extends Controller
 
         $sqlstr1="select distinct department from store where 1=1 ";
 
-        if(($newLevel !="" and $newLevel !="ADMIN") and strpos($my_department,'/') != true){
+        if($my_department !="商业运营部" and ($newLevel !="" and $newLevel !="ADMIN") and strpos($my_department,'/') != true){
             $sqlstr1=$sqlstr1."and department='$my_department'";
         }
 
@@ -382,7 +382,7 @@ class Index extends Controller
             $sqlstr2=$sqlstr2."and department='$chooseTwo' ";
         }
 
-        if(($newLevel !="" and $newLevel !="ADMIN") and strpos($my_department,'/') != true){
+        if($chooseTwo !="全部" and $my_department !="商业运营部" and ($newLevel !="" and $newLevel !="ADMIN") and strpos($my_department,'/') != true){
             if($newLevel =="M"){
                 $sqlstr2=$sqlstr2."and department='$my_department' ";
             }else{
@@ -410,7 +410,7 @@ class Index extends Controller
             $sqlstr3=$sqlstr3."and department='$chooseTwo'";
         }
 
-        if(($newLevel !="" and $newLevel !="ADMIN") and strpos($my_department,'/') != true){
+        if($my_department !="商业运营部" and ($newLevel !="" and $newLevel !="ADMIN") and strpos($my_department,'/') != true){
             if($newLevel =="M"){
                 $sqlstr3=$sqlstr3."and department='$my_department' ";
             }else{
@@ -438,7 +438,7 @@ class Index extends Controller
             $sqlstr4=$sqlstr4." and department='$chooseTwo' ";
         }
 
-        if(($newLevel !="" and $newLevel !="ADMIN") and strpos($my_department,'/') != true){
+        if($my_department !="商业运营部" and ($newLevel !="" and $newLevel !="ADMIN") and strpos($my_department,'/') != true){
             if($newLevel =="M"){
                 $sqlstr4=$sqlstr4."and department='$my_department' ";
             }else{
@@ -466,7 +466,7 @@ class Index extends Controller
             $sqlstr5=$sqlstr5." and department='$chooseTwo' ";
         }
 
-        if(($newLevel !="" and $newLevel !="ADMIN") and strpos($my_department,'/') != true){
+        if($chooseTwo !="全部" and $my_department !="商业运营部" and ($newLevel !="" and $newLevel !="ADMIN") and strpos($my_department,'/') != true){
             if($newLevel =="M"){
                 $sqlstr5=$sqlstr5."and department='$my_department' ";
             }else{
@@ -475,10 +475,10 @@ class Index extends Controller
             
         }
 
-        $sqlstr5=\think\Db::query($sqlstr5);
+        $sqlstr5_a=\think\Db::query($sqlstr5);
 
-        for($i=0;$i<sizeof($sqlstr5);$i++){
-            $ywy_list=$ywy_list.'"'.$sqlstr5[$i]["username"].'",';  
+        for($i=0;$i<sizeof($sqlstr5_a);$i++){
+            $ywy_list=$ywy_list.'"'.$sqlstr5_a[$i]["username"].'",';  
         }
 
         $ywy_list = substr($ywy_list,0,strlen($ywy_list)-1);
@@ -513,6 +513,8 @@ class Index extends Controller
         if($chooseTwo !="全部"){
             $sqlstr6=$sqlstr6." where staff= any( select staff from store where department='$chooseTwo')";
         }
+
+        $sqlstr6=$sqlstr6." order by dateTime desc";
 
         $sqlstr6=\think\Db::query($sqlstr6);
 
@@ -567,7 +569,7 @@ class Index extends Controller
         }
     
         if($chooseEight=="默认"){
-            $date1=date('Y-m-d');
+            $date1=date('Y-m-d',strtotime("-1 day"));
             $date2=date('Y-m-d', strtotime("-1 month"));
             $date3=date('Y-m-d', strtotime("-1 year"));
     
@@ -708,7 +710,7 @@ class Index extends Controller
         }
     
         if($chooseEight=="默认"){
-            $date1=date('Y-m-d');
+            $date1=date('Y-m-d',strtotime("-1 day"));
             $date2=date('Y-m-d', strtotime("-1 month"));
             $date3=date('Y-m-d', strtotime("-1 year"));
     
@@ -738,6 +740,8 @@ class Index extends Controller
             $sqlstr1="select sum(salesMoney) as num from store_data_sales  where storeID= any(select storeID from store where 1=1 ";
         }else if($chooseOne == "回款"){
             $sqlstr1="select sum(backMoney) as num from store_data_hk where storeID= any(select storeID from store  where 1=1 ";
+        }else{
+            $sqlstr1="select sum(salesMoney) as num from store_data_sales  where storeID= any(select storeID from store where 1=1 ";     
         }
     
         //事业部
@@ -792,40 +796,43 @@ class Index extends Controller
     
         //销售额目标&回款目标
         if($chooseOne == "销售额"){
-            $sqlstr2="select sum(storeTarget) as num_t from store_target where 1=1 ";
+            $sqlstr2="select sum(storeTarget) as num_t from store_target where storeID= any(select storeID from store where 1=1 ";
         }else if($chooseOne == "回款"){
-            $sqlstr2="select sum(hkTarget) as num_t from store_target where 1=1 ";
+            $sqlstr2="select sum(hkTarget) as num_t from store_target where storeID= any(select storeID from store where 1=1 ";
+        }else{
+            $sqlstr2="select sum(storeTarget) as num_t from store_target where storeID= any(select storeID from store where 1=1 ";
         }
     
         //事业部
         if($chooseTwo != "全部"){
-            $sqlstr2=$sqlstr2."and a.department='$chooseTwo' ";
+            $sqlstr2=$sqlstr2."and department='$chooseTwo' ";
         }
     
         //平台
         if($chooseThree != "全部"){
-            $sqlstr2=$sqlstr2."and a.pingtai='$chooseThree' ";
+            $sqlstr2=$sqlstr2."and pingtai='$chooseThree' ";
         }
     
         //类目
         if($chooseFour != "全部"){
-            $sqlstr2=$sqlstr2."and a.category='$chooseThree' ";
+            $sqlstr2=$sqlstr2."and category='$chooseThree' ";
         }
     
         //店铺
         if($chooseFive != "全部"){
-            $sqlstr2=$sqlstr2."and a.storeName='$chooseFive' ";
+            $sqlstr2=$sqlstr2."and storeName='$chooseFive' ";
         }
     
         //业务员
         if($chooseSix != "全部"){
-            $sqlstr2=$sqlstr2."and a.staff='$chooseFour' ";
+            $sqlstr2=$sqlstr2."and staff='$chooseFour' ";
         }
     
         if($chooseSeven != "月" and $chooseSeven != "年"){
             $chooseSeven = "日";
         }
         
+        $sqlstr2=$sqlstr2.") ";
     
        //时间段
         if($chooseSeven == "日"){
@@ -991,6 +998,9 @@ class Index extends Controller
         //时间段
         if($chooseEight=="默认"){
             if($chooseSeven == "日"){
+
+                $date1=date('Y-m-d',strtotime("-1 day"));
+
                 $sqlstr1=$sqlstr1." and b.date='$date1' ";
             }elseif($chooseSeven == "月"){
                 $sqlstr1=$sqlstr1." and b.date like '%$dateMonth%' ";
@@ -1044,6 +1054,7 @@ class Index extends Controller
     
     }
 
+    
     public function dataQueryController4(){
         session_start();
         $username=$_SESSION["username"];
@@ -1142,6 +1153,10 @@ class Index extends Controller
     
     
         if($chooseSeven=="日" or $chooseSeven=="全部"){
+            //if($chooseEight=="默认"){
+            //    $chooseEight=date('Y-m-d',strtotime("-1 day"));
+            //}
+
             $sqlstr1=$sqlstr1." and date_sub('".$chooseEight."', INTERVAL 30 DAY) < date  group by date limit 0,30";
         }elseif($chooseSeven=="月"){
             $sqlstr1=$sqlstr1." and date like '%".$chooseEight."%' group by date";
@@ -1150,11 +1165,16 @@ class Index extends Controller
         }
         
     
-        $sqlstr1=\think\Db::query($sqlstr1);
+        $sqlstr1_a=\think\Db::query($sqlstr1);
     
-        for($i=0;$i<sizeof($sqlstr1);$i++){
+        for($i=0;$i<sizeof($sqlstr1_a);$i++){
     
-            $str='{"line":"'.$chooseOne.'","dateTime_xssj":"'.$sqlstr1[$i]["date"].'","number_xssj":"'.round($sqlstr1[$i]["num"]/10000,2).'","object_xssj":"'.$object.'"}';
+            $str='{
+                    "line":"'.$chooseOne.'",
+                    "dateTime_xssj":"'.$sqlstr1_a[$i]["date"].'",
+                    "number_xssj":"'.round($sqlstr1_a[$i]["num"]/10000,2).'",
+                    "object_xssj":"'.$object.'"
+                }';
     
             array_push($data,$str);
             
@@ -1162,7 +1182,12 @@ class Index extends Controller
     
         
         if(sizeof($data)==0){
-            $str='{"line":"'.$chooseOne.'","dateTime_xssj":"暂无数据","number_xssj":"0","object_xssj":"'.$object.'"}';
+            $str='{
+                    "line":"'.$chooseOne.'",
+                    "dateTime_xssj":"暂无数据",
+                    "number_xssj":"0",
+                    "object_xssj":"'.$object.'"
+                }';
     
             array_push($data,$str);
         }
@@ -1190,18 +1215,36 @@ class Index extends Controller
         $chooseSeven=$this->request->post('chooseSeven');
         $chooseEight=$this->request->post('chooseEight');
 
-        date_default_timezone_set("Asia/Shanghai");
-        $date1=date('Y-m-d', time());
-        $date2=date("Y-m-d", strtotime("-1 month"));
-        $date3=date("Y-m-d", strtotime("-1 year"));
-
-        $dateMonth=date('Y-m', time());
-        $dateMonth2=date('Y-m', strtotime("-1 month"));
-        $dateMonth3=date('Y-m', strtotime("-1 year"));
-
-        $dateYear=date('Y', time());
-        $dateYear2=date('Y', strtotime("-1 year"));
-        $dateYear3=date('Y', strtotime("-1 year"));
+        $date=$chooseEight;
+        
+        if($chooseEight=="默认"){
+            date_default_timezone_set("Asia/Shanghai");
+            $date1=date('Y-m-d', strtotime("-1 day"));
+            $date2=date("Y-m-d", strtotime("-1 month"));
+            $date3=date("Y-m-d", strtotime("-1 year"));
+    
+            $dateMonth=date('Y-m', time());
+            $dateMonth2=date('Y-m', strtotime("-1 month"));
+            $dateMonth3=date('Y-m', strtotime("-1 year"));
+    
+            $dateYear=date('Y', time());
+            $dateYear2=date('Y', strtotime("-1 year"));
+            $dateYear3=date('Y', strtotime("-1 year"));
+        }else{
+            $date1=date('Y-m-d', strtotime("$date"));
+            $date2=date('Y-m-d', strtotime("$date -1 month"));
+            $date3=date('Y-m-d', strtotime("$date -1 year"));
+    
+            $dateMonth=$date;
+            $dateMonth2=date('Y-m', strtotime("$date -1 month"));
+            $dateMonth3=date('Y-m', strtotime("$date -1 year"));
+    
+            $dateYear=date('Y', strtotime("$date"));
+            $dateYear2=date('Y', strtotime("$date -1 year"));
+            $dateYear3=date('Y', strtotime("$date -1 year"));
+            
+        }
+       
 
         $sqlstr1="select count(*) as count from store where status='正常' ";
 
@@ -1234,6 +1277,8 @@ class Index extends Controller
         if($chooseSeven != "月" and $chooseSeven != "年"){
             $chooseSeven = "日";
         }
+
+        
         
         //时间段
         if($chooseEight=="默认"){
@@ -1328,18 +1373,35 @@ class Index extends Controller
         $chooseSeven=$this->request->post('chooseSeven');
         $chooseEight=$this->request->post('chooseEight');
 
-        date_default_timezone_set("Asia/Shanghai");
-        $date1=date('Y-m-d', time());
-        $date2=date("Y-m-d", strtotime("-1 month"));
-        $date3=date("Y-m-d", strtotime("-1 year"));
+        $date=$chooseEight;
 
-        $dateMonth=date('Y-m', time());
-        $dateMonth2=date('Y-m', strtotime("-1 month"));
-        $dateMonth3=date('Y-m', strtotime("-1 year"));
-
-        $dateYear=date('Y', time());
-        $dateYear2=date('Y', strtotime("-1 year"));
-        $dateYear3=date('Y', strtotime("-1 year"));
+        if($chooseEight=="默认"){
+            date_default_timezone_set("Asia/Shanghai");
+            $date1=date('Y-m-d', strtotime("-1 day"));
+            $date2=date("Y-m-d", strtotime("-1 month"));
+            $date3=date("Y-m-d", strtotime("-1 year"));
+    
+            $dateMonth=date('Y-m', time());
+            $dateMonth2=date('Y-m', strtotime("-1 month"));
+            $dateMonth3=date('Y-m', strtotime("-1 year"));
+    
+            $dateYear=date('Y', time());
+            $dateYear2=date('Y', strtotime("-1 year"));
+            $dateYear3=date('Y', strtotime("-1 year"));
+        }else{
+            $date1=date('Y-m-d', strtotime("$date"));
+            $date2=date('Y-m-d', strtotime("$date -1 month"));
+            $date3=date('Y-m-d', strtotime("$date -1 year"));
+    
+            $dateMonth=$date;
+            $dateMonth2=date('Y-m', strtotime("$date -1 month"));
+            $dateMonth3=date('Y-m', strtotime("$date -1 year"));
+    
+            $dateYear=date('Y', strtotime("$date"));
+            $dateYear2=date('Y', strtotime("$date -1 year"));
+            $dateYear3=date('Y', strtotime("$date -1 year"));
+            
+        }
 
         $sqlstr1="select count(*) as count from store where status='关闭' ";
 
@@ -1374,23 +1436,20 @@ class Index extends Controller
         }
         
         //时间段
-        if($chooseEight=="默认"){
-            if($chooseSeven == "日"){
-                $sqlstr=$sqlstr1."and createDate='$date1' ";  //当期
-                $sqlstr2=$sqlstr1."and createDate='$date2' ";  //环比
-                $sqlstr3=$sqlstr1."and createDate='$date3' ";   //同比
-            }elseif($chooseSeven == "月"){
-                $sqlstr=$sqlstr1."and createDate like '%$dateMonth%' "; //当期
-                $sqlstr2=$sqlstr1."and createDate like '%$dateMonth2%' ";  //环比
-                $sqlstr3=$sqlstr1."and createDate like '%$dateMonth3%' ";   //同比
-            }elseif($chooseSeven == "年"){
-                $sqlstr=$sqlstr1."and createDate like '%$dateYear%' ";  //当期
-                $sqlstr2=$sqlstr1."and createDate like '%$dateYear2%' ";  //环比
-                $sqlstr3=$sqlstr1."and createDate like '%$dateYear3%' ";  //同比
-            }
-        }else{
-            $sqlstr=$sqlstr1."and createDate like '%$chooseEight%' "; //当期
+        if($chooseSeven == "日"){
+            $sqlstr=$sqlstr1."and createDate='$date1' ";  //当期
+            $sqlstr2=$sqlstr1."and createDate='$date2' ";  //环比
+            $sqlstr3=$sqlstr1."and createDate='$date3' ";   //同比
+        }elseif($chooseSeven == "月"){
+            $sqlstr=$sqlstr1."and createDate like '%$dateMonth%' "; //当期
+            $sqlstr2=$sqlstr1."and createDate like '%$dateMonth2%' ";  //环比
+            $sqlstr3=$sqlstr1."and createDate like '%$dateMonth3%' ";   //同比
+        }elseif($chooseSeven == "年"){
+            $sqlstr=$sqlstr1."and createDate like '%$dateYear%' ";  //当期
+            $sqlstr2=$sqlstr1."and createDate like '%$dateYear2%' ";  //环比
+            $sqlstr3=$sqlstr1."and createDate like '%$dateYear3%' ";  //同比
         }
+        
 
         //当期
 
@@ -1445,4 +1504,191 @@ class Index extends Controller
         echo $data;
     
     }
+
+    public function dataQueryController7(){
+
+        session_start();
+        $username=$_SESSION["username"];
+
+        $user=\think\Db::name('user_form')->where('username',$username)->select();
+
+        $department=$user[0]["department"];
+        $newLevel=$user[0]["newLevel"];
+
+        $chooseOne=$this->request->post('chooseOne');
+        $chooseTwo=$this->request->post('chooseTwo');
+        $chooseThree=$this->request->post('chooseThree');
+        $chooseFour=$this->request->post('chooseFour');
+        $chooseFive=$this->request->post('chooseFive');
+        $chooseSix=$this->request->post('chooseSix');
+        $chooseSeven=$this->request->post('chooseSeven');
+        $chooseEight=$this->request->post('chooseEight');
+
+        $date=$chooseEight;
+
+        if($chooseEight=="默认"){
+            date_default_timezone_set("Asia/Shanghai");
+            $date1=date('Y-m-d', strtotime("-1 day"));
+            $date2=date("Y-m-d", strtotime("-1 month"));
+            $date3=date("Y-m-d", strtotime("-1 year"));
+    
+            $dateMonth=date('Y-m', time());
+            $dateMonth2=date('Y-m', strtotime("-1 month"));
+            $dateMonth3=date('Y-m', strtotime("-1 year"));
+    
+            $dateYear=date('Y', time());
+            $dateYear2=date('Y', strtotime("-1 year"));
+            $dateYear3=date('Y', strtotime("-1 year"));
+        }else{
+            $date1=date('Y-m-d', strtotime("$date"));
+            $date2=date('Y-m-d', strtotime("$date -1 month"));
+            $date3=date('Y-m-d', strtotime("$date -1 year"));
+    
+            $dateMonth=$date;
+            $dateMonth2=date('Y-m', strtotime("$date -1 month"));
+            $dateMonth3=date('Y-m', strtotime("$date -1 year"));
+    
+            $dateYear=date('Y', strtotime("$date"));
+            $dateYear2=date('Y', strtotime("$date -1 year"));
+            $dateYear3=date('Y', strtotime("$date -1 year"));
+            
+        }
+
+        $sqlstr1="select count(*) as count from sx_form where status !='已完成' ";
+        $sqlstr1_b="select count(*) as count from sx_form where status !='已完成' ";
+
+        //事业部
+        if($chooseTwo != "全部"){
+            $sqlstr1=$sqlstr1."and department='$chooseTwo' ";
+        }
+
+        //业务员
+        if($chooseSix != "全部"){
+            $sqlstr1=$sqlstr1."and ywy='$chooseSix' ";
+        }
+
+        if($chooseSeven != "月" and $chooseSeven != "年"){
+            $chooseSeven = "日";
+        }
+        
+        //时间段
+        if($chooseSeven == "日"){
+            $sqlstr=$sqlstr1."and date1='$date1' ";  //当期
+            $sqlstr_b=$sqlstr1_b."and date1='$date1' ";  //当期全部
+
+            $sqlstr2=$sqlstr1."and date1='$date2' ";  //环比
+            $sqlstr2_b=$sqlstr1_b."and date1='$date2' ";  //环比全部
+            
+            $sqlstr3=$sqlstr1."and date1='$date3' ";   //同比
+            $sqlstr3_b=$sqlstr1_b."and date1='$date3' ";   //同比全部
+        
+        }elseif($chooseSeven == "月"){
+            $sqlstr=$sqlstr1."and date1 like '%$dateMonth%' "; //当期
+            $sqlstr_b=$sqlstr1_b."and date1 like '%$dateMonth%' "; //当期全部
+            
+            $sqlstr2=$sqlstr1."and date1 like '%$dateMonth2%' ";  //环比
+            $sqlstr2_b=$sqlstr1_b."and date1 like '%$dateMonth2%' ";  //环比全部
+            
+            $sqlstr3=$sqlstr1."and date1 like '%$dateMonth3%' ";   //同比
+            $sqlstr3_b=$sqlstr1_b."and date1 like '%$dateMonth3%' ";   //同比全部
+        
+        }elseif($chooseSeven == "年"){
+            $sqlstr=$sqlstr1."and date1 like '%$dateYear%' ";  //当期
+            $sqlstr_b=$sqlstr1_b."and date1 like '%$dateYear%' ";  //当期
+            
+            $sqlstr2=$sqlstr1."and date1 like '%$dateYear2%' ";  //环比
+            $sqlstr2_b=$sqlstr1_b."and date1 like '%$dateYear2%' ";  //环比
+            
+            $sqlstr3=$sqlstr1."and date1 like '%$dateYear3%' ";  //同比
+            $sqlstr3_b=$sqlstr1_b."and date1 like '%$dateYear3%' ";  //同比
+        
+        }
+        
+
+        //当期
+
+        $sqlstr=\think\Db::query($sqlstr);
+        
+        $num=0;
+
+        for($i=0;$i<sizeof($sqlstr);$i++){
+            $num=$sqlstr[$i]["count"];
+        }
+
+        //当期全部
+
+        $sqlstr_b=\think\Db::query($sqlstr_b);
+
+        $num_b=0;
+
+        for($i=0;$i<sizeof($sqlstr_b);$i++){
+            $num_b=$sqlstr_b[$i]["count"];
+        }
+
+        if($num_b==0){
+            $per1=0;
+        }else{
+            $per1=number_format(($num/$num_b)*100,0);
+        }
+        
+
+        //环比
+        $sqlstr2=\think\Db::query($sqlstr2);
+        
+        $num2=0;
+
+        for($i=0;$i<sizeof($sqlstr2);$i++){
+            $num2=$sqlstr2[$i]["count"];
+        }
+
+        //环比全部
+        $sqlstr2_b=\think\Db::query($sqlstr2_b);
+        
+        $num2=0;
+
+        for($i=0;$i<sizeof($sqlstr2_b);$i++){
+            $num2_b=$sqlstr2_b[$i]["count"];
+        }
+
+        if($num_b==0){
+            $per2=0;
+        }else{
+            $per2=number_format(($num/$num_b)*100,2);
+        }
+
+        //同比
+        $sqlstr3=\think\Db::query($sqlstr3);
+        
+        $num3=0;
+
+        for($i=0;$i<sizeof($sqlstr3);$i++){
+            $num3=$sqlstr3[$i]["count"];
+        }
+
+        //同比全部
+        $sqlstr3_b=\think\Db::query($sqlstr3_b);
+        
+        $num3_b=0;
+
+        for($i=0;$i<sizeof($sqlstr3_b);$i++){
+            $num3_b=$sqlstr3_b[$i]["count"];
+        }
+
+        if($num_b==0){
+            $per3=0;
+        }else{
+            $per3=number_format(($num/$num_b)*100,2);
+        }
+        
+        $data='[
+            {"name":"title","value":"授信欠据占比"},
+            {"name":"time","value":"'.$chooseSeven.'"},
+            {"name":"num","value":"'.$per1.'%"},
+            {"name":"tb","value":"'.$per2.'"},
+            {"name":"hb","value":"'.$per3.'"}  
+        ]';
+
+        echo $data;
+    }
+
 }

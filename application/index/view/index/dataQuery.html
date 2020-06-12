@@ -21,7 +21,7 @@
         {include file="../application/index/view/common/leftBar.html" /}
 
         <div style="margin-left: 180px;margin-top:60px">
-            <div class="chooseInfo" style="margin-left:30px;margin-top:30px;">
+            <div class="chooseInfo" style="margin-left:20px;margin-top:30px;">
                 <p>筛选条件</p>
                 <select id ="chooseOne" onchange="initData()">
                     <option>销售额</option>
@@ -36,12 +36,12 @@
                 <p>店铺</p>
                 <select id ="chooseFive" onchange="initData($(this).val(),4)"></select>
                 <p>业务员</p>
-                <select id ="chooseSix" onchange="initData($(this).val(),5)"></select>
+                <select id ="chooseSix" onchange="initData($(this).val(),2)"></select>
                 <p>时间段</p>
-                <select style="width:40px;" id ="chooseSeven" onchange="initData($(this).val(),6)"></select>
+                <select style="width:38px;" id ="chooseSeven" onchange="initData($(this).val(),6)"></select>
                 <select style="width:113px;" id="chooseEight" onchange="initData($(this).val(),7)"></select>
             </div>
-            <div style="margin-left:20px;clear:both">
+            <div style="margin-left:10px;clear:both">
                 <div class="data_div">
                     
                     <p class="title" id="title"></p>
@@ -97,7 +97,7 @@
                 </div>
             </div>
             
-            <div style="clear:both;margin-left:20px;">
+            <div style="clear:both;margin-left:10px;">
                 <div class="data_div_large">
                     <p class="title" id="title4"></p>
                     <button id="btn04" class="layui-btn layui-btn-normal  layui-btn-xs" style="float:right;padding:0px 6px 0px 6px;height:20px" disabled></button>
@@ -114,6 +114,24 @@
 
                 <div style="width:280px;float:left">
                     <div class="data_div">
+                        <p class="title" id="title7"></p>
+                        <button id="mytime7" class="layui-btn layui-btn-normal  layui-btn-xs" style="float:right;padding:0px 6px 0px 6px;height:20px" disabled></button>
+                        
+                        <div style="clear:both">
+                            <hr style="margin-top:30px">
+                        </div>
+
+                        <div style="margin-top:20px">
+                            <h1 id="num7"></h1>
+                        </div>
+
+                        <div style="margin-top:20px">
+                            <p class="title">同比:<span id="tb7"></span>%</p>
+                            <p class="title" style="margin-left:10px;">环比:<span id="hb7"></span>%</p>
+                        </div>
+                    </div>
+
+                    <div class="data_div store1">
                         <p class="title" id="title5"></p>
                         <button id="mytime5" class="layui-btn layui-btn-normal  layui-btn-xs" style="float:right;padding:0px 6px 0px 6px;height:20px" disabled></button>
                         
@@ -128,9 +146,12 @@
                         <div style="margin-top:20px">
                             <p class="title">同比:<span id="tb5"></span>%</p>
                             <p class="title" style="margin-left:10px;">环比:<span id="hb5"></span>%</p>
+                            <p class="title" style="float:right" id="no">不合作店铺</p>
                         </div>
                     </div>
-                    <div class="data_div">
+
+
+                    <div class="data_div store2" style="display:none">
                         <p class="title" id="title6"></p>
                         <button id="mytime6" class="layui-btn layui-btn-normal  layui-btn-xs" style="float:right;padding:0px 6px 0px 6px;height:20px" disabled></button>
                         
@@ -145,6 +166,7 @@
                         <div style="margin-top:20px">
                             <p class="title">同比:<span id="tb6"></span>%</p>
                             <p class="title" style="margin-left:10px;">环比:<span id="hb6"></span>%</p>
+                            <p class="title" style="float:right" id="yes">新开拓店铺</p>
                         </div>
                     </div>
                 </div>
@@ -166,15 +188,21 @@
         float:left;
         margin-left:10px;
         height:24px;
-        width:77px;
+        width:81px;
     }
 
-    .data_div{width: 323px;height:160px;border:1px solid #d9d9d9;float:left;margin-left:20px;border-radius: 5px;margin-top:20px;padding-left:10px;padding:10px;}
-    .data_div_large{width: 666px;height:340px;border:1px solid #d9d9d9;float:left;margin-left:20px;border-radius: 5px;margin-top:20px;padding:10px;}
+    .data_div{width: 330px;height:160px;border:1px solid #d9d9d9;float:left;margin-left:20px;border-radius: 5px;margin-top:20px;padding-left:10px;padding:10px;}
+    .data_div_large{width: 680px;height:340px;border:1px solid #d9d9d9;float:left;margin-left:20px;border-radius: 5px;margin-top:20px;padding:10px;}
     .title{color: #9b9b9b;float:left}
 
     ul li{
         margin-top:2px
+    }
+
+    #no:hover,#yes:hover{
+        cursor: pointer;
+        color:#000000;
+        text-decoration: underline;
     }
 
     
