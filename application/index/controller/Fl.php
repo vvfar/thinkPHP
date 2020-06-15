@@ -5,10 +5,11 @@ use think\Request;
 
 class Fl extends Controller{
     
+    
     public function flsq(){
         $id=$this->request->param("id");
 
-
+        date_default_timezone_set("Asia/Shanghai");
         session_start();
         $username=$_SESSION["username"];
 
@@ -21,12 +22,16 @@ class Fl extends Controller{
             $fl_infos=\think\Db::name("flsqd")->where("id",$id)->select();
             $fl_info=$fl_infos[0];
 
-            $fl_sxs=\think\Db::name("use_sx")->field(["sqid","nowUseMoney"])->where("fl_no",$no)->select();
-            $fl_sx=$fl_sxs[0];
+            $fl_sxs=\think\Db::name("use_sx")->field(["sqid","nowUseMoney"])->where("fl_no",$fl_info["no"])->select();
+            
+            if($fl_sxs != []){
+                $fl_sx=$fl_sxs[0];
+            }else{
+                $fl_sx="";
+            }
 
         }else{
-            date_default_timezone_set("Asia/Shanghai");
-
+            
             $fl_info=[];
 
             $fl_info["Id"]="";
@@ -134,8 +139,6 @@ class Fl extends Controller{
         }else{
             $fl_sxInfo="";
         }
-        
-
 
         $category_arr=explode(',',$fl_info["category"]);
         $productNo_arr=explode(',',$fl_info["productNo"]);
@@ -839,8 +842,8 @@ class Fl extends Controller{
         //表中的最大行数为20
         $hd_count=$_POST['hd_count'];
     
-        if($hd_count>20){
-            $hd_count=19;
+        if($hd_count>30){
+            $hd_count=29;
         }
     
         for($i=0;$i<=(int)$hd_count;$i++){
@@ -1129,7 +1132,7 @@ class Fl extends Controller{
 
         $sqlstr1=\think\Db::name("user_form")->field(["department","newLevel"])->where("username",$username)->select();
 
-        $department=$sqlstr1[0]["department"];
+        $my_department=$sqlstr1[0]["department"];
         $newLevel=$sqlstr1[0]["newLevel"];
 
         date_default_timezone_set("Asia/Shanghai");
@@ -1190,9 +1193,9 @@ class Fl extends Controller{
                 }else{
                     $sqlstr_fl=\think\Db::query("update flsqd set status='$status_new',shr='$sp_new',allTime='$shTime_new',file='$username' where id='$id'");
                 }
-        
+
                 //财务，商业运营加入key
-                if($department=="财务部" or ($department=="商业运营部" and $status_forward !="已归档单据")){
+                if($my_department=="财务部" or ($my_department=="商业运营部" and $status_forward !="已归档单据")){
         
                     //获取辅料申请单最大ID
                     $sqlstr=\think\Db::query("select max(id) from fl_key");
@@ -1204,6 +1207,8 @@ class Fl extends Controller{
         
                     $sqlstr_k=\think\Db::query("insert into fl_key values('$maxID'+1,'$id',1,'$time')");
                 }
+
+                return redirect('/index.php/Index/fl/w_fl.html');
             }else{
                 //不能重复提交表单
                 return redirect('/index.php/Index/fl/fl_line.html?id='.$id);
@@ -1218,35 +1223,20 @@ class Fl extends Controller{
             $note=$_GET["note"];
 
             //找出当前流程序号（同意状态）
-            $sqlstr1="select number from flprogress where sp='$username' and no=1";
+            $sqlstr1=\think\Db::name("flprogress")->field("number")->where("sp",$username)->where("no",1)->select();
+            $number=$sqlstr1[0]["number"];
 
-            $result=mysqli_query($conn,$sqlstr1);
-
-            while($myrow=mysqli_fetch_row($result)){
-                $number=$myrow[0];
-            }
-
-            $sqlstr4="select status,shr,allTime from flsqd where id='$id'";
-
-            $result=mysqli_query($conn,$sqlstr4);
-
-            while($myrow=mysqli_fetch_row($result)){
-                $qqstatus=$myrow[0];
-                $qqshr=$myrow[1];
-                $allTime=$myrow[2];
-            }
+            $sqlstr4=\think\Db::name("flsqd")->field(["status","shr","allTime"])->where("id",$id)->select();
+            
+            $qqstatus=$sqlstr4[0]["status"];
+            $qqshr=$sqlstr4[0]["shr"];
+            $allTime=$sqlstr4[0]["allTime"];
 
             //找出下个流程信息
-            $sqlstr2="select name,sp,cs from flprogress where number='$number'+1 and no=1";
+            $sqlstr2=\think\Db::name("flprogress")->field(["name","sp"])->where("number",$number+1)->where("no",1)->select();
 
-            $result=mysqli_query($conn,$sqlstr2);
-
-            if($result){
-                while($myrow=mysqli_fetch_row($result)){
-                    $name=$myrow[0];
-                    $sp=$myrow[1];
-                }
-            }
+            $name=$sqlstr2[0]["name"];
+            $sp=$sqlstr2[0]["sp"];
             
             $sp=$qqshr.",".$sp;
             $name=$qqstatus.",".$name;
@@ -1254,49 +1244,36 @@ class Fl extends Controller{
             $allTime=$allTime.",".$time;
 
             //将下个流程信息放入
-            $sqlstr3="update flsqd set status='$name',shr='$sp',csr='',allTime='$allTime',wlfs='$wlfs',wlno='$wlno',wlprice='$wlprice',note='$note',allTime='$allTime',file='$username' where id='$id'";
+            $sqlstr3=\think\Db::table("flsqd")->where("id",$id)->update(['status'=>$name,'shr'=>$sp,'allTime'=>$allTime,'wlfs'=>$wlfs,'wlno'=>$wlno,'wlprice'=>$wlprice,'note'=>$note]);
 
-            $result=mysqli_query($conn,$sqlstr3);
+            return redirect('/index.php/Index/fl/w_fl.html');
 
         }elseif($option==6){
             //业务员重新编辑
 
             //重新编辑需要返还授信金额
-            $sqlstr4="select count(*) from use_sx where fl_no = (select no from flsqd where id=$id)";
-            $result=mysqli_query($conn,$sqlstr4);
-
-            while($myrow=mysqli_fetch_row($result)){
-                $count=$myrow[0];
-            }
+            $sqlstr=\think\Db::query("select count(*) from use_sx where fl_no = (select no from flsqd where id=$id)");
+            $count=$sqlstr[0]["count(*)"];
 
             if($count > 0){
-                $sqlstr5="select nowUseMoney,sqid from use_sx where  fl_no = (select no from flsqd where id=$id)";
-                $result=mysqli_query($conn,$sqlstr5);
-                
-                while($myrow=mysqli_fetch_row($result)){
-                    $nowUseMoney=$myrow[0];
-                    $sqid=$myrow[1];
-                }
+                $sqlstr2=\think\Db::query("select nowUseMoney,sqid from use_sx where  fl_no = (select no from flsqd where id=$id)");   
 
-                $sqlstr6="update use_sx set newMoney= $nowUseMoney + newMoney where sqid='$sqid'";
-                $result=mysqli_query($conn,$sqlstr6);
+                $nowUseMoney=$sqlstr2[0]["nowUseMoney"];
+                $sqid=$sqlstr2[0]["sqid"];
 
-                $sqlstr8="delete from use_sx where fl_no = (select no from flsqd where id=$id)";
-                $result=mysqli_query($conn,$sqlstr8);
+                $sqlstr3=\think\Db::query("update use_sx set newMoney= $nowUseMoney + newMoney where sqid='$sqid'");
 
-                echo "<script>window.location.href='../../home/fl/flsq.php?id=$id'</script>";
-                
-            }else{
-                echo "<script>window.location.href='../../home/fl/flsq.php?id=$id'</script>";
+                $sqlstr4=\think\Db::query("delete from use_sx where fl_no = (select no from flsqd where id=$id)");   
             }
+
+            return redirect('/index.php/Index/fl/flsq.html?id='.$id);
+
         }elseif($option==7){
             //KA删除单据
+            $sqlstr=\think\Db::name("flsqd")->where("id",$id)->delete();
 
-            $sqlstr7="delete from flsqd where id='$id'";
+            return redirect('/index.php/Index/fl/w_fl.html');
         
-            $result=mysqli_query($conn,$sqlstr7);
-        
-            echo "<script>alert('删除成功');window.location.href='../../home/fl/saveFL.php</script>";
         }elseif($option==8){
 
             //义乌修改单据
@@ -1305,23 +1282,18 @@ class Fl extends Controller{
             $wlprice=$_GET["wlprice"];
             $note=$_GET["note"];
 
-            $sqlstr7="update flsqd set wlfs='$wlfs',wlno='$wlno',wlprice='$wlprice',note='$note' where id='$id'";
-        
-            $result=mysqli_query($conn,$sqlstr7);
-        
-            echo "<script>alert('修改成功');window.location.href='../../home/fl/saveFL.php</script>";
+            $sqlstr3=\think\Db::table("flsqd")->where("id",$id)->update(['wlfs'=>$wlfs,'wlno'=>$wlno,'wlprice'=>$wlprice,'note'=>$note]);
+
+            return redirect('/index.php/Index/fl/w_fl.html');
+
         }else{
             //拒绝，待业务员审核
-            $sqlstr4="select status,shr,allTime from flsqd where id='$id'";
+            $sqlstr=\think\Db::name("flsqd")->field(["status","shr","allTime"])->where("id",$id)->select();
 
-            $result=mysqli_query($conn,$sqlstr4);
-
-            while($myrow=mysqli_fetch_row($result)){
-                $qqstatus=$myrow[0];
-                $qqshr=$myrow[1];
-                $allTime=$myrow[2];
-            }
-
+            $qqstatus=$sqlstr[0]["status"];
+            $qqshr=$sqlstr[0]["shr"];
+            $allTime=$sqlstr[0]["allTime"];
+            
             $arr_shr=explode(",",$qqshr);
             $shr=array_shift($arr_shr);
 
@@ -1330,53 +1302,17 @@ class Fl extends Controller{
             $time=date('Y-m-d H:i:s', time());
             $allTime=$allTime.",".$time;
 
-            $sqlstr3="update flsqd set status='$name',shr='$sp',csr='',allTime='$allTime' where id=$id";
-
-            $result=mysqli_query($conn,$sqlstr3);
+            $sqlstr2=\think\Db::table("flsqd")->where("id",$id)->update(['status'=>$name,'shr'=>$sp,'allTime'=>$allTime]);
 
             //财务，商业运营拒绝删除key
-            $sqlstr4="select count(*) from fl_key where name='$id'";
-            $result=mysqli_query($conn,$sqlstr4);
-
-            while($myrow=mysqli_fetch_row($result)){
-                $count_key=$myrow[0];
-            }
-
+            $sqlstr3=\think\Db::name("fl_key")->field("count(*)")->where("fl_no",$id)->select();
+            $count_key=$sqlstr3[0]["count(*)"];
+            
             if($count_key>0){
-                $sqlstr5="delete from fl_key where name='$id'";
-                $result=mysqli_query($conn,$sqlstr5);
+                $sqlstr4=\think\Db::table("fl_key")->where("fl_no",$id)->delete();
             }
-        }
 
-        /*
-        if($result){
-            ?>
-            <script>
-                if(screen.width<600){
-                    alert("提交成功！")
-                    window.location.href="../../home/mobile/flsq/flList.php"
-                }else{
-                    alert("提交成功！")
-                    window.location.href="../../home/fl/flList.php"
-                }
-            </script>
-            <?php
-        }else{
-            ?>
-            <script>
-                if(screen.width<600){
-                    alert("提交失败！")
-                    window.location.href="../../home/mobile/flsq/flList.php"
-                }else{
-                    alert("提交失败！")
-                    window.location.href="../../home/fl/flList.php"
-                }
-            </script>
-            <?php
+            return redirect('/index.php/Index/fl/fl_line.html?id='.$id);
         }
-
-        */
     }
-
-
 }

@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width,initial-scale=1">
+        <title>俞兆林_公司授信</title>
+        <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" media="screen" />
+        <link href="\lib\bootstrap-3.3.7-dist\css\bootstrap.css" rel="stylesheet"/>
+        <link href="\lib\bootstrap-3.3.7-dist\css\bootstrap-datetimepicker.min.css" rel="stylesheet" media="screen"/>
+        <link href="\css\leftbar.css" rel="stylesheet"/>
+        <link href="\css\header.css" rel="stylesheet"/>
+        <script src="\lib\bootstrap-3.3.7-dist\js\jquery-3.3.1.min.js"></script>
+        <script src="\lib\bootstrap-3.3.7-dist\js\bootstrap.min.js"></script>
+        <script src="\lib\bootstrap-3.3.7-dist\js\bootstrap-datetimepicker.js"></script>
+    </head>
+    <body>
+        {include file="../application/index/view/common/header.html" /}
+        {include file="../application/index/view/common/leftBar.html" /}
+
+        <div class="zhangmu_container" style="margin-top:50px;">
+            <div class="form-group date_form">
+                <p class="djrq">回款期限</p>
+                <p style="width: 20px;font-size: 14px;float: left;margin-top:5px;margin-left:20px;">从</p>
+                <div style="width: 180px;font-size: 14px;float: left;" class="input-group date form_datetime" data-date="" data-date-format="dd MM yyyy" data-link-field="dtp_input2" data-link-format="yyyy-mm-dd">
+                    <input class="form-control" id="date1" size="16" type="text" value="<?=$date1?>" readonly>
+                    <span class="input-group-addon"><span class="glyphicon glyphicon-remove"></span></span>
+                    <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
+                </div>
+                <p style="width: 20px;font-size: 14px;float: left;margin-top:5px;margin-left:20px;">到</p>
+                <div style="width: 180px;font-size: 14px;float: left;" class="input-group date form_datetime" data-date="" data-date-format="dd MM yyyy" data-link-field="dtp_input2" data-link-format="yyyy-mm-dd">
+                    <input class="form-control" id="date2" size="16" type="text" value="<?=$date2?>" readonly>
+                    <span class="input-group-addon"><span class="glyphicon glyphicon-remove"></span></span>
+                    <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
+                </div>
+                <div style="font-size: 14px;float: left;margin-left:20px;">
+                    <select class="form-control" style="width: 105px;" id="chooseInfo">
+
+                        {if($newLevel !="ADMIN" and $department !="财务部")}
+                            {if($chooseInfo=="公司名称")}
+                                <option>授信编号</option>
+                                <option selected>公司名称</option>
+                            {else\}
+                                <option selected>授信编号</option>
+                                <option>公司名称</option>
+                            {/if}
+                        {else\}
+                            {if($chooseInfo=="公司名称")}
+                                <option>授信编号</option>
+                                <option selected>公司名称</option>
+                                <option>事业部</option>
+                            {elseif($chooseInfo=="事业部")}
+                                <option>授信编号</option>
+                                <option>公司名称</option>
+                                <option selected>事业部</option>
+                            {else\}
+                                <option selected>授信编号</option>
+                                <option>公司名称</option>
+                                <option>事业部</option>
+                            {/if}
+                        {/if}
+                    </select>
+                </div>
+                <div style="font-size: 14px;float: left;margin-left:20px;">
+                    {if($chooseInfo=="授信编号")}
+                        <input class="form-control" id="sqid" placeholder="请输入授信编号" style="width:160px;" value="<?=$sqid?>"/>
+                        <input class="form-control" id="companyName" placeholder="请输入公司名称" style="width:160px;display: none;" value="<?=$companyName?>"/>
+                    
+                        <select class="form-control" id="department" style="width:160px;display: none;">
+                            <option></option>
+                            {volist name="departments" id="department"}
+                                <option>{$department["department"]}</option>
+                            {/volist}
+                        </select>
+                    {elseif($chooseInfo=="公司名称")}
+                        <input class="form-control" id="sqid" placeholder="请输入授信编号" style="width:160px;display: none;" value="<?=$sqid?>"/>
+                        <input class="form-control" id="companyName" placeholder="请输入公司名称" style="width:160px;" value="<?=$companyName?>"/>
+                    
+                        <select class="form-control" id="department" style="width:160px;display: none;">
+                            <option></option>
+                            {volist name="departments" id="department"}
+                                <option>{$department["department"]}</option>
+                            {/volist}
+                        </select>
+                    {elseif($chooseInfo=="事业部")}    
+                        <input class="form-control" id="sqid" placeholder="请输入授信编号" style="width:160px;display: none;" value="<?=$sqid?>"/>
+                        <input class="form-control" id="companyName" placeholder="请输入公司名称" style="width:160px;display: none;" value="<?=$companyName?>"/>
+                    
+                        <select class="form-control" id="department" style="width:160px;">
+                            <option></option>
+                            {volist name="departments" id="department"}
+                                {if $department["department"] == $department}
+                                    <option selected>$department_a["department"]</option>
+                                {else\}
+                                    <option>{$department_a["department"]}</option>
+                                {/if}
+                            {/volist}
+                        </select>
+                    {else\}
+                        <input class="form-control" id="sqid" placeholder="请输入授信编号" style="width:160px;" value="<?=$sqid?>"/>
+                        <input class="form-control" id="companyName" placeholder="请输入公司名称" style="width:160px;display: none;" value="<?=$companyName?>"/>
+                    
+                        <select class="form-control" id="department" style="width:160px;display: none;">
+                            <option></option>
+                            {volist name="departments" id="department"}
+                                <option>{$department["department"]}</option>
+                            {/volist}
+                        </select>
+                    {/if}
+                </div>
+
+                <div style="float:left;margin-left:10px;margin-top:2px;">
+                    <button class="btn btn-warning btn-sm" onclick="search()">查询</button>
+                    <button class="btn btn-success btn-sm" onclick="excel()" style="margin-left:5px;">下载</button>
+                    {if($newLevel=="ADMIN")}
+                        <button class="btn btn-info btn-sm" onclick="upload()" data-toggle="modal" data-target="#myModal2">批量导入</button>
+                    {/if}
+                </div>
+
+                <!-- Excel导入模态框 -->
+                <form method="POST" action="formHandle/uploadSXHandle.php" enctype="multipart/form-data">
+                    <div class="modal fade" id="myModal2" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                                        &times;
+                                    </button>
+                                    <h4 class="modal-title" id="myModalLabel">
+                                        批量上传授信
+                                    </h4>
+                                </div>
+                                
+                                <div class="modal-body" style="height: 150px;">
+                                    <input type="file" name="excel"/>
+                                    <div style="clear: both;position: relative;top:20px;width:300px;">
+                                        <p>温馨提示：文件必须为EXCEL格式，请按模板文件格式进行上传，文件大小需小于2M</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                                    <button type="submit" class="btn btn-primary">导入表格</button>
+                                </div> 
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <div style="clear:both;width:1112px">
+                <h4 style="float:left;margin-top:20px;">
+                    <span class="label label-info" style="margin-left:60px;">共<?=$total?>条</span>
+                    <span class="label label-warning" style="margin-left:5px;">共<?=$pagecount?>页</span>
+                    <span class="label label-success" style="margin-left:5px;">第<?=$page?>页</span>
+                </h4>
+                <a href="/index.php/Index/sx/zf_sx.html" style="float:right;margin-right:40px;position: relative;top: 20px;" target="_blank">查看作废单据</a>
+            <div>
+
+            <div style="clear:both;position: relative;top: 15px;margin-left: 60px;">
+                <table class="table table-responsive table-bordered table-hover" style="width: 1020px;margin-bottom:10px;">
+                    <tr>
+                        <th>序号</th>
+                        <th style="width: 150px;">授信编号</th>
+                        <th>公司名称</th>
+                        <th>事业部</th>
+                        <th>业务员</th>
+                        <th>授信金额</th>
+                        <th>剩余应还</th>
+                        <th>已使用额度</th>
+                        <th style="width:100px;">登记日期</th>
+                    </tr>
+    
+                    {foreach name="sxs" item="sx" key="index"}
+                        <tr>
+                            <td>{$pagesize*($page-1) + $index+1}</td>
+                            <td class="td1"><p style="margin:0 auto"><a href="sx_line.php?id={$sx.id}" style="width: 50px;">{$sx.sqid}</a></p></td>
+                            <td class="td2"><p style="margin:0 auto">{$sx.companyName}</p></td>
+                            <td>{$sx.department}</td>
+                            <td>{$sx.ywy}</td>
+                            <td>{$sx.sqmoney}</td>
+                            <td>{$sx.dhkje}</td>
+                            <td>{$sx.dhkje==""?0:$sx.sqmoney-$sx.dhkje}</td>
+                            <td>{$sx.date1}</td>
+                        </tr>
+                    {/foreach}
+                </table>
+            </div>
+
+            <div style="margin-left: 60px;">
+                <ul class="pager" style="float:left;width:150px;">
+                    <li><a href="<?php echo $_SERVER['PHP_SELF']?>?page=<?php
+                        if($page>1)
+                            echo $page-1;
+                        else
+                            echo 1;  
+                    ?>&date1=<?=$date1?>&date2=<?=$date2?>&companyName=<?=$companyName?>">上一页</a></li>
+                    <li><a href="<?php echo $_SERVER['PHP_SELF']?>?page=<?php
+                        if($page<$pagecount)
+                            echo $page+1;
+                        else
+                            echo $pagecount;  
+                    ?>&date1=<?=$date1?>&date2=<?=$date2?>&companyName=<?=$companyName?>">下一页</a></li>
+                </ul>
+
+                <div style="float:left;margin-left:550px;width:321px;">
+                    <ul class="pagination" style="float:right">
+                        <li><a href="<?php echo $_SERVER['PHP_SELF']?>?page=1">&laquo;</a></li>
+                        <?php
+                            if($pagecount<=5){
+                                for($i=1;$i<=$pagecount;$i++){
+                                    if($i==$page){
+                                        ?>
+                                            <li  class="active"><a href="<?php echo $_SERVER['PHP_SELF']?>?page=<?=$i?>&date1=<?=$date1?>&date2=<?=$date2?>&companyName=<?=$companyName?>"><?=$i?></a></li>
+                                        <?php
+                                    }else{
+                                        ?>
+                                            <li><a href="<?php echo $_SERVER['PHP_SELF']?>?page=<?=$i?>&date1=<?=$date1?>&date2=<?=$date2?>&companyName=<?=$companyName?>"><?=$i?></a></li>
+                                        <?php
+                                    }
+                                }
+                            }else{
+                                for($i=1;$i<=$pagecount;$i++){
+                                    if($i==$page){
+                                        ?>
+                                            <li  class="active"><a href="<?php echo $_SERVER['PHP_SELF']?>?page=<?=$i?>&date1=<?=$date1?>&date2=<?=$date2?>&companyName=<?=$companyName?>"><?=$i?></a></li>
+                                        <?php
+                                    }elseif(($i>=$page-2 and $i<=$page+2 and $page>3) and $page !=$pagecount){
+                                        ?>
+                                            <li><a href="<?php echo $_SERVER['PHP_SELF']?>?page=<?=$i?>&date1=<?=$date1?>&date2=<?=$date2?>&companyName=<?=$companyName?>"><?=$i?></a></li>
+                                        <?php
+                                    }elseif($i<=5){
+                                        if($page<=3){
+                                        ?>
+                                            <li><a href="<?php echo $_SERVER['PHP_SELF']?>?page=<?=$i?>&date1=<?=$date1?>&date2=<?=$date2?>&companyName=<?=$companyName?>"><?=$i?></a></li>
+                                        <?php
+                                        }
+                                    }
+                                }
+                            }
+                            
+                        ?>
+                        
+                        <li><a href="<?php echo $_SERVER['PHP_SELF']?>?page=<?php echo $pagecount; ?>&date1=<?=$date1?>&date2=<?=$date2?>&companyName=<?=$companyName?>">&raquo;</a></li>
+                    </ul>
+                </div>
+            </div>
+
+
+        </div>
+    </body>
+</html>
+
+<style>
+    th{background-color:rgb(67, 64, 255);color:#fff}
+    th,td{text-align: center;margin: 0;overflow: hidden}
+    .to-scroll{overflow-x: scroll;overflow-x: scroll;height: 550px;clear:both}
+    .zhangmu_container{margin-left: 150px;}
+    .nav_div{clear:both;float:left;margin-top: 20px;margin-left:60px;}
+    .date_form{clear: both;float:left;margin-top:30px;margin-left:60px}
+    .djrq{float:left;margin-top:5px}
+    .template{float:left;margin-left:350px;margin-top:2px;}
+    .pager li a:hover{background-color:#337ab7;color:#fff;}
+    .td1 p{text-align:center;width: 150px;white-space: nowrap;overflow: hidden;text-overflow:ellipsis;}
+    .td2 p{width: 180px;white-space: nowrap;overflow: hidden;text-overflow:ellipsis}
+</style>
+
+<script type="text/javascript">  
+    $(".form_datetime").datetimepicker({
+        format: 'yyyy-mm-dd',
+        weekStart: 1,
+        autoclose: true,
+        todayBtn: true,
+        startView: 2,  
+        minView: 2, 
+        forceParse: false,
+        language:'cn',
+        pickerPosition: "bottom-left"
+    });
+
+    var excel=function(){
+        date1=$("#date1").val()
+        date2=$("#date2").val()
+        companyName=$("#companyName").val()
+
+        window.location.href='../../controller/sx/sc_form.php?date1=' + date1 + '&date2=' + date2 +"&companyName=" + companyName + "&option=2"
+    }
+
+    var search=function(){
+        date1=$("#date1").val()
+        date2=$("#date2").val()
+        companyName=$("#companyName").val()
+        chooseInfo=$("#chooseInfo").val()
+        sqid=$("#sqid").val()
+
+        window.location.href="<?php echo $_SERVER['PHP_SELF']?>?date1=" +date1 + "&date2=" + date2 +"&companyName=" + companyName + "&chooseInfo=" + chooseInfo + "&sqid=" +sqid
+
+    }
+
+    $("#chooseInfo").change(function(){
+        chooseInfo=$(this).val()
+
+        if(chooseInfo=="授信编号"){
+            $("#sqid").css("display","inline")
+            $("#companyName").css("display","none")
+            $("#department").css("display","none")
+        }else if(chooseInfo=="公司名称"){
+            $("#sqid").css("display","none")
+            $("#companyName").css("display","inline")
+            $("#department").css("display","none")
+        }else if(chooseInfo=="事业部"){
+            $("#sqid").css("display","none")
+            $("#companyName").css("display","none")
+            $("#department").css("display","inline")
+        }
+
+    })
+</script>

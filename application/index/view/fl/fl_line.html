@@ -179,7 +179,7 @@
 
 
                     {if($sx_filesName !=[])}
-                        <td colspan="6"><a href="../../common/file/sx_file/{$sx_filesName.fileName}" target="_blank">{$sx_info.sqid}</a></td>
+                        <td colspan="6"><a href="/common/file/sx_file/{$sx_filesName.fileName}" target="_blank">{$sx_info.sqid}</a></td>
                     {else\}
                         <td colspan="6">{$sx_info.sqid}</td>
                     {/if}
@@ -206,10 +206,6 @@
                             <button type="button" class="btn btn-success btn-sm" id="yes" style="float:right;">同意</button>
                         {/if}
                     {/if}
-                    
-                    {if($department=="义乌部" and $fl_line.status_pop=="商业运营归档单据")}
-                        <button type="button" class="btn btn-info btn-sm" id="edit_YW" style="float:right;margin-left:37px;">修改单据</button>
-                    {/if}
 
                     {if(sizeof($statuss)==0)}
                         {if($fl_line.status_shift == $username)}
@@ -225,6 +221,10 @@
                             <button type="button" class="btn btn-info btn-sm" id="yes4" style="float:right;margin-left:37px;">修改单据</button>
                         {/if}
                     {/if}
+                {/if}
+
+                {if($department=="义乌部" and $fl_line.status_pop=="商业运营归档单据")}
+                    <button type="button" class="btn btn-info btn-sm" id="edit_YW" style="float:right;margin-left:37px;">修改单据</button>
                 {/if}
             </div>
 
@@ -268,7 +268,7 @@
         </form>
 
         <!-- 财务短信验证码模态框 -->
-        <form method="POST" action="../../controller/fl/flLiucheng.php?id={$fl_line.Id}&option=1" enctype="multipart/form-data">
+        <form method="POST" action="/index.php/Index/fl/fl_liucheng.html?id={$fl_line.Id}&option=1" enctype="multipart/form-data">
             <div class="modal fade" id="myModal2" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="top:20%;left:20%">
                 <div class="modal-dialog">
                     <div class="modal-content" style="width:400px;">
@@ -305,11 +305,11 @@
 <script>
     {if($fl_line.shr_pop ==$username and $department != "义乌部" and $fl_line.status_pop !="义乌打包发货")}
             $("#yes").click(function(){
-                window.location.href="/index.php/Index/fl/fl_liucheng.html?id={$fl_line.Id}&option=1"
+                window.location.href="/index.php/Index/fl/fl_liucheng?id={$fl_line.Id}&option=1"
             })
         
             $("#no").click(function(){
-                window.location.href="/index.php/Index/fl/fl_liucheng.html?id={$fl_line.Id}&option=0"
+                window.location.href="/index.php/Index/fl/fl_liucheng?id={$fl_line.Id}&option=0"
             })
     {else\}
             $("#yes").click(function(){
@@ -319,16 +319,16 @@
                 wlprice=$("#wlprice").val()
                 note=$("#note").val()
 
-                window.location.href="/index.php/Index/fl/fl_liucheng.html?id={$fl_line.Id}&option=3&wlfs=" + wlfs + "&wlno=" + wlno + "&wlprice=" + wlprice + "&note=" + note
+                window.location.href="/index.php/Index/fl/fl_liucheng?id={$fl_line.Id}&option=3&wlfs=" + wlfs + "&wlno=" + wlno + "&wlprice=" + wlprice + "&note=" + note
             })
         
             $("#no").click(function(){
-                window.location.href="/index.php/Index/fl/fl_liucheng.html?id={$fl_line.Id}&option=0"
+                window.location.href="/index.php/Index/fl/fl_liucheng?id={$fl_line.Id}&option=0"
             })
     {/if}
    
    $("#yes4").click(function(){
-        window.location.href="../../controller/fl/flLiucheng.php?id={$fl_line.Id}&option=6"
+        window.location.href="/index.php/Index/fl/fl_liucheng?id={$fl_line.Id}&option=6"
     })
 
     $("#edit_YW").click(function(){
@@ -337,7 +337,7 @@
         wlprice=$("#wlprice").val()
         note=$("#note").val()
 
-        window.location.href="../../controller/fl/flLiucheng.php?id={$fl_line.Id}&option=8&wlfs=" + wlfs + "&wlno=" + wlno + "&wlprice=" + wlprice + "&note=" + note
+        window.location.href="/index.php/Index/fl/fl_liucheng.html?id={$fl_line.Id}&option=8&wlfs=" + wlfs + "&wlno=" + wlno + "&wlprice=" + wlprice + "&note=" + note
     })
 
     $(".agree_yzm").click(function(){
@@ -347,7 +347,7 @@
         $.ajax({
             type:"get",
             async:true,
-            url:"../../controller/fl/fl_yzm.php?phone=" + phone,
+            url:"/index.php/Index/fl/fl_yzm?phone=" + phone,
             dataType:"json",
             success:function(result){
                 $("#yzm").html(result)
@@ -367,6 +367,9 @@
         }
     })
 
+    $("#backEdit").click(function(){
+        window.location.href="/index.php/Index/fl/fl_liucheng?id={$fl_line.Id}&option=0"
+    })
 
 
     //打印页面
@@ -381,7 +384,7 @@
             xmlhttp=new XMLHttpRequest();
         }
 
-        xmlhttp.open("GET","../../controller/fl/isPrint.php?id={$fl_line.Id}&department={$department}",true);
+        xmlhttp.open("GET","/index.php/Index/fl/isPrint.php?id={$fl_line.Id}&department={$department}",true);
 
         xmlhttp.onreadystatechange=function(){
             
@@ -403,8 +406,5 @@
         
     }
 
-    $("#backEdit").click(function(){
-        window.location.href="../../controller/fl/flLiucheng.php?id={$fl_line.Id}&option=0"
-    })
-
+    
 </script>

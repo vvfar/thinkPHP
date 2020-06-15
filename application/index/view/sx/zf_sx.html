@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width,initial-scale=1">
+        <title>俞兆林_公司授信</title>
+        <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" media="screen" />
+        <link href="\lib\bootstrap-3.3.7-dist\css\bootstrap.css" rel="stylesheet"/>
+        <link href="\lib\bootstrap-3.3.7-dist\css\bootstrap-datetimepicker.min.css" rel="stylesheet" media="screen"/>
+        <link href="\css\leftbar.css?v=2" rel="stylesheet"/>
+        <link href="\css\header.css?v=2" rel="stylesheet"/>
+        <script src="\lib\flotr2\flotr2.min.js"></script>
+        <script src="\lib\bootstrap-3.3.7-dist\js\jquery-3.3.1.min.js"></script>
+        <script src="\lib\bootstrap-3.3.7-dist\js\bootstrap.min.js"></script>
+        <script src="\lib\bootstrap-3.3.7-dist\js\bootstrap-datetimepicker.js"></script>
+    </head>
+    <body>
+        {include file="../application/index/view/common/header.html" /}
+        {include file="../application/index/view/common/leftBar.html" /}
+
+        <div class="zhangmu_container" style="margin-top:50px;">
+            <div class="form-group date_form">
+                <p class="djrq">最晚回款期限</p>
+                <p style="width: 20px;font-size: 14px;float: left;margin-top:5px;margin-left:20px;">从</p>
+                <div style="width: 180px;font-size: 14px;float: left;" class="input-group date form_datetime" data-date="" data-date-format="dd MM yyyy" data-link-field="dtp_input2" data-link-format="yyyy-mm-dd">
+                    <input class="form-control" id="date1" size="16" type="text" value="<?=$date1?>" readonly>
+                    <span class="input-group-addon"><span class="glyphicon glyphicon-remove"></span></span>
+                    <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
+                </div>
+                <p style="width: 20px;font-size: 14px;float: left;margin-top:5px;margin-left:20px;">到</p>
+                <div style="width: 180px;font-size: 14px;float: left;" class="input-group date form_datetime" data-date="" data-date-format="dd MM yyyy" data-link-field="dtp_input2" data-link-format="yyyy-mm-dd">
+                    <input class="form-control" id="date2" size="16" type="text" value="<?=$date2?>" readonly>
+                    <span class="input-group-addon"><span class="glyphicon glyphicon-remove"></span></span>
+                    <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
+                </div>
+                <div style="font-size: 14px;float: left;margin-left:20px;">
+                    <input class="form-control" id="companyName" placeholder="请输入公司名称" style="width:250px;" value="<?=$companyName?>"/>
+                </div>
+                <div style="float:left;margin-left:20px;margin-top:2px;">
+                    <button class="btn btn-warning btn-sm" onclick="search()">查询</button>
+                    <button class="btn btn-success btn-sm" onclick="excel()">下载</button>
+                    {if($newLevel=="ADMIN")}
+                        <button class="btn btn-info btn-sm" onclick="upload()" data-toggle="modal" data-target="#myModal2">批量导入</button>
+                    {/if}
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
+
+<style>
+    th{background-color:lavender}
+    th,td{text-align: center;margin: 0;overflow: hidden}
+    .to-scroll{overflow-x: scroll;overflow-x: scroll;height: 550px;clear:both}
+    .zhangmu_container{margin-left: 180px;}
+    .nav_div{float:left;margin-top: 20px;margin-left:40px;}
+    .date_form{clear: both;float:left;margin-top:30px;margin-left:30px}
+    .djrq{float:left;margin-top:5px}
+    .template{float:left;margin-left:400px;margin-top:2px;}
+    .pager li a:hover{background-color:#337ab7;color:#fff;}
+    .td1 p{text-align:center;width: 150px;white-space: nowrap;overflow: hidden;text-overflow:ellipsis;}
+    .td2 p{width: 180px;white-space: nowrap;overflow: hidden;text-overflow:ellipsis;}
+</style>

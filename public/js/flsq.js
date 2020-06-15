@@ -504,7 +504,7 @@ $(document).ready(function(){
 
         id=$("#my_id").val()
 
-        window.location.href="../../controller/fl/flLiucheng.php?option=7&id=" + id;
+        window.location.href="/index.php/Index/fl/fl_liucheng?option=7&id=" + id;
     })
 })
 

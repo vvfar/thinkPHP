@@ -93,12 +93,12 @@
 
                             {if($fl.key==0 and ($fl.status == "义乌打包发货" or $fl.status == "商业运营归档单据" or $fl.status == "已归档单据"))}
                                 {if($newLevel == "ADMIN")}
-                                    <td><a href="flLine.php?id={$fl.id}" target="_blank" style="color:red">{$fl.no}</a></td>
+                                    <td><a href="/index.php/Index/fl/fl_line.html?id={$fl.id}" target="_blank" style="color:red">{$fl.no}</a></td>
                                 {else\}
-                                    <td><a href="flLine.php?id={$fl.id}" target="_blank">{$fl.no}</a></td>
+                                    <td><a href="/index.php/Index/fl/fl_line.html?id={$fl.id}" target="_blank">{$fl.no}</a></td>
                                 {/if}
                             {else\}
-                                <td><a href="flLine.php?id={$fl.id}" target="_blank">{$fl.no}</a></td>
+                                <td><a href="/index.php/Index/fl/fl_line.html?id={$fl.id}" target="_blank">{$fl.no}</a></td>
                             {/if}
                     
                             <td>{$fl.company}</td>

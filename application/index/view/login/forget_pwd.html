@@ -52,11 +52,11 @@
                     </div>
                     <div class="form-group" style="clear: both;">
                         <p style="width: 120px;font-size: 14px;float: left;margin-top: 22px;">新密码</p>
-                        <input type="text" class="form-control" id="newPwd1" name="newPwd1" placeholder="请输入新密码" value="" style="width: 220px;float: left;margin-top: 15px;">
+                        <input type="password" class="form-control" id="newPwd1" name="newPwd1" placeholder="请输入新密码" value="" style="width: 220px;float: left;margin-top: 15px;">
                     </div>
                     <div class="form-group" style="clear: both;">
                         <p style="width: 120px;font-size: 14px;float: left;margin-top: 22px;">确认密码</p>
-                        <input type="text" class="form-control" id="newPwd2" name="newPwd2" placeholder="请输入确认密码" value="" style="width: 220px;float: left;margin-top: 15px;">
+                        <input type="password" class="form-control" id="newPwd2" name="newPwd2" placeholder="请输入确认密码" value="" style="width: 220px;float: left;margin-top: 15px;">
                     </div>
                     <div class="form-group" style="clear: both;">
                         <p style="width: 120px;font-size: 14px;float: left;margin-top: 22px;">验证码</p>
@@ -103,7 +103,7 @@
                 //dataType:"json",
                 success:function(yzm){
                     
-                    var len=5;
+                    var len=60;
                     var a=true;
 
                     var time = setInterval(function() {

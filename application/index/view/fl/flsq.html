@@ -39,7 +39,7 @@
                 {if($fl_info.Id=="")}
                     <button type="reset" class="btn btn-danger btn-sm" style="float:left;margin-left:695px;margin-top:-10px">重置表单</button>
                 {else\}
-                    <button type="reset" id="delete" class="btn btn-danger btn-sm" style="float:right;margin-right:50px;margin-top:-10px">删除表单</button>
+                    <button type="reset" id="delete" class="btn btn-danger btn-sm" style="float:left;margin-left:695px;margin-top:-10px">删除表单</button>
                 {/if}
                 
 
@@ -83,7 +83,7 @@
                         <td colspan="4">辅料费用</td>
                     </tr>
                     <tr>
-                        <td>序号</td>
+                        <td style="width:80px;">序号</td>
                         <td>品类</td>
                         <td>货号</td>
                         <td>品名</td>
@@ -148,7 +148,7 @@
                         }
                         
                         for($i=0;$i<$hd_count-1;$i++){
-                            for($i=0;$i<20;$i++){
+                            for($i=0;$i<30;$i++){
                                 if($hd_count >2){
                                     if($i<$hd_count){
                                         ?>

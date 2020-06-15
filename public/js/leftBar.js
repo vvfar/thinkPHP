@@ -33,7 +33,7 @@ $(document).ready(function(){
             $(".leftbar0Z3 a").css("color","#fff")
         }
 
-    }else if(leftBar_path ==  "write_sx.html" || leftBar_path ==  "companyManger2.php" || leftBar_path ==  "dsh_sx.html"  || leftBar_path ==  "dhk_sx.html" || leftBar_path ==  "ywc_sx.html" || leftBar_path ==  "sx_line.php" || leftBar_path ==  "sxmb.php"  || leftBar_path ==  "companyManger1_edit.php" || leftBar_path == "expireSX.php"    || leftBar_path == "timeSX.php"|| leftBar_path == "sx_cw.php" || leftBar_path == "ZFSX.php" || leftBar_path ==  "sx_line2.php" || leftBar_path ==  "djLoad.php"){
+    }else if(leftBar_path ==  "write_sx.html" || leftBar_path ==  "companyManger2.php" || leftBar_path ==  "dsh_sx.html"  || leftBar_path ==  "dhk_sx.html" || leftBar_path ==  "ywc_sx.html" || leftBar_path ==  "sx_line.html" || leftBar_path ==  "sxmb.php"  || leftBar_path ==  "companyManger1_edit.php" || leftBar_path == "expireSX.php"    || leftBar_path == "timeSX.php"|| leftBar_path == "sx_cw.php" || leftBar_path == "ZFSX.php" || leftBar_path ==  "sx_line2.php" || leftBar_path ==  "djLoad.html"){
 
         $(".leftbarAll li").css("background-color","#160509");
         $(".leftbar1").css("background-color","darkslateblue");
@@ -54,7 +54,7 @@ $(document).ready(function(){
 
         if(leftBar_path ==  "dsh_sx.html" || leftBar_path ==  "sx_cw.php"){
             $(".leftbar1Z1 a").css("color","#fff")
-        }else if(leftBar_path == "write_sx.html" || leftBar_path ==  "djLoad.php"){
+        }else if(leftBar_path == "write_sx.html" || leftBar_path ==  "djLoad.html"){
             $(".leftbar1Z2 a").css("color","#fff")
         }else if(leftBar_path == "companyManger2.php"){
             $(".leftbar1Z3 a").css("color","#fff")
