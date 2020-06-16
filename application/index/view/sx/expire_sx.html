@@ -1,56 +1,164 @@
-<!--
-                <?php
-                    for($i=0;$i<12;$i++){
-                        if($dateTime[$i] != "" || $date1[$i] != ""){
-                        ?>
-                            <tr>
-                                <td>第<?=$i+1?>期</td>
-                                <td><?=$dateTime[$i]?></td>
-                                <td><?=$hkje[$i]?></td>
-                                <?php
-                                    if($wyfl[$i] !=""){
-                                        ?>
-                                            <td><?=$wyfl[$i].'%'?></td>
-                                        <?php
-                                    }else{
-                                        ?>
-                                            <td></td>
-                                        <?php
-                                    }
-                                    ?>
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width,initial-scale=1">
+        <title>俞兆林_公司授信</title>
+        <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" media="screen" />
+        <link href="\lib\bootstrap-3.3.7-dist\css\bootstrap.css" rel="stylesheet"/>
+        <link href="\lib\bootstrap-3.3.7-dist\css\bootstrap-datetimepicker.min.css" rel="stylesheet" media="screen"/>
+        <link href="\css/leftbar.css" rel="stylesheet"/>
+        <link href="\css/header.css" rel="stylesheet"/>
+        <script src="\lib\bootstrap-3.3.7-dist\js\jquery-3.3.1.min.js"></script>
+        <script src="\lib\bootstrap-3.3.7-dist\js\bootstrap.min.js"></script>
+        <script src="\lib\bootstrap-3.3.7-dist\js\bootstrap-datetimepicker.js"></script>
+    </head>
+    <body>
+        {include file="../application/index/view/common/header.html" /}
+        {include file="../application/index/view/common/leftBar.html" /}
 
-                                <td><?php echo $hkje[$i]*($wyfl[$i]/100+1)?></td>
-                                <td><a href="#" title="<?=$hkfsbz[$i]?>" style="color:#333"><?=$hkfs[$i]?></a></td>
-                                <td><?=$date1[$i]?></td>
-                                <td><?=$sjhkje[$i]?></td>
-                                <td><a href="#" title="<?=$hkfs2[$i]?>" style="color:#333"><?=$sjhkfs[$i]?></a></td>
-                                <?php
-                                    $D1 = strtotime($now);
+        <div class="zhangmu_container" style="margin-top:70px;">
+            <div style="margin-left:30px;margin-top:15px;">
+                <ul class="nav nav-pills nav-stacked">
+                    <li><a href="/index.php/Index/sx/time_sx.html" style="width:120px;float:left">即将到期授信</a></li>
+                    <li class="active" style="width:90px;float:left"><a href="#">逾期授信</a></li>
+                </ul>
+            </div>
 
-                                    if($dateTime[$i] !=""){
-                                        $D2 = strtotime($dateTime[$i]);
-                                    }else{
-                                        $D2="";
-                                    }
-                                    
-                                    if($D1>$D2 and $date1[$i]=="" and $syhkje !="0"){
-                                        ?>
-                                            <td style="color: darkred;">逾期</td>
-                                        <?php
-                                    }elseif($D1<=$D2 and $date1[$i]=="" and $syhkje !="0"){
-                                        ?>
-                                            <td style="color: darkyellow;">待还款</td>
-                                        <?php
-                                    }else{
-                                        ?>
-                                            <td style="color: darkgreen;">已还款</td>
-                                        <?php
-                                    }
-                                ?>
-                                
-                            </tr>
+            <div>
+                <button class="btn btn-success btn-sm" style="float:left;margin-left:955px;" onclick="downloadYQ()">下载逾期单据</button>
+            </div>
+
+            <div style="clear:both;margin-left: 30px;">
+                
+                <table class="table table-responsive table-bordered table-hover" style="width: 1020px;margin-bottom:10px;margin-top:45px;">
+                    <tr>
+                        <th>序号</th>
+                        <th>授信编号</th>
+                        <th>公司名称</th>
+                        <th>事业部</th>
+                        <th>业务员</th>
+                        <th>授信金额</th>
+                        <th>期数</th>
+                        <th>应收</th>
+                        <th>已收</th>
+                        <th>未收</th>
+                        <th>到期时间</th>
+                        <th>逾期天数</th>
+                    </tr>
+
+                    {foreach name="sxs" item="sx" key="index"}
+                        {if($yqsj != "")}
+                            {if($myTotal <= $page * $pagesize and $myTotal > ($page-1) * $pagesize)}
+                                <tr>
+                                    <td><?=$myTotal?></td>
+                                    <td class="td1"><p style="margin:0 auto"><a href="sx_line.php?id=<?=$myrow[0]?>" style="width: 30px;"><?=$myrow[2]?></a></p></td>
+                                    <td class="td2"><p style="margin:0 auto"><?=$myrow[3]?></p></td>
+                                    <td><p style="margin:0"><?=$myrow[4]?></p></td>
+                                    <td><?=$myrow[5]?></td>
+                                    <td><?=$myrow[6]?></td>
+                                    <td><?=$qs?></td>
+                                    <td><?=$all_jhhk?></td>
+                                    <td><?=$all_sjhk?></td>
+                                    <td><?php echo $all_jhhk-$all_sjhk?></td>
+                                    <td><?=$expireDate?></td>
+                                    <td><?=$yqsj?></td>
+                                </tr>
+                                {$myTotal+=1}
+                            {/if}
+                        {/if}
+                    {/foreach}
+                </table>
+
+                <div style="clear:both">
+                    <h4>
+                        <span class="label label-info">共<?=$total?>条</span>
+                        <span class="label label-warning" style="margin-left:5px;">共<?=$pagecount?>页</span>
+                        <span class="label label-success" style="margin-left:5px;">第<?=$page?>页</span>
+                    </h4>
+                <div>
+            </div>
+
+            <div>
+                <ul class="pager" style="float:left;width:150px;">
+                    <li><a href="<?php echo $_SERVER['PHP_SELF']?>?page=<?php
+                        if($page>1)
+                            echo $page-1;
+                        else
+                            echo 1;  
+                    ?>&date1=<?=$date1?>&date2=<?=$date2?>&companyName=<?=$companyName?>">上一页</a></li>
+                    <li><a href="<?php echo $_SERVER['PHP_SELF']?>?page=<?php
+                        if($page<$pagecount)
+                            echo $page+1;
+                        else
+                            echo $pagecount;  
+                    ?>&date1=<?=$date1?>&date2=<?=$date2?>&companyName=<?=$companyName?>">下一页</a></li>
+                </ul>
+
+                <div style="float:left;margin-left:550px;width:321px;">
+                    <ul class="pagination" style="float:right;margin:0">
+                        <li><a href="<?php echo $_SERVER['PHP_SELF']?>?page=1">&laquo;</a></li>
                         <?php
-                        }
-                    }
-                ?>
-                -->
+                            if($pagecount<=5){
+                                for($i=1;$i<=$pagecount;$i++){
+                                    if($i==$page){
+                                        ?>
+                                            <li  class="active"><a href="<?php echo $_SERVER['PHP_SELF']?>?page=<?=$i?>&date1=<?=$date1?>&date2=<?=$date2?>&companyName=<?=$companyName?>"><?=$i?></a></li>
+                                        <?php
+                                    }else{
+                                        ?>
+                                            <li><a href="<?php echo $_SERVER['PHP_SELF']?>?page=<?=$i?>&date1=<?=$date1?>&date2=<?=$date2?>&companyName=<?=$companyName?>"><?=$i?></a></li>
+                                        <?php
+                                    }
+                                }
+                            }else{
+                                for($i=1;$i<=$pagecount;$i++){
+                                    if($i==$page){
+                                        ?>
+                                            <li  class="active"><a href="<?php echo $_SERVER['PHP_SELF']?>?page=<?=$i?>&date1=<?=$date1?>&date2=<?=$date2?>&companyName=<?=$companyName?>"><?=$i?></a></li>
+                                        <?php
+                                    }elseif(($i>=$page-2 and $i<=$page+2 and $page>3) and $page !=$pagecount){
+                                        ?>
+                                            <li><a href="<?php echo $_SERVER['PHP_SELF']?>?page=<?=$i?>&date1=<?=$date1?>&date2=<?=$date2?>&companyName=<?=$companyName?>"><?=$i?></a></li>
+                                        <?php
+                                    }elseif($i<=5){
+                                        if($page<=3){
+                                        ?>
+                                            <li><a href="<?php echo $_SERVER['PHP_SELF']?>?page=<?=$i?>&date1=<?=$date1?>&date2=<?=$date2?>&companyName=<?=$companyName?>"><?=$i?></a></li>
+                                        <?php
+                                        }
+                                    }
+                                }
+                            }
+                            
+                        ?>
+                        
+                        <li><a href="<?php echo $_SERVER['PHP_SELF']?>?page=<?php echo $pagecount; ?>&date1=<?=$date1?>&date2=<?=$date2?>&companyName=<?=$companyName?>">&raquo;</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
+
+<style>
+    th{background-color:lavender}
+    th,td{text-align: center;margin: 0;overflow: hidden}
+    .to-scroll{overflow-x: scroll;overflow-x: scroll;height: 550px;clear:both}
+    .zhangmu_container{margin-left: 180px;}
+    .nav_div{float:left;margin-top: 20px;margin-left:40px;}
+    .date_form{clear: both;float:left;margin-top:30px;margin-left:60px}
+    .djrq{float:left;margin-top:5px}
+    .template{float:left;margin-left:400px;margin-top:2px;}
+    table p{width: 100px;white-space: nowrap;overflow: hidden;text-overflow:ellipsis;}
+    .pager li a:hover{background-color:#337ab7;color:#fff;}
+    .td1 p{text-align:center;width: 150px;white-space: nowrap;overflow: hidden;text-overflow:ellipsis;}
+    .td2 p{width: 180px;white-space: nowrap;overflow: hidden;text-overflow:ellipsis}
+</style>
+
+<script type="text/javascript">  
+    var downloadYQ=function(){
+        window.location.href="../../controller/sx/downloadSX_YQ.php"
+    }
+</script>

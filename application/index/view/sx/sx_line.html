@@ -133,8 +133,60 @@
                     <th>回款方式</th>
                     <th>是否逾期</th>
                 </tr>
+                <?php
+                    for($i=0;$i<12;$i++){
+                        if($dateTime[$i] != "" || $date1[$i] != ""){
+                        ?>
+                            <tr>
+                                <td>第<?=$i+1?>期</td>
+                                <td><?=$dateTime[$i]?></td>
+                                <td><?=$hkje[$i]?></td>
+                                <?php
+                                    if($wyfl[$i] !=""){
+                                        ?>
+                                            <td><?=$wyfl[$i].'%'?></td>
+                                        <?php
+                                    }else{
+                                        ?>
+                                            <td></td>
+                                        <?php
+                                    }
+                                    ?>
 
-                
+                                <td><?php echo $hkje[$i]*($wyfl[$i]/100+1)?></td>
+                                <td><a href="#" title="<?=$hkfsbz[$i]?>" style="color:#333"><?=$hkfs[$i]?></a></td>
+                                <td><?=$date1[$i]?></td>
+                                <td><?=$sjhkje[$i]?></td>
+                                <td><a href="#" title="<?=$hkfs2[$i]?>" style="color:#333"><?=$sjhkfs[$i]?></a></td>
+                                <?php
+                                    $D1 = strtotime($now);
+
+                                    if($dateTime[$i] !=""){
+                                        $D2 = strtotime($dateTime[$i]);
+                                    }else{
+                                        $D2="";
+                                    }
+                                    
+                                    if($D1>$D2 and $date1[$i]=="" and $syhkje !="0"){
+                                        ?>
+                                            <td style="color: darkred;">逾期</td>
+                                        <?php
+                                    }elseif($D1<=$D2 and $date1[$i]=="" and $syhkje !="0"){
+                                        ?>
+                                            <td style="color: darkyellow;">待还款</td>
+                                        <?php
+                                    }else{
+                                        ?>
+                                            <td style="color: darkgreen;">已还款</td>
+                                        <?php
+                                    }
+                                ?>
+                                
+                            </tr>
+                        <?php
+                        }
+                    }
+                ?>
             </table>
 
             <p style="margin-left:50px;">剩余金额回款方式：{$sx_line.syjehkfs}</p>

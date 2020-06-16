@@ -145,7 +145,7 @@
                     </div>
                 </form>
 
-                <div style="clear:both;width:1112px">
+                <div style="clear:both;width:1053px">
                     <h4 style="float:left;margin-top:20px;">
                         <span class="label label-info">共<?=$total?>条</span>
                         <span class="label label-warning" style="margin-left:5px;">共<?=$pagecount?>页</span>
@@ -155,13 +155,14 @@
                     {if($department =="财务部" or $department == "商业运营部" or $newLevel =="ADMIN")}
                         <div style="float:right;margin-right:33px;margin-top:20px;">
                 
-                            <p style="float: left;margin-left:20px;">事业部：<span style="text-decoration: underline;"><?=$s_department?></span></p>
-                            <p style="float: left;margin-left:20px;">授信金额：￥<span style="text-decoration: underline;"><?=$sxMoney?></span></p>
-                            <p style="float: left;margin-left:20px;">剩余应还：￥<span style="text-decoration: underline;"><?=$syyh?></span></p>
-                            <p style="float: left;margin-left:20px;">剩余额度：￥<span style="text-decoration: underline;"><?=$syed?></span></p>
-                        
-                            <a href="timeSX.php" class="btn btn-xs btn-warning" style="float: left;margin-left:10px;">到期授信</a>    
-                            <a href="expireSX.php" class="btn btn-xs btn-danger" style="float: left;margin-left:10px;">逾期授信</a>   
+                            <p style="float: left;margin-left:20px;">事业部：<span style="text-decoration: underline;">{$s_department}</span></p>
+                            <p style="float: left;margin-left:20px;">授信金额：￥<span style="text-decoration: underline;">{$sxMoney}</span></p>
+                            <p style="float: left;margin-left:20px;">剩余应还：￥<span style="text-decoration: underline;">{$syyh}</span></p>
+                            <p style="float: left;margin-left:20px;">剩余额度：￥<span style="text-decoration: underline;">{$syed}</span></p>
+                            
+                            <p style="float: left;margin-left:10px;">状态：</p>
+                            <a href="/index.php/Index/sx/time_sx.html" class="btn btn-xs btn-warning" style="float: left;">到期</a>    
+                            <a href="/index.php/Index/sx/expire_sx.html" class="btn btn-xs btn-danger" style="float: left;margin-left:7px;">逾期</a>   
                         </div>
                     {/if}
                 <div> 
