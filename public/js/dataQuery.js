@@ -11,6 +11,24 @@ window.onload=function(){
         $(".store1").css("display","")
     })
 
+    $(".click_bar button").click(function(){
+        option=$(this).html();
+
+        $(this).siblings().removeClass("btn-success");
+        $(this).removeClass("btn-default");
+        $(this).addClass("btn-success");
+        
+        if(option=="折线图"){
+            plant(1)
+        }else if(option=="柱状图"){
+            plant(2)
+        }else if(option=="饼图"){
+            plant(3)
+        }
+
+
+    })
+
 }
 
 
@@ -420,10 +438,17 @@ function initData(changeData,no){
             }
         })
         
-        //第四个框
+        plant(1);  
+    }
+}
+
+//第四个框 
+function plant(no){
+
+    if(no==1){
         var myChart=echarts.init(document.getElementById('data_body'),"light");
     
-        myChart.showLoading();
+        //myChart.showLoading();
     
         var names=[];
         var numbers=[];
@@ -444,7 +469,7 @@ function initData(changeData,no){
                     line=result[0].line;
                 }
                 
-                myChart.hideLoading();
+                //myChart.hideLoading();
             
                 var option={
                     title:{
@@ -462,14 +487,19 @@ function initData(changeData,no){
                     },
                     
                     xAxis:{
-                        data:names
+                        data:names,
+                        "axisLabel":{
+                            interval: 1
+                        },
+                        show:true
                     },
                     yAxis:{
                         type: 'value',
                         //name:'万',
                         axisLabel: {
                             formatter:'{value} (万)'
-                        }
+                        },
+                        show:true
                     },
                     series:[{
                         name:line,
@@ -482,10 +512,104 @@ function initData(changeData,no){
     
             }
         })
-        
-    }
+    }else if(no==2){
+        var myChart=echarts.init(document.getElementById('data_body'),"light");
     
+        var names=[];
+        var numbers=[];
 
+        $.ajax({
+            type:"post",
+            async:true,
+            data:data,
+            url:"/index.php/Index/index/dataQueryController8",
+            dataType:"json",
+            success:function(result){
 
+                for(var i in result){
+                    names.push(i)
+                    numbers.push(result[i])
+                }
 
+                //console.log(names)
+                //console.log(numbers)
+
+                // 指定图表的配置项和数据
+                var option = {
+                    title: {
+                        text: ''
+                    },
+                    tooltip: {},
+                    legend: {
+                        data:['销量']
+                    },
+                    xAxis: {
+                        splitLine: { show: false },
+                        data: names,
+                        "axisLabel":{
+                            interval: 0
+                        },
+                        show:true
+                    },
+                    // axisLabel: {
+                    //     interval: 0,
+                    //     formatter: function(data) {
+                    //         return data.split("").join("\n");
+                    //     }
+                    // },
+
+                    yAxis: {show:true},
+                    series: [{
+                        name: '销量',
+                        type: 'bar',
+                        data: numbers,
+                    }],
+                };
+
+                
+                // 使用刚指定的配置项和数据显示图表。
+                myChart.setOption(option);
+            }
+        })
+    }else if(no=3){
+        var myChart3=echarts.init(document.getElementById('data_body'),"light");
+    
+        var names=[];
+        var numbers=[];
+
+        $.ajax({
+            type:"post",
+            async:true,
+            data:data,
+            url:"/index.php/Index/index/dataQueryController9",
+            dataType:"json",
+            success:function(result){
+
+                var pie_str="";
+
+                for(var i in result){
+                    pie_str+="{value:'"+result[i]+"', name:'"+ i +"'},"
+                }
+
+                pie_str="["+pie_str+"]";
+                console.log(pie_str)
+
+                myChart3.setOption({
+                    series : [
+                        {
+                            name: '',
+                            type: 'pie',
+                            radius: '55%',
+                            data:eval(pie_str)
+                        }
+                    ],
+                    xAxis : [{show:false}],
+                    yAxis : [{show:false}]
+                })
+
+                // 使用刚指定的配置项和数据显示图表。
+                myChart3.setOption(option);
+            }
+        })
+    }
 }

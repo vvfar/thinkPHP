@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width,initial-scale=1">
+        <title>{$title}</title>
+        <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" media="screen" />
+        <link href="\lib\bootstrap-3.3.7-dist\css\bootstrap.css" rel="stylesheet"/>
+        <link href="\lib\bootstrap-3.3.7-dist\css\bootstrap-datetimepicker.min.css" rel="stylesheet" media="screen"/>
+        <link href="\css\leftbar.css" rel="stylesheet"/>
+        <link href="\css\header.css" rel="stylesheet"/>
+        <script src="\lib\bootstrap-3.3.7-dist\js\jquery-3.3.1.min.js"></script>
+        <script src="\lib\bootstrap-3.3.7-dist\js\bootstrap.min.js"></script>
+        <script src="\lib\bootstrap-3.3.7-dist\js\bootstrap-datetimepicker.js"></script>
+    </head>
+    <body>
+        {include file="../application/index/view/common/header.html" /}
+        {include file="../application/index/view/common/leftBar.html" /}
+
+        <div style="margin-left: 180px;margin-top:50px;">
+
+            <div style="clear: both;border-radius: 6px;width:1060px;">
+                <div class="nav nav-pills" style="float:left;margin-top:15px;margin-left:30px;">
+                    <li role="presentation"><a href="/index.php/Index/store/store_data1.html">销售额</a></li>
+                    <li role="presentation" class="active"><a href="#">回款</a></li>
+                </div>
+
+                <div style="float:right;margin-top:20px;">
+                    <p style="float:left;margin-left:10px;position:relative;top:5px;">下载</p>
+                    <button class="btn btn-sm btn-info" style="float:left;margin-left:10px;"  id="downloadAll_xj">现金回款</button>  
+                    <button class="btn btn-sm btn-warning" style="float:left;margin-left:10px;"  id="downloadAll_sx">授信回款</button>  
+                </div>
+            </div>
+            
+            <div style="clear:both;width:1060px;">
+                <div style="position:relative;top:10px;">
+                    <h4 style="float:left;margin-top:15px;">
+                        <span class="label label-info" style="margin-left:30px;">共{$total}条</span>
+                        <span class="label label-warning" style="margin-left:5px;">共{$pagecount}页</span>
+                        <span class="label label-success" style="margin-left:5px;">第{$page}页</span>
+                    </h4>
+
+                    <div style="float:right;">
+                        <p style="float: left;position:relative;top:7px;">选择日期</p>
+                        <div style="width: 180px;font-size: 14px;float: left;margin-left:20px" class="input-group date form_datetime" data-date="" data-date-format="dd MM yyyy" data-link-field="dtp_input2" data-link-format="yyyy-mm-dd">
+                            <input class="form-control" id="dateTime" name="dateTime" size="16" type="text" value="<?=$date?>" readonly>
+                            <span class="input-group-addon"><span class="glyphicon glyphicon-remove"></span></span>
+                            <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div style="clear:both">
+                <table class="table table-responsive table-bordered table-hover" style="width:1030px;margin-top:60px;margin-left:30px;">
+                    <tr>
+                        <th>序号</th>
+                        <th>店铺编号</th>
+                        <th>店铺名</th>
+                        <th>负责人</th>
+                        <th>回款</th>
+                        <th>回款目标</th>
+                        <th>现完成额</th>
+                        <th>完成比</th>
+                        <th>店铺状态</th>
+                    </tr>
+                
+                    {foreach name="store_datas" item="store_data" key="index"}
+                        <tr>
+                            <td>{$pagesize*($page-1) + $index+1}</td>
+                            <td><a href="dataStoreDetails.php?storeID={$store_data.storeID}">{$store_data.storeID}</a></td>
+                            <td>{$store_data.storeName}</td>
+                            <td>{$store_data.staff}</td>
+                            <td>{$store_data.backMoney}</td>
+                            <td>￥{$store_data.hkTarget}</td>
+                            <td>￥{$store_data.backMoney}</td>
+                            <td>
+                                {if $store_data.hkTarget != ""}
+                                    {$store_data.backMoney}/{$store_data.hkTarget} *100?>%
+                                {/if}
+                            </td>
+                            <td>{$store_data.status}</td>
+                        </tr>
+                    {/foreach}
+                </table>
+            </div>
+
+            <div style="margin-left: 30px;">
+                <ul class="pager" style="float:left;width:150px;margin-top:0px;">
+                    <li><a href="<?php echo $_SERVER['PHP_SELF']?>?page=<?php
+                        if($page>1)
+                            echo $page-1;
+                        else
+                            echo 1;  
+                    ?>&date=<?=$date?>">上一页</a></li>
+                    <li><a href="<?php echo $_SERVER['PHP_SELF']?>?page=<?php
+                        if($page<$pagecount)
+                            echo $page+1;
+                        else
+                            echo $pagecount;  
+                    ?>&date=<?=$date?>">下一页</a></li>
+                </ul>
+
+                <div style="float:left;margin-left:560px;width:321px;">
+                    <ul class="pagination" style="float:right;margin-top:0px;">
+                        <li><a href="<?php echo $_SERVER['PHP_SELF']?>?page=1&date=<?=$date?>">&laquo;</a></li>
+                        <?php
+                            if($pagecount<=5){
+                                for($i=1;$i<=$pagecount;$i++){
+                                    if($i==$page){
+                                        ?>
+                                            <li  class="active"><a href="<?php echo $_SERVER['PHP_SELF']?>?page=<?=$i?>&date=<?=$date?>"><?=$i?></a></li>
+                                        <?php
+                                    }else{
+                                        ?>
+                                            <li><a href="<?php echo $_SERVER['PHP_SELF']?>?page=<?=$i?>&date=<?=$date?>"><?=$i?></a></li>
+                                        <?php
+                                    }
+                                }
+                            }else{
+                                for($i=1;$i<=$pagecount;$i++){
+                                    if($i==$page){
+                                        ?>
+                                            <li  class="active"><a href="<?php echo $_SERVER['PHP_SELF']?>?page=<?=$i?>&date=<?=$date?>"><?=$i?></a></li>
+                                        <?php
+                                    }elseif(($i>=$page-2 and $i<=$page+2 and $page>3) and $page !=$pagecount){
+                                        ?>
+                                            <li><a href="<?php echo $_SERVER['PHP_SELF']?>?page=<?=$i?>&date=<?=$date?>"><?=$i?></a></li>
+                                        <?php
+                                    }elseif($i<=5){
+                                        if($page<=3){
+                                        ?>
+                                            <li><a href="<?php echo $_SERVER['PHP_SELF']?>?page=<?=$i?>&date=<?=$date?>"><?=$i?></a></li>
+                                        <?php
+                                        }
+                                    }
+                                }
+                            }
+                            
+                        ?>
+                        
+                        <li><a href="<?php echo $_SERVER['PHP_SELF']?>?page=<?php echo $pagecount; ?>&date=<?=$date?>">&raquo;</a></li>
+                    </ul>
+                </div>
+            
+            </div>
+        </div>
+    </body>
+</html>
+
+<style>
+    th{background-color:rgb(67, 64, 255);color:#fff}
+
+    td,th{text-align: center;}
+</style>
+
+<script>
+
+    $(".form_datetime").datetimepicker({
+        format: 'yyyy-mm-dd',
+        weekStart: 1,
+        autoclose: true,
+        todayBtn: true,
+        startView: 2,  
+        minView: 2, 
+        forceParse: false,
+        language:'cn',
+        pickerPosition: "bottom-left"
+    });
+
+    $(".date").change(function(){
+        date=$("#dateTime").val();
+
+        window.location.href="dataStore2.php?date="+date;
+    })
+
+    $("#downloadAll_xj").click(function(){
+        window.location.href="../../controller/store/downloadStoreData.php?option=2"
+    })
+
+    $("#downloadAll_sx").click(function(){
+        window.location.href="../../controller/sx/downloadSXHK_list.php"
+    })
+</script>

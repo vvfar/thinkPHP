@@ -1691,4 +1691,34 @@ class Index extends Controller
         echo $data;
     }
 
+    //柱状图
+    public function dataQueryController8(){
+
+        $data=array();
+
+        $label=["TOMMY","自营","服饰","家纺","居家","母婴","京东","拼多多","天猫","女装","线下"];
+        $value=["5", "20", "36", "10", "10", "20","5", "20", "36", "10", "10"];
+
+        for($i=0;$i<sizeof($label);$i++){
+            $data[$label[$i]]=$value[$i];
+        }
+
+        echo json_encode($data,JSON_UNESCAPED_UNICODE);
+    }
+
+    //饼图
+    public function dataQueryController9(){
+        $data=array();
+
+        $label=["京东","天猫","唯品会","苏宁","其他"];
+        $value=["235", "274", "310", "335", "400"];
+
+        for($i=0;$i<sizeof($label);$i++){
+            $data[$label[$i]]=$value[$i];
+        }
+
+        echo json_encode($data,JSON_UNESCAPED_UNICODE);
+
+    }
+
 }
