@@ -6,7 +6,7 @@ $(document).ready(function(){
     leftBar_path=leftBar_path.split("/");
     leftBar_path=leftBar_path.pop()
 
-    if(leftBar_path == "" || leftBar_path == "/" || leftBar_path == "dataQuery.html" || leftBar_path == "myWork.html"){
+    if(leftBar_path == "" || leftBar_path == "/" || leftBar_path == "dataQuery.html" || leftBar_path == "myWork.html" || leftBar_path == "news_list.html" || leftBar_path == "news_line.html" || leftBar_path == "document_list.html"){
 
         $(".leftbarAll li").css("background-color","#160509");
         $(".leftbar0").css("background-color","darkslateblue");
@@ -25,7 +25,7 @@ $(document).ready(function(){
         $(".leftbar11Z").toggle();
         $(".leftbar13Z").toggle();
 
-        if(leftBar_path ==  ""){
+        if(leftBar_path ==  "" || leftBar_path == "news_list.html" || leftBar_path == "news_line.html" || leftBar_path == "document_list.html"){
             $(".leftbar0Z1 a").css("color","#fff")
         }else if(leftBar_path == "myWork.html"){
             $(".leftbar0Z2 a").css("color","#fff")
@@ -203,31 +203,6 @@ $(document).ready(function(){
         }else if(leftBar_path == "add_device.html"){
             $(".leftbar8Z2 a").css("color","#fff")
         }
-    }else if(leftBar_path == "document.php" || leftBar_path == "allNews.php" || leftBar_path == "news.php"){
-        
-        $(".leftbarAll li").css("background-color","#160509");
-        $(".leftbar9").css("background-color","darkslateblue");
-        $(".leftbar9 a").css("color","#ffffff");
-        
-        $(".leftbar9 i").css("color","#ffffff");
-        
-        $(".leftbar0Z").toggle();
-        $(".leftbar1Z").toggle();
-        $(".leftbar2Z").toggle();
-        $(".leftbar5Z").toggle();
-        $(".leftbar6Z").toggle();
-        $(".leftbar7Z").toggle();
-        $(".leftbar8Z").toggle();
-        $(".leftbar10Z").toggle();
-        $(".leftbar11Z").toggle();
-        $(".leftbar13Z").toggle();
-
-        if(leftBar_path ==  "document.php"){
-            $(".leftbar9Z3 a").css("color","#fff")
-        }else if(leftBar_path == "allNews.php" || leftBar_path == "news.php"){
-            $(".leftbar9Z1 a").css("color","#fff")
-        }
-    
     }else if(leftBar_path ==  "add_meeting.html" || leftBar_path ==  "view_meeting.html"  || leftBar_path ==  "meeting_line.html"){
         $(".leftbar10 i").css("color","#ffffff");
         $(".leftbar10").css("background-color","darkslateblue");

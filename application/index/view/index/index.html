@@ -77,11 +77,12 @@
             </div>
 
             <div  class="bd">
-                <div class="ggl_title">
-                    <p class="title">公共文档</p>
+                <div class="ggl_title" style="height:20px;">
+                    <p class="title" style="float:left">公共文档</p>
+                    <p style="float:right;margin-right:20px;"><a href="/index.php/Index/document/document_list.html" target="_blank" class="title">更多>></a></p>
                 </div>
             
-                <table class="table table-hover ggl_tb" style="width:670px">
+                <table class="table table-hover ggl_tb" style="width:690px">
                     <tr>
                         <th>文档标题</th>
                         <th>下载链接</th>
@@ -101,22 +102,20 @@
             </div>
 
             <div class="ggl2">
-                <div class="ggl2_title">
-                    <p class="title">公告栏</p>
+                <div class="ggl2_title" style="height:20px;">
+                    <p class="title" style="float:left">公告栏</p>
+                    <p style="float:right;margin-right:30px;"><a class="title" target="_blank" href="/index.php/Index/document/news_list.html">更多>></a></p>
                 </div>
 
                 <table class="table table-hover">
                     {foreach $news_ggl as $n}
                         <tr>
-                            <td><a href="home/news/news.php?id={$n.id}" style="color:#000000">{$n.title}</a></td>
+                            <td><a href="/index.php/Index/document/news_line.html?id={$n.id}" style="color:#000000">{$n.title}</a></td>
                             <td style="color:#cccccc;font-size:12px;text-align:right">{$n.time}</td>
                         </tr>
                     {/foreach}
-
                 </table>
             </div>
-
         </div>
-
     </body>
 </html>
