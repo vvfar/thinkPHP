@@ -1,3 +1,5 @@
+click="1"
+
 window.onload=function(){
     initData()
 
@@ -20,10 +22,13 @@ window.onload=function(){
         
         if(option=="折线图"){
             plant(1)
+            click="1"
         }else if(option=="柱状图"){
             plant(2)
+            click="2"
         }else if(option=="饼图"){
             plant(3)
+            click="3"
         }
 
 
@@ -438,7 +443,15 @@ function initData(changeData,no){
             }
         })
         
-        plant(1);  
+        option=$(".click_bar button").html();
+
+        if(click==1){
+            plant(1)
+        }else if(click==2){
+            plant(2)
+        }else if(click==3){
+            plant(3)
+        }
     }
 }
 
@@ -489,7 +502,7 @@ function plant(no){
                     xAxis:{
                         data:names,
                         "axisLabel":{
-                            interval: 1
+                            interval: 3
                         },
                         show:true
                     },
@@ -525,10 +538,12 @@ function plant(no){
             url:"/index.php/Index/index/dataQueryController8",
             dataType:"json",
             success:function(result){
+                console.log(result)
 
-                for(var i in result){
-                    names.push(i)
-                    numbers.push(result[i])
+                for(i=0;i<result.length;i++){
+
+                    names.push(result[i].department)
+                    numbers.push(result[i].num)
                 }
 
                 //console.log(names)
@@ -587,8 +602,8 @@ function plant(no){
 
                 var pie_str="";
 
-                for(var i in result){
-                    pie_str+="{value:'"+result[i]+"', name:'"+ i +"'},"
+                for(i=0;i<result.length;i++){
+                    pie_str+="{value:'"+result[i]["num"]+"', name:'"+ result[i]["pt"] +"'},"
                 }
 
                 pie_str="["+pie_str+"]";

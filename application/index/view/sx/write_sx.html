@@ -8,8 +8,8 @@
         <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" media="screen" />
         <link href="\lib\bootstrap-3.3.7-dist\css\bootstrap.css" rel="stylesheet"/>
         <link href="\lib\bootstrap-3.3.7-dist\css\bootstrap-datetimepicker.min.css" rel="stylesheet" media="screen"/>
-        <link href="\css\leftbar.css?v=2" rel="stylesheet"/>
-        <link href="\css/header.css?v=2" rel="stylesheet"/>
+        <link href="\css\leftbar.css" rel="stylesheet"/>
+        <link href="\css/header.css" rel="stylesheet"/>
         <script src="\lib\bootstrap-3.3.7-dist\js\jquery-3.3.1.min.js"></script>
         <script src="\lib\bootstrap-3.3.7-dist\js\bootstrap.min.js"></script>
         <script src="\lib\bootstrap-3.3.7-dist\js\bootstrap-datetimepicker.js"></script>
@@ -21,78 +21,7 @@
 
         <div style="margin-left: 180px;margin-top:50px;">
 
-            <form method="POST" action="../../controller/sx/newSXHandle.php" enctype="multipart/form-data" style="clear:both;float: left;margin-top: 10px;margin-left: 40px;">
-                <?php
-                    
-                    error_reporting(E_ALL || ~E_NOTICE);
-                                        
-                    $username=$_SESSION["username"];
-
-                    $sqlstr1="select department,newLevel from user_form where username='$username'";
-
-                    $result=mysqli_query($conn,$sqlstr1);
-
-                    while($myrow=mysqli_fetch_row($result)){
-                        $department=$myrow[0];
-                        $newLevel=$myrow[1];
-                    }
-
-
-                    $sqlstr2="select name,id from sx_id";
-
-                    $result1=mysqli_query($conn,$sqlstr2);
-
-                    if($result1){
-                        while($myrow=mysqli_fetch_row($result1)){
-                            $sx_id=$myrow[0];
-                            $sx_id_id=$myrow[1];
-                        }
-
-                        //拆分，获取最新sx_id
-                        $sx_id_arr=explode("-",$sx_id);
-
-                        $sx_xl=array_pop($sx_id_arr);
-                        $sx_year=(int)substr($sx_xl,0,4);
-                        $sx_month=(int)substr($sx_xl,4,2);
-                        $sx_no=(int)substr($sx_xl,6,9);
-
-                        date_default_timezone_set("Asia/Shanghai");
-                        $date=date('Y-m-d H:i:s', time());
-                        $year=date("Y",strtotime($date));
-                        $month=date("m",strtotime($date));
-
-                        if((int)$year != (int)$sx_year || (int)$month != (int)$sx_month){
-                            $sx_year_new=$year;
-                            $sx_month_new=$month;
-                            $sx_no_new=1;
-                        }else{
-                            $sx_year_new=$year;
-                            $sx_month_new=$sx_month;
-                            $sx_no_new=$sx_no+1;
-                        
-                            if((int)$sx_month_new<10){
-                                $sx_month_new="0".$sx_month_new;
-                            }
-                        }
-                        
-
-
-                        if($sx_no<10){
-                            $sx_no_new="00".$sx_no_new; 
-                        }elseif($sx_no<100){
-                            $sx_no_new="0".$sx_no_new;
-                        }
-
-                        $sx_xl_new=$sx_year_new.$sx_month_new.$sx_no_new;
-
-                        $sx_id=str_replace($sx_xl,$sx_xl_new,$sx_id);
-
-                    }else{
-                        $sx_id="";
-                    }
-                    
-
-                ?>
+            <form method="POST" action="/index.php/Index/sx/write_sxHandle" enctype="multipart/form-data" style="clear:both;float: left;margin-top: 10px;margin-left: 40px;">
 
                 <div class="nav nav-pills" style="float:left;margin-top:10px;">
                     <li role="presentation" class="active"><a href="#">新增授信</a></li>
@@ -109,16 +38,10 @@
                     <p style="width: 120px;font-size: 14px;float: left;margin-top: 20px;">公司名称</p>
                     <select name="companyName" class="form-control" style="width: 250px;float: left;margin-top: 15px;">
                         <option></option>
-                        <?php
-                            $sqlstr1="select distinct client from store where staff='$username' and status='正常' and htsq='合同授权已提交'";
 
-                            $result=mysqli_query($conn,$sqlstr1);
-        
-                            while($myrow=mysqli_fetch_row($result)){
-                                echo "<option>$myrow[0]</option>";
-                            }
-                        ?>
-                    
+                        {foreach $clients as $client}
+                            <option>{$client.client}</option>
+                        {/foreach}
                     </select>
                 </div>
                     
@@ -133,17 +56,9 @@
                 <div class="form-group gxCount" style="clear: both;display:none">
                     <p style="width: 120px;font-size: 14px;float: left;margin-top: 20px;">共享事业部数</p>
                     <select class="form-control" style="float: left;width:250px;margin-top: 15px;" id="gxCount_val" name="gxCount_val">
-                        <option selected>0</option>
-                        <option>1</option>
-                        <option>2</option>
-                        <option>3</option>
-                        <option>4</option>
-                        <option>5</option>
-                        <option>6</option>
-                        <option>7</option>
-                        <option>8</option>
-                        <option>9</option>
-                        <option>10</option>
+                        <?php for($i=0;$i<=12;$i++){ ?>    
+                            <option>{$i}</option>
+                        <?php } ?>
                     </select>
                 </div>
                 <?php
@@ -153,15 +68,11 @@
                     <p style="width: 120px;font-size: 14px;float: left;margin-top: 20px;">共享事业部</p>
 
                     <select class="form-control " style="float: left;width:250px;margin-top: 15px;" name="gxDepartment<?=$i?>">
-                        <option selected>内衣京东</option>
-                        <option>内衣拼多多</option>
-                        <option>内衣天猫唯品会事业管理部</option>
-                        <option>女装事业管理部</option>
-                        <option>居家百货事业管理部</option>
-                        <option>母婴童装事业管理部</option>
-                        <option>家纺事业管理部</option>
-                        <option>服饰事业管理部</option>
-                        <option>线下事业管理部</option>
+                        <option selected></option>
+                        
+                        {foreach $departments as $department}
+                            <option>{$department.department}</option>
+                        {/foreach}
                     </select>
         
                 </div>
@@ -179,25 +90,16 @@
                 <div class="form-group" style="clear: both;">
                     <p style="width: 120px;font-size: 14px;float: left;margin-top: 20px;">计划回款期数</p>
                     <select id="qs" name="qs" class="form-control" style="float: left;width: 250px;margin-top:15px;" onclick="over()">
-                        <?php
-                            for($i=0;$i<=12;$i++){  
-                        ?>
+                        <?php for($i=0;$i<=12;$i++){  ?>
                             <option><?=$i?></option>
-                        <?php
-                            }
-                        ?>
-                    
+                        <?php } ?>
                     </select>
-                </div>
-                
-                <div class="form-group" style="clear: both;">
-                
                 </div>
 
                 <?php
                     for($a=0;$a<=11;$a++){
                 ?>
-                <div style="clear: both;position: relative;top: 0px;display: none;margin-bottom:0px" class="zh<?=$a+1?>">
+                <div style="clear: both;display: none;margin-bottom:0px" class="zh<?=$a+1?>">
                     <div class="form-group" style="float:left">
                         <p style="width: 120px;font-size: 14px;float: left;margin-top:5px;">第<?=$a+1?>期回款日期</p>
                         <div style="width: 180px;font-size: 14px;float: left;" class="input-group date form_datetime" data-date="" data-date-format="dd MM yyyy" data-link-field="dtp_input2" data-link-format="yyyy-mm-dd">
@@ -212,7 +114,7 @@
                     </div>
                     <div class="form-group" style="float:left">
                         <p style="width: 30px;font-size: 14px;float: left;margin-left:20px;margin-top:5px;">费率</p>
-                        <input type="text" class="form-control" name="wyfl<?=$a+1?>" placeholder="" style="width: 62px;float: left;margin-left:20px;"><span style="position:relative;top:7px;margin-left:5px;font-size:16px;">%</span>
+                        <input type="text" class="form-control" name="wyfl<?=$a+1?>" value="0" placeholder="" style="width: 62px;float: left;margin-left:20px;"><span style="position:relative;top:7px;margin-left:5px;font-size:16px;">%</span>
                     </div>
                     <div class="form-group" style="float:left">
                         <p style="width: 30px;font-size: 14px;float: left;margin-left:20px;margin-top:5px;">方式</p>
@@ -236,8 +138,12 @@
                 ?>
 
                 <div class="form-group" style="clear: both;">
-                    <p style="width: 120px;font-size: 14px;float: left;margin-top:5px;">备注</p>
-                    <input type="text" class="form-control" name="note" placeholder="请输入备注信息" style="width: 250px;float: left;">
+                    <p style="width: 120px;font-size: 14px;float: left;margin-top:15px;">保证人</p>
+                    <input type="text" class="form-control" name="bpeople" placeholder="请输入备注信息" style="width: 250px;float: left;margin-top:15px;">
+                </div>
+                <div class="form-group" style="clear: both;">
+                    <p style="width: 120px;font-size: 14px;float: left;margin-top:15px;">备注</p>
+                    <input type="text" class="form-control" name="note" placeholder="请输入备注信息" style="width: 250px;float: left;margin-top:15px;">
                 </div>
 
                 <div class="form-group" style="clear: both;">
@@ -261,39 +167,10 @@
                 <div style="clear: both;margin-top:65px;">
                     <button type="button" class="btn btn-success btn-sm" id="submit">提交表单</button>
                     <button type="submit" class="btn btn-default btn-sm hidden" id="hd_submit">提交</button>
-                    <button type="reset" class="btn btn-primary btn-sm">重置表单</button>
+                    <button type="reset" class="btn btn-primary btn-sm" style="margin-left:10px;">重置表单</button>
                 </div>
-                
             </form>
-        </div>
-        <!-- Excel导入模态框,确认是否作废单据 -->
-        <form method="POST" action="formHandle/addCompanyHandle.php">
-            <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="top:30%">
-                <div class="modal-dialog">
-                    <div class="modal-content" style="width:350px;">
-                        <div class="modal-header">
-                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
-                                &times;
-                            </button>
-                            <h4 class="modal-title" id="myModalLabel">
-                                新增授信公司
-                            </h4>
-
-                        </div>
-                        <div class="modal-body" style="height: 100px;">
-                            <div class="form-group" style="clear: both;margin-bottom:0px;">
-                                <p style="width: 120px;font-size: 14px;float: left;">公司名称</p>
-                                <input type="text" class="form-control" name="companyName" placeholder="请输入公司名称" style="width: 250px;float: left;">
-                            </div>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-                            <button type="submit" class="btn btn-primary">确认</button>
-                        </div> 
-                    </div>
-                </div>
-            </div>
-        </form>                           
+        </div>                    
     </body>
 </html>
 

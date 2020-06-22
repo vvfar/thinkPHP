@@ -64,9 +64,19 @@ window.onload=function(){
                 },
                 
                 xAxis:{
-                    data:names
+                    data:names,
+                    "axisLabel":{
+                        interval: 3
+                    },
                 },
-                yAxis:{},
+                yAxis:{
+                    type: 'value',
+                    //name:'万',
+                    axisLabel: {
+                        formatter:'{value} (万)'
+                    },
+                    show:true
+                },
                 series:[{
                     name:'销量',
                     type:'line',

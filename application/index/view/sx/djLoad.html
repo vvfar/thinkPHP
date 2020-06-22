@@ -48,7 +48,7 @@
                         <th>业务员</th>
                         <th>授信金额</th>
                         <th>剩余应还</th>
-                        <th>剩余额度</th>
+                        <th>当前已还</th>
                         <th>状态</th>
                         <th style="width:100px;">登记日期</th>
                     </tr>
@@ -56,13 +56,14 @@
                     {foreach name="sxs" item="sx" key="index"}
                         <tr>
                             <td>{$pagesize*($page-1) + $index+1}</td>
-                            <td class="td1"><p style="margin:0 auto"><a href="sx_line.php?id={$sx.Id}" style="width: 50px;">{$sx.sqid}</a></p></td>
+                            <td class="td1"><p style="margin:0 auto"><a href="/index.php/Index/sx/sx_line.html?id={$sx.id}" style="width: 50px;">{$sx.sqid}</a></p></td>
                             <td class="td2"><p style="margin:0 auto">{$sx.companyName}</p></td>
-                            <td>{sx.department}</td>
-                            <td>{sx.ywy}</td>
-                            <td>{sx.sqmoney}</td>
-                            <td>{if($sx.dhkje==NULL)?0:<?=($sx.sqmoney-$sx.dhkje)?></td>
-                            <td>{$sx.status2}</td>
+                            <td class="td3"><p style="margin:0 auto">{$sx.department}</p></td>
+                            <td>{$sx.ywy}</td>
+                            <td>{$sx.sqmoney}</td>
+                            <td>{$sx.dhkje}</td>
+                            <td>{$sx.dhkje==NULL?0:$sx.sqmoney-$sx.dhkje}</td>
+                            <td>{$sx.status}</td>
                             <td>{$sx.date1}</td>
                         </tr>
                     {/foreach}
@@ -142,6 +143,7 @@
     .pager li a:hover{background-color:#337ab7;color:#fff;}
     .td1 p{text-align:center;width: 150px;white-space: nowrap;overflow: hidden;text-overflow:ellipsis;}
     .td2 p{width: 180px;white-space: nowrap;overflow: hidden;text-overflow:ellipsis;}
+    .td3 p{width: 100px;white-space: nowrap;overflow: hidden;text-overflow:ellipsis;}
 </style>
 
 <script type="text/javascript">  

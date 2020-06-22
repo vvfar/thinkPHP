@@ -85,6 +85,8 @@ class Index extends Controller
 
         $sqlstr2=\think\Db::name('sx_form')->field(['ywy','status'])->select();
 
+        $ywy="";
+
         for($i=0;$i<sizeof($sqlstr2);$i++){
             
             $ywy=$sqlstr2[$i]["ywy"];
@@ -195,47 +197,23 @@ class Index extends Controller
 
         $data=[];
 
-        if($newLevel == "KA"){
-            $object=$username;
+        date_default_timezone_set("Asia/Shanghai");
 
-            $sqlstr1=\think\Db::name('store_data_sales')->field(['sum(salesMoney)','date'])->where('staff',$username)->limit(30)->group('date')->select();
-    
-            //$sqlstr1="select sum(salesMoney),date from store_data_sales  where staff='".$username."' group by date limit 0,30";
-    
-            for($i=0;$i<sizeof($sqlstr1);$i++){
-                
-                $str='{"dateTime_xssj":"'.$sqlstr1[$i]["date"].'","number_xssj":"'.$sqlstr1[$i]["sum(salesMoney)"].'","object_xssj":"'.$object.'"}';
-                
-                array_push($data,$str);
-                
-            }
-    
-        }elseif($newLevel == "M" and $username !="崔立德" and $username !="宋歌"){
-            $object=$department;
+        $date=date('Y-m-d', time());
+        $dateMonth=date('Y-m', time());
+
+        
+        $object="全公司";
+
+        $sqlstr1=\think\Db::name('store_data_sales')->field(['sum(salesMoney)','date'])->limit(30)->group('date')->order('date desc')->select();
+
+
+        for($i=sizeof($sqlstr1)-1;$i>=0;$i--){
+
+            $str='{"dateTime_xssj":"'.$sqlstr1[$i]["date"].'","number_xssj":"'.($sqlstr1[$i]["sum(salesMoney)"]/10000).'","object_xssj":"'.$object.'"}';
+
+            array_push($data,$str);
             
-            $sqlstr1=\think\Db::query("select sum(salesMoney),date from store_data_sales where staff=any(select staff from store where '$department' like concat('%',department,'%')) group by date limit 0,30");
-    
-            for($i=0;$i<sizeof($sqlstr1);$i++){
-    
-                $str='{"dateTime_xssj":"'.$sqlstr1[$i]["date"].'","number_xssj":"'.$sqlstr1[$i]["sum(salesMoney)"].'","object_xssj":"'.$object.'"}';
-    
-                array_push($data,$str);
-                
-            }
-    
-        }else{
-            $object="全公司";
-    
-            $sqlstr1=\think\Db::name('store_data_sales')->field(['sum(salesMoney)','date'])->limit(30)->group('date')->select();
-
-    
-            for($i=0;$i<sizeof($sqlstr1);$i++){
-    
-                $str='{"dateTime_xssj":"'.$sqlstr1[$i]["date"].'","number_xssj":"'.$sqlstr1[$i]["sum(salesMoney)"].'","object_xssj":"'.$object.'"}';
-    
-                array_push($data,$str);
-                
-            }
         }
     
         echo "[".implode(",",$data)."]";
@@ -1694,30 +1672,185 @@ class Index extends Controller
     //柱状图
     public function dataQueryController8(){
 
-        $data=array();
+        session_start();
+        $username=$_SESSION["username"];
 
-        $label=["TOMMY","自营","服饰","家纺","居家","母婴","京东","拼多多","天猫","女装","线下"];
-        $value=["5", "20", "36", "10", "10", "20","5", "20", "36", "10", "10"];
+        $user=\think\Db::name('user_form')->where('username',$username)->select();
 
-        for($i=0;$i<sizeof($label);$i++){
-            $data[$label[$i]]=$value[$i];
+        $department=$user[0]["department"];
+        $newLevel=$user[0]["newLevel"];
+
+        $chooseOne=$this->request->post('chooseOne');
+        $chooseTwo=$this->request->post('chooseTwo');
+        $chooseThree=$this->request->post('chooseThree');
+        $chooseFour=$this->request->post('chooseFour');
+        $chooseFive=$this->request->post('chooseFive');
+        $chooseSix=$this->request->post('chooseSix');
+        $chooseSeven=$this->request->post('chooseSeven');
+        $chooseEight=$this->request->post('chooseEight');
+
+        $date=$chooseEight;
+
+        if($chooseEight=="默认"){
+            date_default_timezone_set("Asia/Shanghai");
+            $date1=date('Y-m-d', strtotime("-1 day"));
+            $date2=date("Y-m-d", strtotime("-1 month"));
+            $date3=date("Y-m-d", strtotime("-1 year"));
+    
+            $dateMonth=date('Y-m', time());
+            $dateMonth2=date('Y-m', strtotime("-1 month"));
+            $dateMonth3=date('Y-m', strtotime("-1 year"));
+    
+            $dateYear=date('Y', time());
+            $dateYear2=date('Y', strtotime("-1 year"));
+            $dateYear3=date('Y', strtotime("-1 year"));
+        }else{
+            $date1=date('Y-m-d', strtotime("$date"));
+            $date2=date('Y-m-d', strtotime("$date -1 month"));
+            $date3=date('Y-m-d', strtotime("$date -1 year"));
+    
+            $dateMonth=$date;
+            $dateMonth2=date('Y-m', strtotime("$date -1 month"));
+            $dateMonth3=date('Y-m', strtotime("$date -1 year"));
+    
+            $dateYear=date('Y', strtotime("$date"));
+            $dateYear2=date('Y', strtotime("$date -1 year"));
+            $dateYear3=date('Y', strtotime("$date -1 year"));
+            
         }
 
-        echo json_encode($data,JSON_UNESCAPED_UNICODE);
+        //事业部
+        if($chooseTwo != "全部"){
+            $sqlstr1=$sqlstr1."and department='$chooseTwo' ";
+        }
+
+        //业务员
+        if($chooseSix != "全部"){
+            $sqlstr1=$sqlstr1."and ywy='$chooseSix' ";
+        }
+
+        if($chooseSeven != "月" and $chooseSeven != "年"){
+            $chooseSeven = "日";
+        }
+        
+        $sqlstr="select ROUND(sum(a.salesMoney)/10000,2) as num,b.department as department from store_data_sales a left join store b on a.storeID=b.storeID where 1=1 ";
+
+        //时间段
+        if($chooseSeven == "日"){
+            $sqlstr=$sqlstr."and date='$date1' ";  //当期
+        }elseif($chooseSeven == "月"){
+            $sqlstr=$sqlstr."and date like '%$dateMonth%' "; //当期
+        }elseif($chooseSeven == "年"){
+            $sqlstr=$sqlstr."and date like '%$dateYear%' ";  //当期
+        }
+
+        $sqlstr=$sqlstr."group by b.department";
+
+        $sqlstr=\think\Db::query($sqlstr);
+        $label=["TOMMY","自营","服饰","家纺","居家","母婴","京东","拼多多","天猫","女装","线下"];
+
+        for($i=0;$i<sizeof($sqlstr);$i++){
+            for($j=0;$j<sizeof($label);$j++){
+                if(strpos($sqlstr[$i]["department"],$label[$j]) !==false){
+                    $sqlstr[$i]["department"]=$label[$j];
+                }
+            }
+        }
+
+        echo json_encode($sqlstr,JSON_UNESCAPED_UNICODE);
     }
 
     //饼图
     public function dataQueryController9(){
-        $data=array();
 
-        $label=["京东","天猫","唯品会","苏宁","其他"];
-        $value=["235", "274", "310", "335", "400"];
+        session_start();
+        $username=$_SESSION["username"];
 
-        for($i=0;$i<sizeof($label);$i++){
-            $data[$label[$i]]=$value[$i];
+        $user=\think\Db::name('user_form')->where('username',$username)->select();
+
+        $department=$user[0]["department"];
+        $newLevel=$user[0]["newLevel"];
+
+        $chooseOne=$this->request->post('chooseOne');
+        $chooseTwo=$this->request->post('chooseTwo');
+        $chooseThree=$this->request->post('chooseThree');
+        $chooseFour=$this->request->post('chooseFour');
+        $chooseFive=$this->request->post('chooseFive');
+        $chooseSix=$this->request->post('chooseSix');
+        $chooseSeven=$this->request->post('chooseSeven');
+        $chooseEight=$this->request->post('chooseEight');
+
+        $date=$chooseEight;
+
+        if($chooseEight=="默认"){
+            date_default_timezone_set("Asia/Shanghai");
+            $date1=date('Y-m-d', strtotime("-1 day"));
+            $date2=date("Y-m-d", strtotime("-1 month"));
+            $date3=date("Y-m-d", strtotime("-1 year"));
+    
+            $dateMonth=date('Y-m', time());
+            $dateMonth2=date('Y-m', strtotime("-1 month"));
+            $dateMonth3=date('Y-m', strtotime("-1 year"));
+    
+            $dateYear=date('Y', time());
+            $dateYear2=date('Y', strtotime("-1 year"));
+            $dateYear3=date('Y', strtotime("-1 year"));
+        }else{
+            $date1=date('Y-m-d', strtotime("$date"));
+            $date2=date('Y-m-d', strtotime("$date -1 month"));
+            $date3=date('Y-m-d', strtotime("$date -1 year"));
+    
+            $dateMonth=$date;
+            $dateMonth2=date('Y-m', strtotime("$date -1 month"));
+            $dateMonth3=date('Y-m', strtotime("$date -1 year"));
+    
+            $dateYear=date('Y', strtotime("$date"));
+            $dateYear2=date('Y', strtotime("$date -1 year"));
+            $dateYear3=date('Y', strtotime("$date -1 year"));
+            
         }
 
-        echo json_encode($data,JSON_UNESCAPED_UNICODE);
+        $sqlstr="select ROUND(sum(a.salesMoney)/10000,2) as num,b.pingtai as pt from store_data_sales a left join store b on a.storeID=b.storeID where 1=1 ";
+
+        //事业部
+        if($chooseTwo != "全部"){
+            $sqlstr1=$sqlstr1."and department='$chooseTwo' ";
+        }
+
+        //业务员
+        if($chooseSix != "全部"){
+            $sqlstr1=$sqlstr1."and ywy='$chooseSix' ";
+        }
+
+        if($chooseSeven != "月" and $chooseSeven != "年"){
+            $chooseSeven = "日";
+        }
+        
+        
+
+        //时间段
+        if($chooseSeven == "日"){
+            $sqlstr=$sqlstr."and date='$date1' ";  //当期
+        }elseif($chooseSeven == "月"){
+            $sqlstr=$sqlstr."and date like '%$dateMonth%' "; //当期
+        }elseif($chooseSeven == "年"){
+            $sqlstr=$sqlstr."and date like '%$dateYear%' ";  //当期
+        }
+
+        $sqlstr=$sqlstr."group by b.pingtai order by num desc  limit 10";
+
+        $sqlstr=\think\Db::query($sqlstr);
+
+        // $data=array();
+
+        // $label=["京东","天猫","唯品会","苏宁","其他"];
+        // $value=["235", "274", "310", "335", "400"];
+
+        // for($i=0;$i<sizeof($label);$i++){
+        //     $data[$label[$i]]=$value[$i];
+        // }
+
+        echo json_encode($sqlstr,JSON_UNESCAPED_UNICODE);
 
     }
 

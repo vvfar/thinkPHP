@@ -53,18 +53,19 @@
                         <tr>
                             <td>{$pagesize*($page-1) + $index+1}</td>
 
-                            {if $sxs.status=="已拒绝" and $sxs.ywy == $username}
-                                <td class="td1"><p style="margin:0 auto"><a href="sx_line.php?id={$sx.Id}" style="width: 50px;color:red">{$sx.sqid}</a></p></td>
+                            {if $sx.status=="已拒绝" and $sx.ywy == $username}
+                                <td class="td1"><p style="margin:0 auto"><a href="/index.php/Index/sx/sx_line2.html?id={$sx.id}" style="width: 50px;color:red">{$sx.sqid}</a></p></td>
                             {else\}
-                                <td class="td1"><p style="margin:0 auto"><a href="sx_line.php?id={$sx.Id}" style="width: 50px;">{$sx.sqid}</a></p></td>
+                                <td class="td1"><p style="margin:0 auto"><a href="/index.php/Index/sx/sx_line2.html?id={$sx.id}" style="width: 50px;">{$sx.sqid}</a></p></td>
                             {/if}
                         
                             <td class="td2"><p style="margin:0 auto">{$sx.companyName}</p></td>
-                            <td>{sx.department}</td>
-                            <td>{sx.ywy}</td>
-                            <td>{sx.sqmoney}</td>
-                            <td>{if($sx.dhkje==NULL)?0:<?=($sx.sqmoney-$sx.dhkje)?></td>
-                            <td>{$sx.status2}</td>
+                            <td class="td3"><p style="margin:0 auto">{$sx.department}</p></td>
+                            <td>{$sx.ywy}</td>
+                            <td>{$sx.sqmoney}</td>
+                            <td>{$sx.dhkje}</td>
+                            <td>{$sx.dhkje==NULL?0:$sx.sqmoney-$sx.dhkje}</td>
+                            <td>{$sx.status}</td>
                             <td>{$sx.date1}</td>
                         </tr>
                     {/foreach}
@@ -144,4 +145,5 @@
     .pager li a:hover{background-color:#337ab7;color:#fff}
     .td1 p{text-align:center;width: 150px;white-space: nowrap;overflow: hidden;text-overflow:ellipsis;}
     .td2 p{width: 180px;white-space: nowrap;overflow: hidden;text-overflow:ellipsis}
+    .td3 p{width: 100px;white-space: nowrap;overflow: hidden;text-overflow:ellipsis;}
 </style>

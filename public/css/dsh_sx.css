@@ -9,3 +9,4 @@ th,td{text-align: center;margin: 0;overflow: hidden;}
 .pager li a:hover{background-color:#337ab7;color:#fff;}
 .td1 p{text-align:center;width: 150px;white-space: nowrap;overflow: hidden;text-overflow:ellipsis;}
 .td2 p{width: 180px;white-space: nowrap;overflow: hidden;text-overflow:ellipsis;}
+.td3 p{width: 100px;white-space: nowrap;overflow: hidden;text-overflow:ellipsis;}

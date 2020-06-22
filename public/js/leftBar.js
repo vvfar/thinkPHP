@@ -33,7 +33,7 @@ $(document).ready(function(){
             $(".leftbar0Z3 a").css("color","#fff")
         }
 
-    }else if(leftBar_path ==  "write_sx.html" || leftBar_path ==  "companyManger2.php" || leftBar_path ==  "dsh_sx.html"  || leftBar_path ==  "dhk_sx.html" || leftBar_path ==  "ywc_sx.html" || leftBar_path ==  "sx_line.html" || leftBar_path ==  "sxmb.php"  || leftBar_path ==  "companyManger1_edit.php" || leftBar_path == "expire_sx.html"    || leftBar_path == "time_sx.html"|| leftBar_path == "sx_cw.html" || leftBar_path == "zf_sx.html" || leftBar_path ==  "sx_line2.php" || leftBar_path ==  "djLoad.html"){
+    }else if(leftBar_path ==  "write_sx.html" || leftBar_path ==  "back_sx.html" || leftBar_path ==  "dsh_sx.html"  || leftBar_path ==  "dhk_sx.html" || leftBar_path ==  "ywc_sx.html" || leftBar_path ==  "sx_line.html" || leftBar_path ==  "template_sx.html"  || leftBar_path ==  "companyManger1_edit.php" || leftBar_path == "expire_sx.html"    || leftBar_path == "time_sx.html"|| leftBar_path == "sx_cw.html" || leftBar_path == "zf_sx.html" || leftBar_path ==  "sx_line2.html" || leftBar_path ==  "djLoad.html"){
 
         $(".leftbarAll li").css("background-color","#160509");
         $(".leftbar1").css("background-color","darkslateblue");
