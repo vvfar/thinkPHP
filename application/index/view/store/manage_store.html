@@ -19,7 +19,7 @@
         {include file="../application/index/view/common/leftBar.html" /}
 
         <div style="margin-left: 180px;margin-top:50px;">
-            <div style="clear: both;border-radius: 6px;width:1030px;">
+            <div style="clear: both;border-radius: 6px;width:1060px;">
                 <div class="nav nav-pills" style="float:left;margin-top:15px;margin-left:30px;">
                     <li id="open" role="presentation" class="active"><a href="/index.php/Index/store/manage_store.html?status=1">合作店铺</a></li>
                     <li id="close" role="presentation"><a href="/index.php/Index/store/manage_store.html?status=0">不合作店铺</a></li>
@@ -73,9 +73,9 @@
                             <td>{$store.createDate}</td>
                             <td>
                                 {if($newLevel == "M")}
-                                    <a href="newStore.php?id={$store.storeID}" class="btn btn-info btn-xs" style="margin-right:3px;">管理</a>
+                                    <a href="/index.php/Index/store/store_opt.html?id={$store.storeID}" class="btn btn-info btn-xs" style="margin-right:3px;">管理</a>
                                 {else\}
-                                    <a href="uploadStore.php?id={$store.storeID}" class="btn btn-info btn-xs" style="margin-right:3px;">管理</a>
+                                    <a href="/index.php/Index/store/store_daily.html?id={$store.storeID}" class="btn btn-info btn-xs" style="margin-right:3px;">管理</a>
                                 {/if}
                             </td>
                         </tr>

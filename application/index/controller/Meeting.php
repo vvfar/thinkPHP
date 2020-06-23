@@ -25,7 +25,10 @@ class Meeting extends Controller
             }
 
             $meetings=Db::query("select * from meeting where date='$date' and status='已审核'");
-
+            
+            for($i=0;$i<sizeof($meetings);$i++){
+                $meetings[$i]["room"]=$meetings[$i]["room"]-1;
+            }
 
             $this->assign('title','会议室概况');
             $this->assign('username',$username);
@@ -79,6 +82,32 @@ class Meeting extends Controller
         }else{
             return $this->redirect('/index.php/Index/Login/login');
         }
+    }
+
+    public function add_meetingHandle(){
+        
+        session_start();
+        $username=$_SESSION["username"];
+
+        $title=$this->request->param("title");
+        $dateTime=$this->request->param("dateTime");
+        $startTime=$this->request->param("startTime");
+        $endTime=$this->request->param("endTime");
+        $chooseRoom=$this->request->param("chooseRoom");
+        $roomResource=$this->request->param("roomResource");
+        $apply=$this->request->param("apply");
+        $department=$this->request->param("department");
+        $people=$this->request->param("people");
+
+        //$roomResource=implode(',',$roomResource);
+
+        $maxIDs=DB::name("meeting")->field("max(id)")->find();
+        $maxID=$maxIDs["max(id)"];
+
+        $sqlstr2=DB::query("insert into meeting values('$maxID'+1,'$title','$department','$dateTime','$startTime','$endTime','$chooseRoom','$roomResource','$apply','已审核','$people')");
+
+        return $this->redirect('/index.php/Index/meeting/view_meeting.html');
+        
     }
 }
 

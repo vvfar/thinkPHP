@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width,initial-scale=1">
+        <title>{$title}</title>
+        <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" media="screen" />
+        <link href="\lib\bootstrap-3.3.7-dist\css\bootstrap.css" rel="stylesheet"/>
+        <link href="\css/leftbar.css" rel="stylesheet"/>
+        <link href="\css/header.css" rel="stylesheet"/>
+        <script src="\lib\bootstrap-3.3.7-dist\js\jquery-3.3.1.min.js"></script>
+    </head>
+    <body>
+        {include file="../application/index/view/common/header.html" /}
+        {include file="../application/index/view/common/leftBar.html" /}
+
+        <div style="margin-left: 180px;margin-top:50px;">
+
+            <div style="clear: both;border-radius: 6px;">
+                <div class="nav nav-pills" style="float:left;margin-top:20px;margin-left:40px;">
+                    <li role="presentation" class="active"><a href="#">关闭店铺</a></li>
+                </div>
+            </div>
+
+            <form action="/index.php/Index/store/store_closeHandle" method="POST" style="padding-top: 10px;margin-left:45px;clear: both;">                
+                
+                <div class="form-group" style="clear: both;display:none">
+                    <p style="width: 120px;font-size: 14px;float: left;margin-top: 20px;">id</p>
+                    <input type="text" class="form-control" name="id" value="{$store_line.id}" style="width: 250px;float: left;margin-top: 15px;">
+                </div>
+                <div class="form-group" style="margin-top:10px;">
+                    <p style="margin-top:5px;">店铺编号：{$store_line.storeID}</p>
+                    <p style="margin-top:5px;">客户名称：{$store_line.client}</p>
+                    <p style="margin-top:5px;">店铺名称：{$store_line.storeName}</p>
+                    <p style="margin-top:5px;">平台:{$store_line.pingtai}</p>
+                    <p style="margin-top:5px;">类目:{$store_line.category}</p>
+                </div>
+                <div class="form-group">
+                    <p>关店原因（最多输入100个字）</p>
+                    <textarea style="width:370px;height:100px;margin-top:5px;" name="reason"></textarea>
+                </div>
+                <div style="clear: both">
+                    <button type="submit" class="btn btn-success btn-sm">关闭店铺</button>
+                </div>
+            </form>
+        </div>
+    </body>
+</html>
+
+<style>
+    .breadcrumb a{
+        color:#333;
+    }
+
+    .breadcrumb a:hover{
+        color:#333;
+        text-decoration: underline;
+    }
+</style>

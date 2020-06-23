@@ -41,12 +41,8 @@
                     ?>
                 
                     <div style="width:318px;height:250px;float:left;margin-right:30px;margin-top:20px" class="meetingBorder">
-                        <span class="label label-success" style="position:relative;top:10px;left:10px;padding-top:5px;">会议室<?=$i+1?></span>
+                        <span class="label label-success" style="position:relative;top:15px;left:10px;padding-top:5px;">会议室<?=$i+1?></span>
                         <p style="float:right;margin-top:10px;margin-right:10px;">当前状态：空闲</p>
-                        
-                        <div style="clear:both">
-                            <p style="float:right;margin-right:10px;margin-top:5px;">更多>></p>
-                        </div>
 
                         <div style="margin-top:15px;" class="meetingUL">
                             <div style="height:160px;">
@@ -101,7 +97,7 @@
     $(".date").change(function(){
         date=$("#dateTime").val();
 
-        window.location.href="/viewMeeting.php?date="+date;
+        window.location.href="view_meeting.html?date="+date;
     })
 </script>
 

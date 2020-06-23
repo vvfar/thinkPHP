@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width,initial-scale=1">
+        <title>{$title}</title>
+        <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" media="screen" />
+        <link href="\lib\bootstrap-3.3.7-dist\css\bootstrap.css" rel="stylesheet"/>
+        <link href="\css/leftbar.css" rel="stylesheet"/>
+        <link href="\css/header.css" rel="stylesheet"/>
+        <script src="\lib\bootstrap-3.3.7-dist\js\jquery-3.3.1.min.js"></script>
+        <script src="\js\manager_header.js"></script>
+    </head>
+    <body>
+        {include file="../application/index/view/common/header.html" /}
+        {include file="../application/index/view/common/leftBar.html" /}
+
+        <div style="margin-left: 180px;">
+
+            {include file="../application/admin/view/common/manager_header.html" /}
+
+            <div style="width:1060px;">
+                <button class="btn btn-sm btn-success" id="createUser" style="float:right">新增用户</button>
+            </div>
+
+            <table class="table table-responsive table-bordered table-hover user" style="clear:both;position:relative;top:10px;width: 1020px;margin-left: 40px;">
+                <tr>
+                    <th>序号</th>
+                    <th>用户名</th>
+                    <th>事业部</th>
+                    <th>职位</th>
+                    <th>层级</th>
+                    <th style="width:180px">操作</th>
+                </tr>
+                
+                {foreach name="users" item="user" key="index"}
+                    <tr>
+                        <td>{$pagesize*($page-1) + $index+1}</td>
+                        <td>{$user.username}</a></td>
+                        <td><p>{$user.department}</p></td>
+                        <td>{$user.level}</td>
+                        <td>{$user.newLevel}</td>
+                        <td>
+                            <a href="manager_userLine.php?id={$user.id}">修改</a> |
+                            <a href="../../controller/adminHandle/delUser.php?id={$user.id}">删除</a> |
+                            <a href="../../controller/adminHandle/resetPwd.php?id={$user.id}">重置密码</a>
+                        </td>
+                    </tr>
+                {/foreach}
+                
+            </table>
+
+            <div style="margin-left:40px;">
+                <a href="<?php echo $_SERVER['PHP_SELF']?>">首页</a>
+                <a href="<?php echo $_SERVER['PHP_SELF']?>?page=<?php
+                    if($page>1)
+                        echo $page-1;
+                    else
+                        echo 1;  
+                ?>">上一页</a>
+                <a href="<?php echo $_SERVER['PHP_SELF']?>?page=<?php
+                    if($page<$pagecount)
+                        echo $page+1;
+                    else
+                        echo $pagecount;  
+                ?>">下一页</a>
+                <a href="<?php echo $_SERVER['PHP_SELF']?>?page=<?php echo $pagecount; ?>">尾页</a>
+            </div>
+        </div>
+    </body>
+</html>
+
+<script>
+    $("#createUser").click(function(){
+        window.location.href="manager_userLine.php"
+    })
+</script>
+
+<style>
+    th{
+        background-color: #f5f2f2;
+    }
+
+    .user p{
+        margin:0;
+        padding:0;
+        width: 180px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow:ellipsis;
+    }
+</style>

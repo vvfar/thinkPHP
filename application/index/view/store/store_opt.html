@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width,initial-scale=1">
+        <title>{$title}</title>
+        <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" media="screen" />
+        <link href="\lib\bootstrap-3.3.7-dist\css\bootstrap.css" rel="stylesheet"/>
+        <link href="\css\leftbar.css" rel="stylesheet"/>
+        <link href="\css\header.css" rel="stylesheet"/>
+        <script src="\lib\bootstrap-3.3.7-dist\js\jquery-3.3.1.min.js"></script>
+    </head>
+    <body>
+        {include file="../application/index/view/common/header.html" /}
+        {include file="../application/index/view/common/leftBar.html" /}
+
+        <div style="margin-left: 190px;margin-top:50px;">
+
+            <div style="clear: both;border-radius: 6px;">
+                <div class="nav nav-pills" style="float:left;margin-top:20px;margin-left:30px;">
+                    {if $newLevel == "M"}
+                        <li role="presentation" class="active"><a href="store_opt.html?id={$store_line.storeID}">店铺管理</a></li>
+                        <li role="presentation"><a href="store_daily.html?id={$store_line.storeID}">每日数据</a></li>
+                        <li role="presentation"><a href="write_store_qs.html?id={$store_line.storeID}">店铺问题</a></li>
+                    {else\}
+                        <li role="presentation" class="active"><a href="store_daily.html?id={$store_line.storeID}">每日数据</a></li>
+                        <li role="presentation"><a href="write_store_qs.html?id={$store_line.storeID}">店铺问题</a></li>
+                    {/if}
+                </div>
+            </div>
+
+
+            <form action="/index.php/Index/store/store_optHandle" method="POST" style="padding-top: 10px;margin-left:30px;clear: both;">                
+                
+                <div class="form-group" style="clear: both;margin-bottom:0px;display:none">
+                    <p style="width: 120px;font-size: 14px;float: left;margin-top: 20px;">id</p>
+                    <input type="text" class="form-control" name="id" value="{$store_line.id}" style="width: 250px;float: left;margin-top: 15px;">
+                </div>
+                <div class="form-group" style="clear: both;margin-bottom:0px;">
+                    <p style="width: 120px;font-size: 14px;float: left;margin-top: 20px;">店铺编号</p>
+                    <input type="text" class="form-control" name="storeID" value="{$store_line.storeID}" placeholder="请输入店铺编号" style="width: 250px;float: left;margin-top: 15px;">
+                </div>
+                <div class="form-group" style="clear: both;margin-bottom:0px;">
+                    <p style="width: 120px;font-size: 14px;float: left;margin-top: 20px;">客户名称</p>
+                    <input type="text" class="form-control" name="client" value="{$store_line.client}" placeholder="请输入客户名称" style="width: 250px;float: left;margin-top: 15px;">
+                </div>
+                <div class="form-group" style="clear: both;margin-bottom:0px;">
+                    <p style="width: 120px;font-size: 14px;float: left;margin-top: 20px;">店铺名称</p>
+                    <input type="text" class="form-control" name="storeName" value="{$store_line.storeName}" placeholder="请输入店铺名称" style="width: 250px;float: left;margin-top: 15px;">
+                </div>
+                <div class="form-group" style="clear: both;margin-bottom:0px;">
+                    <p style="width: 120px;font-size: 14px;float: left;margin-top: 20px;">平台</p>
+                    <input type="text" class="form-control" name="pingtai" value="{$store_line.pingtai}" placeholder="请输入平台" style="width: 250px;float: left;margin-top: 15px;">
+                </div>
+                <div class="form-group" style="clear: both;margin-bottom:0px;">
+                    <p style="width: 120px;font-size: 14px;float: left;margin-top: 20px;">类目</p>
+                    <input type="text" class="form-control" name="category" value="{$store_line.category}" placeholder="请输入类目" style="width: 250px;float: left;margin-top: 15px;">
+                </div>
+                <div class="form-group" style="clear: both;margin-bottom:0px;">
+                    <p style="width: 120px;font-size: 14px;float: left;margin-top: 20px;">月度销售目标</p>
+                    <input type="text" class="form-control" name="storeTarget" value="{$store_line.storeTarget}" placeholder="请输入销售额目标" style="width: 250px;float: left;margin-top: 15px;">
+                </div>
+                <div class="form-group" style="clear: both;margin-bottom:0px;">
+                    <p style="width: 120px;font-size: 14px;float: left;margin-top: 20px;">月度回款目标</p>
+                    <input type="text" class="form-control" name="hkTarget" value="{$store_line.hkTarget}" placeholder="请输入回款目标" style="width: 250px;float: left;margin-top: 15px;">
+                </div>
+                <div class="form-group" style="clear: both;margin-bottom:0px;">
+                    <p style="width: 120px;font-size: 14px;float: left;margin-top: 20px;">店铺链接</p>
+                    <input type="text" class="form-control" name="link" value="{$store_line.link}" placeholder="请输入店铺链接" style="width: 250px;float: left;margin-top: 15px;">
+                </div>
+                <div class="form-group" style="clear: both;margin-bottom:0px;">
+                    <p style="width: 120px;font-size: 14px;float: left;margin-top: 20px;">店铺成立时间</p>
+                    <input type="text" class="form-control" name="createDate" value="{$store_line.createDate}" style="width: 250px;float: left;margin-top: 15px;" readOnly>
+                    <p style="font-size:12px;float: left;margin-top: 25px;margin-left:20px;color:red">*新店6个月不能调拨</p>
+                </div>
+                <div class="form-group" style="clear: both;margin-bottom:0px;">
+                    <p style="width: 120px;font-size: 14px;float: left;margin-top: 20px;">店铺归属时间</p>
+                    <input type="text" class="form-control" name="staff_time" value="{$store_line.staff_time}" style="width: 250px;float: left;margin-top: 15px;" readOnly>
+                    <p style="font-size:12px;float: left;margin-top: 25px;margin-left:20px;color:red">*老店3个月不能调拨</p>
+                </div>
+                <div class="form-group" style="clear: both;margin-bottom:0px;">
+                    <p style="width: 120px;font-size: 14px;float: left;margin-top: 20px;">店铺归属人</p>
+                    <select class="form-control" style="width:250px;position:relative;top: 15px;" name="staff">
+                        {foreach $users as $user}
+                            {if $store_line.staff==$user.username}
+                                <option selected>{$user.username}</option>
+                            {else\}   
+                                <option>{$user.username}</option>
+                            {/if}    
+                        {/foreach}
+                    </select>
+                </div>
+                <input type="hidden" name="oldStaff" value="{$store_line.staff}"/>
+
+                <div style="clear: both">
+                    <button type="submit" class="btn btn-success btn-sm" style="margin-top: 20px;margin-bottom:10px;">提交</button>
+                    
+                    {if $store_line.status == "正常"}
+                        <a type="button" href="/index.php/Index/store/store_close?id={$store_line.storeID}" class="btn btn-danger btn-sm" style="margin-top: 20px;margin-bottom:10px;margin-left:10px">关店</a>
+                    {else\}
+                        <a type="button" href="/index.php/Index/store/store_open?id={$store_line.storeID}" class="btn btn-info btn-sm" style="margin-top: 20px;margin-bottom:10px;margin-left:10px">开店</a>
+                    {/if}
+            
+                </div>
+            </form>
+        </div>
+    </body>
+</html>
+
+<style>
+    .breadcrumb a{
+        color:#333;
+    }
+
+    .breadcrumb a:hover{
+        color:#333;
+        text-decoration: underline;
+    }
+</style>
