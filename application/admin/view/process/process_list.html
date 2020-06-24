@@ -32,7 +32,7 @@
                 </tr>
                 {foreach name="process_alls" item="process_all" key="index"}
                     <tr>
-                        <td><a href="/index.php/Admin/process/process_fl?id={$process_all.id}&department={$process_all.department}">{$process_all.name}</a></td>
+                        <td><a href="/index.php/Admin/process/process_fl.html?id={$process_all.id}&department={$process_all.department}">{$process_all.name}</a></td>
                         <td><a href="formHandle/adminHandle/delFLProcessTotal.php?id={$process_all.id}">删除</a></td>
                     </tr>
                 {/foreach}

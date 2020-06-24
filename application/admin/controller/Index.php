@@ -70,7 +70,7 @@ class Index extends Controller
 
         
             }else{
-                $user_line["id"]="";
+                $user_line["Id"]="";
                 $user_line["username"]="";
                 $user_line["department"]="";
                 $user_line["level"]="";

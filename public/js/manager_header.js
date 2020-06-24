@@ -3,32 +3,23 @@ $(document).ready(function(){
 
     managerHeader_path=managerHeader_path.split("/");
     managerHeader_path=managerHeader_path.pop();
-    
+
     if(managerHeader_path == "index.html"){
         $(".header_manager1").siblings().removeClass("active");
         $(".header_manager1").addClass("active");
-    }else if(managerHeader_path == "" || managerHeader_path == "managerFL_edit.php"){
+    }else if(managerHeader_path == "fl_list.html" || managerHeader_path == "fl_edit"){
         $(".header_manager2").siblings().removeClass("active");
         $(".header_manager2").addClass("active");
-    }else if(managerHeader_path == "managerNews.php" || managerHeader_path == "managerAddContent.php"){
+    }else if(managerHeader_path == "news_list.html" || managerHeader_path == "news_add.html"){
         $(".header_manager3").siblings().removeClass("active");
         $(".header_manager3").addClass("active");
-    }else if(managerHeader_path == "managerFile.php" || managerHeader_path == "managerAddFile.php"){
+    }else if(managerHeader_path == "document_list.html" || managerHeader_path == "managerAddFile.php"){
         $(".header_manager4").siblings().removeClass("active");
         $(".header_manager4").addClass("active");
-    }else if(managerHeader_path == "managerStaff.php" || managerHeader_path == "manager_staffLine.php" ){
-        $(".header_manager5").siblings().removeClass("active");
-        $(".header_manager5").addClass("active");
-    }else if(managerHeader_path == "managerStore.php" || managerHeader_path == "manager_storeLine.php"){
-        $(".header_manager6").siblings().removeClass("active");
-        $(".header_manager6").addClass("active");
-    }else if(managerHeader_path == "managerData.php"){
-        $(".header_manager7").siblings().removeClass("active");
-        $(".header_manager7").addClass("active");
-    }else if(managerHeader_path == "process_list.html" || managerHeader_path == "flProcess.php"){
+    }else if(managerHeader_path == "process_list.html" || managerHeader_path == "process_fl.html"){
         $(".header_manager8").siblings().removeClass("active");
         $(".header_manager8").addClass("active");
-    }else if(managerHeader_path == "" || managerHeader_path == "manager_backup.php"){
+    }else if(managerHeader_path == "system_log.html" || managerHeader_path == "system_backup.html"){
         $(".header_manager9").siblings().removeClass("active");
         $(".header_manager9").addClass("active");
     }
