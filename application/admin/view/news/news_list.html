@@ -17,41 +17,37 @@
         {include file="../application/index/view/common/leftBar.html" /}
 
         <div style="margin-left: 180px;">
-
             {include file="../application/admin/view/common/manager_header.html" /}
-
-            <div style="width:1060px;">
-                <button class="btn btn-sm btn-success" id="createUser" style="float:right;margin-top:100px;">新增用户</button>
+   
+            <div style="width:1060px">
+                <button class="btn btn-sm btn-success" style="float:right;margin-top:110px" id="createUser">新增公告</button>
             </div>
 
-            <table class="table table-responsive table-bordered table-hover user" style="clear:both;position:relative;top:10px;width: 1020px;margin-left: 40px;">
+            <table class="table table-responsive table-bordered table-hover" style="position:relative;top:15px;width: 1020px;margin-left: 40px;">
                 <tr>
                     <th>序号</th>
-                    <th>用户名</th>
-                    <th>事业部</th>
-                    <th>职位</th>
-                    <th>层级</th>
-                    <th style="width:180px">操作</th>
+                    <th style="width:300px;">标题</th>
+                    <th>发布者</th>
+                    <th>发布时间</th>
+                    <th style="width:150px;">操作</th>
                 </tr>
-                
-                {foreach name="users" item="user" key="index"}
+                {foreach name="news" item="new" key="index"}
                     <tr>
                         <td>{$pagesize*($page-1) + $index+1}</td>
-                        <td>{$user.username}</a></td>
-                        <td><p>{$user.department}</p></td>
-                        <td>{$user.level}</td>
-                        <td>{$user.newLevel}</td>
+                        <td>{$new.title}</td>
+                        <td>{$new.person}</td>
+                        <td>{$new.time}</td>
                         <td>
-                            <a href="/index.php/Admin/Index/add_user.html?id={$user.id}">修改</a> |
-                            <a href="/index.php/Admin/Index/del_user?id={$user.id}">删除</a> |
-                            <a href="/index.php/Admin/Index/reset_pwd?id={$user.id}">重置密码</a>
+                            <a href="/index.php/Index/document/news_line.html?id={$new.id}" target="_blank">查看</a> |
+                            <a href="news_add?id={$new.id}">修改</a> |
+                            <a href="news_del?id={$new.id}">删除</a>
                         </td>
                     </tr>
                 {/foreach}
                 
             </table>
 
-            <div style="margin-left:30px;margin-top:25px;">
+            <div style="margin-left:30px;margin-top:30px;">
                 <ul class="pager" style="float:left;width:150px;margin-top:0px;">
                     <li><a href="<?php echo $_SERVER['PHP_SELF']?>?page=<?php
                         if($page>1)
@@ -115,21 +111,12 @@
 
 <script>
     $("#createUser").click(function(){
-        window.location.href="/index.php/Admin/index/add_user.html"
+        window.location.href="news_add.html"
     })
 </script>
 
 <style>
     th{
         background-color: #f5f2f2;
-    }
-
-    .user p{
-        margin:0;
-        padding:0;
-        width: 180px;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow:ellipsis;
     }
 </style>

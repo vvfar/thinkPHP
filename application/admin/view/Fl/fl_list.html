@@ -11,47 +11,42 @@
         <link href="\css/header.css" rel="stylesheet"/>
         <script src="\lib\bootstrap-3.3.7-dist\js\jquery-3.3.1.min.js"></script>
         <script src="\js\manager_header.js"></script>
+        <script src="\lib\bootstrap-3.3.7-dist\js\bootstrap.min.js"></script>
     </head>
     <body>
         {include file="../application/index/view/common/header.html" /}
         {include file="../application/index/view/common/leftBar.html" /}
 
         <div style="margin-left: 180px;">
-
             {include file="../application/admin/view/common/manager_header.html" /}
 
             <div style="width:1060px;">
-                <button class="btn btn-sm btn-success" id="createUser" style="float:right;margin-top:100px;">新增用户</button>
+                <button class="btn btn-sm btn-success" style="float:right;margin-top:110px;" id="createFL" data-toggle="modal" data-target="#myModal">添加辅料</button>
             </div>
 
-            <table class="table table-responsive table-bordered table-hover user" style="clear:both;position:relative;top:10px;width: 1020px;margin-left: 40px;">
+            <table class="table table-responsive table-bordered table-hover" style="width: 1020px;margin-left: 40px;position:relative;top:15px;">
                 <tr>
                     <th>序号</th>
-                    <th>用户名</th>
-                    <th>事业部</th>
-                    <th>职位</th>
-                    <th>层级</th>
-                    <th style="width:180px">操作</th>
+                    <th>辅料名称</th>
+                    <th>辅料单价</th>
+                    <th>操作</th>
                 </tr>
-                
-                {foreach name="users" item="user" key="index"}
+                {foreach name="fls" item="fl" key="index"}
                     <tr>
                         <td>{$pagesize*($page-1) + $index+1}</td>
-                        <td>{$user.username}</a></td>
-                        <td><p>{$user.department}</p></td>
-                        <td>{$user.level}</td>
-                        <td>{$user.newLevel}</td>
-                        <td>
-                            <a href="/index.php/Admin/Index/add_user.html?id={$user.id}">修改</a> |
-                            <a href="/index.php/Admin/Index/del_user?id={$user.id}">删除</a> |
-                            <a href="/index.php/Admin/Index/reset_pwd?id={$user.id}">重置密码</a>
+                        <td>{$fl.fl_name}</td>
+                        <td>{$fl.fl_price}</td>
+                        <td style="width:150px;">
+                            <a href="fl_edit?id={$fl.id}">修改</a>
+                            <span> | </span>
+                            <a href="fl_del?id={$fl.id}">删除</a>
                         </td>
                     </tr>
                 {/foreach}
                 
             </table>
 
-            <div style="margin-left:30px;margin-top:25px;">
+            <div style="margin-left:30px;margin-top:35px;">
                 <ul class="pager" style="float:left;width:150px;margin-top:0px;">
                     <li><a href="<?php echo $_SERVER['PHP_SELF']?>?page=<?php
                         if($page>1)
@@ -110,26 +105,45 @@
                 </div>
             </div>
         </div>
+
+        <!-- Excel导入模态框 -->
+        <form action="fl_add" method="POST" style="margin-left: 50px;">
+            <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                <div class="modal-dialog" style="width:400px;">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 class="modal-title" id="myModalLabel">
+                                添加辅料
+                            </h4>
+                        </div>
+                        
+                        <div class="modal-body" style="height: 200px;">
+                            <div>
+                                <p>辅料名称：</p>
+                                <input type="text" placeholder="请输入辅料名称" class="form-control" name="fl_name" style="width: 300px;margin-top:10px;">
+                            </div>
+
+                            <div style="margin-top:10px;">
+                                <p>辅料价格：</p>
+                                <input type="text" placeholder="请输入辅料价格" class="form-control" name="fl_price" style="width: 300px;margin-top:15px;">
+                            </div>
+                            
+                        </div>
+                        
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-success">新增辅料</button>
+                            <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                        </div> 
+                    </div>
+                </div>
+            </div>
+        </form>
     </body>
 </html>
-
-<script>
-    $("#createUser").click(function(){
-        window.location.href="/index.php/Admin/index/add_user.html"
-    })
-</script>
 
 <style>
     th{
         background-color: #f5f2f2;
     }
-
-    .user p{
-        margin:0;
-        padding:0;
-        width: 180px;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow:ellipsis;
-    }
 </style>
+

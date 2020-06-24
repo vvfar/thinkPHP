@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width,initial-scale=1">
+        <title>{$title}</title>
+        <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" media="screen" />
+        <link href="\lib\bootstrap-3.3.7-dist\css\bootstrap.css" rel="stylesheet"/>
+        <link href="\css/leftbar.css?v=2" rel="stylesheet"/>
+        <link href="\css/header.css?v=2" rel="stylesheet"/>
+        <script src="\lib\bootstrap-3.3.7-dist\js\jquery-3.3.1.min.js"></script>
+        <script src="\lib\bootstrap-3.3.7-dist\js\bootstrap.min.js"></script>
+        <script src="\js\manager_header.js"></script>
+    </head>
+    <body>
+        {include file="../application/index/view/common/header.html" /}
+        {include file="../application/index/view/common/leftBar.html" /}
+
+        <div style="margin-left: 180px;">
+            {include file="../application/admin/view/common/manager_header.html" /}
+
+            <div class="nav nav-pills" style="float:left;margin-left:40px;margin-top:110px;">
+                <li role="presentation" class="active"><a href="#">系统日志</a></li>
+                <li role="presentation"><a href="system_backup.html">数据备份</a></li>
+                <button id="del_log" class="btn btn-success btn-sm" style="float:left;margin-left:780px;margin-top:10px;"  data-toggle="modal" data-target="#myModal">清除日志</button>
+            </div>
+
+            <table class="table table-responsive table-bordered table-hover" style="clear:both;position:relative;top: 20px;width: 1025px;margin-left: 40px;">
+                <tr>
+                    <th>登录账号</th>
+                    <th>登录时间</th>
+                    <th>登录ip</th>
+                    <th>登录操作</th>
+                </tr>
+                <tr>
+                    <?php
+                        if($chr !=""){
+                            for($i=0;$i<count($chr);$i++){
+                                ?>
+                                    <td><?=$chr[$i]?></td>
+                                <?php
+                            }
+                        }else{
+                            ?>
+                                <td colspan="4">还没日志文件</td>
+                            <?php
+                        } 
+                    ?>
+                </tr>
+            </table>
+            
+        </div>
+    </body>
+</html>
+
+<script>
+    $("#del_log").click(function(){
+        window.location.href="formHandle/del_logHandle.php";
+    })
+</script>
+
+<style>
+    th{
+        background-color: #f5f2f2;
+    }
+</style>

@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width,initial-scale=1">
+        <title>{$title}</title>
+        <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" media="screen" />
+        <link href="\lib\bootstrap-3.3.7-dist\css\bootstrap.css" rel="stylesheet"/>
+        <link href="\css/leftbar.css" rel="stylesheet"/>
+        <link href="\css/header.css" rel="stylesheet"/>
+        <script src="\lib\bootstrap-3.3.7-dist\js\jquery-3.3.1.min.js"></script>
+    </head>
+    <body>
+        {include file="../application/index/view/common/header.html" /}
+        {include file="../application/index/view/common/leftBar.html" /}
+
+        <div style="margin-left: 180px;">
+           
+            {include file="../application/admin/view/common/manager_header.html" /}
+
+            <form action="/index.php/Admin/index/add_userHandle" method="POST" style="padding-top: 10px;margin-left:45px;">                
+                <div>
+                    <p style="float: left;margin-top:100px;font-size:16px;">用户信息</p>
+                </div>
+                
+                <div class="form-group" style="clear: both;margin-bottom:0px;display:none">
+                    <p style="width: 120px;font-size: 14px;float: left;margin-top: 20px;">*id</p>
+                    <input type="text" class="form-control" name="id" value="{$user_line.Id}" style="width: 250px;float: left;margin-top: 15px;">
+                </div>
+                <div class="form-group" style="clear: both;margin-bottom:0px;">
+                    <p style="width: 80px;font-size: 14px;float: left;margin-top: 20px;">*用户名</p>
+                    <input type="text" class="form-control" name="username" value="{$user_line.username}" placeholder="请输入用户名" style="width: 200px;float: left;margin-top: 15px;">
+                </div>
+                <div class="form-group" style="clear: both;margin-bottom:0px;">
+                    <p style="width: 80px;font-size: 14px;float: left;margin-top: 20px;">*事业部</p>
+                    <input type="text" class="form-control" name="department" value="{$user_line.department}" placeholder="请输入事业部" style="width: 200px;float: left;margin-top: 15px;">
+                </div>
+                <div class="form-group" style="clear: both;margin-bottom:0px;">
+                    <p style="width: 80px;font-size: 14px;float: left;margin-top: 20px;">*职位</p>
+                    <input type="text" class="form-control" name="level" value="{$user_line.level}" placeholder="请输入职位" style="width: 200px;float: left;margin-top: 15px;">
+                </div>
+                <div class="form-group" style="clear: both;margin-bottom:0px;">
+                    <p style="width: 80px;font-size: 14px;float: left;margin-top: 20px;">*层级</p>
+                    <select class="form-control" name="newLevel" style="width: 200px;float: left;margin-top: 15px;">
+
+                        {if $user_line.newLevel =="M"}
+                            <option>请选择层级</option>
+                            <option selected>M</option>
+                            <option>KA</option>
+                            <option>P</option>
+                            <option>数据专员</option>   
+                        {elseif $user_line.newLevel =="KA"}
+                            <option>请选择层级</option>
+                            <option>M</option>
+                            <option selected>KA</option>
+                            <option>P</option>
+                            <option>数据专员</option>
+                        {elseif $user_line.newLevel =="P"}
+                            <option>请选择层级</option>
+                            <option>M</option>
+                            <option>KA</option>
+                            <option selected>P</option>
+                            <option>数据专员</option>
+                        {elseif $user_line.newLevel =="数据专员"}
+                            <option>请选择层级</option>
+                            <option>M</option>
+                            <option>KA</option>
+                            <option>P</option>
+                            <option selected>数据专员</option>
+                        {else\}
+                            <option>请选择层级</option>
+                            <option>M</option>
+                            <option>KA</option>
+                            <option>P</option>
+                            <option>数据专员</option>
+                        {/if}
+                    </select>
+                </div>
+                <div class="form-group" style="clear: both;margin-bottom:0px;">
+                    <p style="width: 80px;font-size: 14px;float: left;margin-top: 20px;">电话</p>
+                    <input type="text" class="form-control" name="phone" value="{$user_line.phone}" placeholder="请输入电话号码" style="width: 200px;float: left;margin-top: 15px;">
+                </div>
+                <div class="form-group" style="clear: both;margin-bottom:0px;">
+                    <p style="width: 80px;font-size: 14px;float: left;margin-top: 20px;">邮箱</p>
+                    <input type="text" class="form-control" name="email" value="{$user_line.email}" placeholder="请输入邮箱地址" style="width: 200px;float: left;margin-top: 15px;">
+                </div>
+                <div class="form-group" style="clear: both;margin-bottom:0px;">
+                    <p style="width: 80px;font-size: 14px;float: left;margin-top: 20px;">昵称</p>
+                    <input type="text" class="form-control" name="nickname" value="{$user_line.nickname}" placeholder="请输入昵称" style="width: 200px;float: left;margin-top: 15px;">
+                </div>
+                <div style="clear: both">
+                    <button type="submit" class="btn btn-success btn-sm" style="margin-top: 20px;">提交</button>
+                </div>
+            </form>
+        </div>
+    </body>
+</html>
