@@ -1,6 +1,7 @@
 <?php
 namespace app\index\controller;
 use think\Controller;
+use think\Db;
 
 class Login extends Controller
 {
@@ -19,7 +20,7 @@ class Login extends Controller
         $username=$this->request->post("username");
         $password=$this->request->post("password");
 
-        $pwd=\think\Db::name("user_form")->field("password")->where("username",$username)->select();
+        $pwd=Db::name("user_form")->field("password")->where("username",$username)->select();
 
         $pwd=$pwd[0]["password"];
 
@@ -53,7 +54,7 @@ class Login extends Controller
 
         $username=$this->request->get("username");
 
-        $phones=\think\Db::name("user_form")->field("phone")->where("username",$username)->select();
+        $phones=Db::name("user_form")->field("phone")->where("username",$username)->select();
         
         if($phones != []){
             echo $phones[0]["phone"];
@@ -132,7 +133,6 @@ class Login extends Controller
         
         echo $yzm;
         
-        
         session_start();
         
         $_SESSION["yzm"]=$yzm;
@@ -148,13 +148,11 @@ class Login extends Controller
         $yzm=$this->request->param("yzm");
 
         if($yzm == $_SESSION["yzm"]){
-            $update_Pwd=\think\Db::table('user_form')->where('username',$username)->update(['password'=>$newPwd1]);
+            $update_Pwd=Db::table('user_form')->where('username',$username)->update(['password'=>$newPwd1]);
 
             $this->success('密码修改成功，请重新登录！','/index.php/Index/login/login.html');
         }else{
             $this->error('验证码校验失败！','/index.php/Index/login/forget_pwd.html');
         }
-
-
     }
 }

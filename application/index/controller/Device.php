@@ -25,11 +25,8 @@ class Device extends Controller
 
             $pagesize=15;
 
-            $sqlstr3="select count(*) as total from it";
-
-            $sqlstr3=Db::query($sqlstr3);
-
-            $total=$sqlstr3[0]["total"];
+            $sqlstr1=Db::name("it")->field("count(*)")->select();
+            $total=$sqlstr1[0]["count(*)"];
 
             if($total%$pagesize==0){
                 $pagecount=intval($total/$pagesize);
@@ -37,19 +34,19 @@ class Device extends Controller
                 $pagecount=ceil($total/$pagesize);
             }
 
-            $sqlstr2="select id,barcode,user,department,brand,system2,ram,hardpan,leixing,leibie from it order by department desc,leibie asc limit ".($page-1)*$pagesize.",$pagesize";
-                                                
-            $devices=Db::query($sqlstr2);
+            $devices=Db::name('it')->field('id,barcode,user,department,brand,system2,ram,hardpan,leixing,leibie')->order(['department'=>'desc'])->order(['leibie'=>'asc'])->limit(($page-1)*$pagesize,$page*$pagesize)->select();
 
-            $this->assign('title','设备列表');
-            $this->assign('username',$username);
-            $this->assign('devices',$devices);
-            $this->assign("total",$total);
-            $this->assign('pagecount',$pagecount);
-            $this->assign('pagesize',15);
-            $this->assign('page',$page);
+            $data=[
+                'title' => '设备列表',
+                'username' => $username,
+                'devices' => $devices,
+                "total" => $total,
+                'pagecount' => $pagecount,
+                'pagesize' => 15,
+                'page' => $page
+            ];
 
-            return $this->fetch();
+            return $this->fetch('',$data);
         }else{
             return $this->redirect('/index.php/Index/Login/login');
         }
@@ -88,12 +85,14 @@ class Device extends Controller
                 $device_line["note"]="";
                 $device_line["position"]="";
             }
-            
-            $this->assign('title','新增设备');
-            $this->assign('username',$username);
-            $this->assign('device_line',$device_line);
+
+            $data=[
+                'title' => '新增设备',
+                'username' => $username,
+                'device_line' => $device_line
+            ];
         
-            return $this->fetch();
+            return $this->fetch('',$data);
         }else{
             return $this->redirect('/index.php/Index/Login/login');
         }
@@ -127,24 +126,41 @@ class Device extends Controller
         $position=$this->request->param('position');
             
         if($id==""){
-
-            $sqlstr=DB::name("it")->field("max(id)")->find();
-        
-            $maxID=$sqlstr["max(id)"];
-            
-            if($maxID==""){
-                $maxID=0;
-            }
-    
-            $sqlstr1=DB::query("insert into it values('$maxID'+1,'$leibie','$user','$department','$orginalDepartment','$ytMac','$wxMac','$leixing','$brand','$xinghao','$year','$system','$cpu','$ram','$hardpan','$barcode','$position','$mouse','$power','$bag','$note')");
+            $result=DB::table("it")->insert(
+                [
+                    'leibie' => $leibie,
+                    'user' => $user,
+                    'department' => $department,
+                    'orginalDepartment' => $orginalDepartment,
+                    'ytMac' => $ytMac,
+                    'wxMac' => $wxMac,
+                    'leixing' => $leixing,
+                    'brand' => $brand,
+                    'xinghao' => $xinghao,
+                    'year' => $year,
+                    'system2' => $system,
+                    'cpu' => $cpu,
+                    'ram' => $ram,
+                    'hardpan' => $hardpan,
+                    'barcode' => $barcode,
+                    'position' => $position,
+                    'mouse' => $mouse,
+                    'power' => $power ,
+                    'bag' => $bag,
+                    'note' => $note
+                ]
+            );
     
         }else{
-    
-            $sqlstr1=DB::query("update it set leibie='$leibie',department='$department',user='$user',orginalDepartment='$orginalDepartment',ytMac='$ytMac',wxMac='$wxMac',leixing='$leixing',brand='$brand',xinghao='$xinghao',year='$year',system2='$system',".
+            $result=DB::query("update it set leibie='$leibie',department='$department',user='$user',orginalDepartment='$orginalDepartment',ytMac='$ytMac',wxMac='$wxMac',leixing='$leixing',brand='$brand',xinghao='$xinghao',year='$year',system2='$system',".
                         "cpu='$cpu',ram='$ram',hardpan='$hardpan',barcode='$barcode',position='$position',mouse='$mouse',power='$power',bag='$bag',note='$note' where id='$id'");
         }
 
-        return $this->redirect('/index.php/Index/device/device_list.html');
+        if($result==1){
+            return $this->success('添加成功！','/index.php/Index/device/device_list.html','',1);
+        }else{
+            return $this->error('添加失败！','/index.php/Index/client/add_deviceHandle.html','',1);
+        }
     }
 
     public function download_deviceHandle(){
@@ -195,8 +211,6 @@ class Device extends Controller
         $list2=range(1,22);
     
         createtable($data,'员工电脑设备',$header,$list2);
-    
-    
-    
+
     }
 }

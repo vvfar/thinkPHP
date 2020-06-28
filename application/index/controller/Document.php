@@ -33,15 +33,17 @@ class Document extends Controller
 
             $news=Db::name("news")->select();
 
-            $this->assign('title','公告列表');
-            $this->assign('username',$username);
-            $this->assign('news',$news);
-            $this->assign("total",$total);
-            $this->assign('pagecount',$pagecount);
-            $this->assign('pagesize',15);
-            $this->assign('page',$page);
+            $data=[
+                'title' => '公告列表',
+                'username' => $username,
+                'news' => $news,
+                "total" => $total,
+                'pagecount' => $pagecount,
+                'pagesize' => 15,
+                'page' => $page
+            ];
 
-            return $this->fetch();
+            return $this->fetch('',$data);
         
         }else{
             return $this->redirect('/index.php/Index/Login/login');
@@ -57,11 +59,13 @@ class Document extends Controller
 
             $news_line=Db::name("news")->where("id",$id)->find();
 
-            $this->assign('title','公告详情');
-            $this->assign('username',$username);
-            $this->assign('news_line',$news_line);
+            $data=[
+                'title' => '公告详情',
+                'username' => $username,
+                'news_line' => $news_line
+            ];
 
-            return $this->fetch();
+            return $this->fetch('',$data);
         
         }else{
             return $this->redirect('/index.php/Index/Login/login');
@@ -82,7 +86,7 @@ class Document extends Controller
                 $page=intval($_GET["page"]);
             }
 
-            $pagesize=10;
+            $pagesize=15;
 
             $sqlstr1=Db::name("files")->field("count(*)")->select();
 
@@ -96,20 +100,20 @@ class Document extends Controller
 
             $files=Db::name("files")->select();
 
-            $this->assign('title','文件列表');
-            $this->assign('username',$username);
-            $this->assign('files',$files);
-            $this->assign("total",$total);
-            $this->assign('pagecount',$pagecount);
-            $this->assign('pagesize',15);
-            $this->assign('page',$page);
+            $data=[
+                'title','文件列表',
+                'username' => $username,
+                'files' => $files,
+                'total',$total,
+                'pagecount' => $pagecount,
+                'pagesize' => $pagesize,
+                'page' => $page
+            ];
 
-            return $this->fetch();
+            return $this->fetch('',$data);
         
         }else{
             return $this->redirect('/index.php/Index/Login/login');
         }
     }
-
-
 }

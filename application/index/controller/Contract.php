@@ -2,6 +2,7 @@
 namespace app\index\controller;
 use think\Controller;
 use think\Request;
+use think\Db;
 
 class Contract extends Controller{
 
@@ -15,7 +16,7 @@ class Contract extends Controller{
         $contract_info= array();
 
         if($id !=""){
-            $contract_infos=\think\Db::name("contract")->where("id",$id)->select();
+            $contract_infos=Db::name("contract")->where("id",$id)->select();
             $contract_info=$contract_infos[0];
         }else{
             $contract_info["id"]="";
@@ -37,11 +38,13 @@ class Contract extends Controller{
             $contract_info["input_time2"]="";
         }
 
-        $this->assign('username',$username);
-        $this->assign('title','新增合同');
-        $this->assign('contract_info',$contract_info);
+        $data=[
+            'username' => $username,
+            'title' => '新增合同',
+            'contract_info' => $contract_info
+        ];
 
-        return $this->fetch();
+        return $this->fetch('',$data);
     }
 
     public function w_contract(){
@@ -52,7 +55,7 @@ class Contract extends Controller{
         $contractID=$this->request->param("contractID");
         $clientName=$this->request->param("clientName");
 
-        $sqlstr1=\think\Db::name("user_form")->field(["department","newLevel"])->where("username",$username)->select();
+        $sqlstr1=Db::name("user_form")->field(["department","newLevel"])->where("username",$username)->select();
 
         $department=$sqlstr1[0]["department"];
         $newLevel=$sqlstr1[0]["newLevel"];
@@ -78,7 +81,7 @@ class Contract extends Controller{
             $sqlstr3=$sqlstr3." and no like '%$contractID%'";
         }
 
-        $sqlstr3=\think\Db::query($sqlstr3);
+        $sqlstr3=Db::query($sqlstr3);
 
         $total=$sqlstr3[0]["total"];
 
@@ -105,20 +108,22 @@ class Contract extends Controller{
 
         $sqlstr2=$sqlstr2." order by id desc limit ".($page-1)*$pagesize.",$pagesize";
 
-        $contracts=\think\Db::query($sqlstr2);
+        $contracts=Db::query($sqlstr2);
 
-        $this->assign('username',$username);
-        $this->assign('title','待审核合同');
-        $this->assign('contracts',$contracts);
-        $this->assign('contractID',$contractID);
-        $this->assign('clientName',$clientName);
-        $this->assign('total',$total);
-        $this->assign('pagecount',$pagecount);
-        $this->assign('page',$page);
-        $this->assign('pagesize',15);
-        $this->assign('i',1);
+        $data=[
+            'username' => $username,
+            'title' => '待审核合同',
+            'contracts' => $contracts,
+            'contractID' => $contractID,
+            'clientName' => $clientName,
+            'total' => $total,
+            'pagecount' => $pagecount,
+            'page' => $page,
+            'pagesize' => 15,
+            'i' => 1
+        ];
 
-        return $this->fetch();
+        return $this->fetch('',$data);
     }
 
     public function d_contract(){
@@ -129,7 +134,7 @@ class Contract extends Controller{
         $contractID=$this->request->param("contractID");
         $clientName=$this->request->param("clientName");
 
-        $sqlstr1=\think\Db::name("user_form")->field(["department","newLevel"])->where("username",$username)->select();
+        $sqlstr1=Db::name("user_form")->field(["department","newLevel"])->where("username",$username)->select();
 
         $department=$sqlstr1[0]["department"];
         $newLevel=$sqlstr1[0]["newLevel"];
@@ -155,7 +160,7 @@ class Contract extends Controller{
             $sqlstr3=$sqlstr3." and no like '%$contractID%'";
         }
 
-        $sqlstr3=\think\Db::query($sqlstr3);
+        $sqlstr3=Db::query($sqlstr3);
 
         $total=$sqlstr3[0]["total"];
 
@@ -180,25 +185,25 @@ class Contract extends Controller{
 
         $sqlstr2=$sqlstr2."order by id desc limit ".($page-1)*$pagesize.",$pagesize";
 
-        $contracts=\think\Db::query($sqlstr2);
+        $contracts=Db::query($sqlstr2);
 
         $i=1;
 
-        $this->assign('username',$username);
-        $this->assign('title','已审核合同');
-        $this->assign('contracts',$contracts);
-        $this->assign('contractID',$contractID);
-        $this->assign('clientName',$clientName);
-        $this->assign('total',$total);
-        $this->assign('pagecount',$pagecount);
-        $this->assign('page',$page);
-        $this->assign('pagesize',15);
-        $this->assign('i',1);
-        $this->assign('newLevel',$newLevel);
-        $this->assign('title','已审核合同');
+        $data=[
+            'username' => $username,
+            'newLevel' => $newLevel,
+            'title' => '已审核合同',
+            'contracts' => $contracts,
+            'contractID' => $contractID,
+            'clientName' => $clientName,
+            'total' => $total,
+            'pagecount' => $pagecount,
+            'page' => $page,
+            'pagesize' => 15,
+            'i' => 1
+        ];
 
-        return $this->fetch();
-
+        return $this->fetch('',$data);
     }
 
     public function add_contract_handle($progress){
@@ -208,7 +213,7 @@ class Contract extends Controller{
         session_start();
         $username=$_SESSION["username"];
 
-        $sqlstr1=\think\Db::name("user_form")->field(["department","newLevel"])->where("username",$username)->select();
+        $sqlstr1=Db::name("user_form")->field(["department","newLevel"])->where("username",$username)->select();
 
         $department=$sqlstr1[0]["department"];
         
@@ -240,19 +245,10 @@ class Contract extends Controller{
                 $pingtai="工厂";
             }
     
-            $sqlstr=\think\Db::name("contract")->field("max(id)")->select();
-
-            $maxID=$sqlstr[0]["max(id)"];
-    
-            if($maxID==""){
-                $maxID=0;
-            }
-
             if($id==""){
 
-                \think\Db::table('contract')->insert(
+                $result=Db::table('contract')->insert(
                     [
-                        'id'=>$maxID+1,
                         're_date'=>$re_date,
                         'no'=>$no,
                         'department'=>$department,
@@ -276,34 +272,51 @@ class Contract extends Controller{
                         'contractType'=>$contractType,
                     ]
                 );
+
             }else{
-                $sqlstr1=\think\Db::query("update contract set no='$no',company='$company',store='$store',pingtai='$pingtai',category='$category',money='$money',ismoney='$ismoney',sales='$sales',issales='$issales',service='$service',isservice='$isservice',note='$note',oldNo='$oldNo',status='待归档',shr='$username',shTime='$time',contractType='$contractType',input_time='$input_time',input_time2='$input_time2' where id='$id'");
+                $result=Db::query("update contract set no='$no',company='$company',store='$store',pingtai='$pingtai',category='$category',money='$money',ismoney='$ismoney',sales='$sales',issales='$issales',service='$service',isservice='$isservice',note='$note',oldNo='$oldNo',status='待归档',shr='$username',shTime='$time',contractType='$contractType',input_time='$input_time',input_time2='$input_time2' where id='$id'");
             }
-            
-            return redirect('/index.php/Index/contract/w_contract.html');
+
+            if($result==1){
+                return $this->success('提交成功！','/index.php/Index/contract/w_contract.html','',1);
+            }else{
+                return $this->error('提交失败！','/index.php/Index/contract/addClient.html','',1);
+            }
             
         }elseif($progress == 4){
             //审核通过
             $id=$_GET["id"];
             
-            $update=\think\Db::table("contract")->where("id",$id)->update(["status"=>"已归档"]);
-  
-            return redirect("/index.php/Index/contract/contract_line.html?id=".$id);
-    
+            $result=Db::table("contract")->where("id",$id)->update(["status"=>"已归档"]);
+
+            if($result==1){
+                return $this->success('提交成功！','/index.php/Index/contract/contract_line.html?id='.$id,'',1);
+            }else{
+                return $this->error('提交失败！','/index.php/Index/contract/contract_line.html?id='.$id,'',1);
+            }
+
         }elseif($progress == 5){
             //审核拒绝
             $id=$_GET["id"];
             
-            $update=\think\Db::table("contract")->where("id",$id)->update(["status"=>"审核拒绝"]);
+            $result=Db::table("contract")->where("id",$id)->update(["status"=>"审核拒绝"]);
   
-            return redirect("/index.php/Index/contract/contract_line.html?id=".$id);
+            if($result==1){
+                return $this->success('提交成功！','/index.php/Index/contract/contract_line.html?id='.$id,'',1);
+            }else{
+                return $this->error('提交失败！','/index.php/Index/contract/contract_line.html?id='.$id,'',1);
+            }
 
         }elseif($progress == 6){
             $id=$_GET["id"];
     
-            $del=\think\Db::table("contract")->where("id",$id)->delete();
+            $result=Db::table("contract")->where("id",$id)->delete();
 
-            return redirect("/index.php/Index/contract/d_contract.html");
+            if($result==1){
+                return $this->success('删除成功！','/index.php/Index/contract/d_contract.html','',1);
+            }else{
+                return $this->error('删除失败！','/index.php/Index/contract/d_contract.html','',1);
+            }
         }        
     }
 
@@ -311,28 +324,30 @@ class Contract extends Controller{
         session_start();
         $username=$_SESSION["username"];
 
-        $sqlstr1=\think\Db::name("user_form")->field(["department","newLevel"])->where("username",$username)->select();
+        $sqlstr1=Db::name("user_form")->field(["department","newLevel"])->where("username",$username)->select();
 
         $department=$sqlstr1[0]["department"];
         $newLevel=$sqlstr1[0]["newLevel"];
 
-        $contract_items=\think\Db::name("contract")->where("id",$id)->select();
+        $contract_items=Db::name("contract")->where("id",$id)->select();
         $contract_item=$contract_items[0];
         
-        $counts=\think\Db::name("contract")->field("count(*)")->where("no",$contract_item["oldNo"])->select();
+        $counts=Db::name("contract")->field("count(*)")->where("no",$contract_item["oldNo"])->select();
         $count=$counts[0];
 
-        $contracts_all=\think\Db::name("contract")->field(["company","store","pingtai","category","money","ismoney","sales","issales","service","isservice"])->where("no",$contract_item["no"])->select();
+        $contracts_all=Db::name("contract")->field(["company","store","pingtai","category","money","ismoney","sales","issales","service","isservice"])->where("no",$contract_item["no"])->select();
 
-        $this->assign('username',$username);
-        $this->assign('department',$department);
-        $this->assign('newLevel',$newLevel);
-        $this->assign('contract_item',$contract_item);
-        $this->assign('count',$count);
-        $this->assign('contracts_all',$contracts_all);
-        $this->assign('title','合同详情');
+        $data=[
+            'username' => $username,
+            'department' => $department,
+            'newLevel' => $newLevel,
+            'contract_item' => $contract_item,
+            'count' => $count,
+            'contracts_all' => $contracts_all,
+            'title' => '合同详情'
+        ];
 
-        return $this->fetch();
+        return $this->fetch('',$data);
     }
 
     public function contract_download($contractID,$clientName,$status){
@@ -343,7 +358,7 @@ class Contract extends Controller{
         session_start();
         $username=$_SESSION['username'];
 
-        $sqlstr1=\think\Db::name("user_form")->field(["department","newLevel"])->where("username",$username)->select();
+        $sqlstr1=Db::name("user_form")->field(["department","newLevel"])->where("username",$username)->select();
 
         $department=$sqlstr1[0]["department"];
         $newLevel=$sqlstr1[0]["newLevel"];

@@ -504,7 +504,7 @@ class Fl extends Controller{
             $sqlstr2=$sqlstr2." and company like '%$clientName%' ";
         }
 
-        $sqlstr2=$sqlstr2." order by id desc limit ".($page-1)*$pagesize.",$pagesize";
+        $sqlstr2=$sqlstr2." order by date2 desc limit ".($page-1)*$pagesize.",$pagesize";
 
         $fls=\think\Db::query($sqlstr2);
 
@@ -613,7 +613,7 @@ class Fl extends Controller{
             $sqlstr2=$sqlstr2." and company like '%$clientName%' ";
         }
 
-        $sqlstr2=$sqlstr2." order by id desc limit ".($page-1)*$pagesize.",$pagesize";
+        $sqlstr2=$sqlstr2." order by date2 desc limit ".($page-1)*$pagesize.",$pagesize";
 
 
         $fls=\think\Db::query($sqlstr2);

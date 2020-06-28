@@ -271,7 +271,7 @@ $(document).ready(function(){
         $(".leftbar11Z").toggle();
         $(".leftbar13Z").toggle();
         
-    }else if(leftBar_path == "clientList.html" || leftBar_path == "addClientPage.html"){
+    }else if(leftBar_path == "clientList.html" || leftBar_path == "addClient.html"){
         $(".leftbarAll li").css("background-color","#160509");
         $(".leftbar13").css("background-color","darkslateblue");
         $(".leftbar13 a").css("color","#ffffff");
@@ -291,7 +291,7 @@ $(document).ready(function(){
 
         if(leftBar_path == "clientList.html"){
             $(".leftbar13Z2 a").css("color","#fff")
-        }else if(leftBar_path == "addClientPage.html"){
+        }else if(leftBar_path == "addClient.html"){
             $(".leftbar13Z1 a").css("color","#fff")
         }
     }else{
