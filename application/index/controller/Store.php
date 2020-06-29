@@ -74,23 +74,23 @@ class Store extends Controller{
 
             $stores=Db::query($sqlstr2);
 
+            $data=[
+                'title' => '店铺管理',
+                'username' => $username,
+                "newLevel" => $newLevel,
+                "total" => $total,
+                'pagecount' => $pagecount,
+                'page' => $page,
+                'pagesize' => 15,
+                'stores'  => $stores,
+                'status'  => $status
+            ];
 
-            $this->assign('title','店铺管理');
-            $this->assign('username',$username);
-            $this->assign("newLevel",$newLevel);
-            $this->assign("total",$total);
-            $this->assign('pagecount',$pagecount);
-            $this->assign('page',$page);
-            $this->assign('pagesize',15);
-            $this->assign('stores',$stores);
-            $this->assign('status',$status);
-
-            return $this->fetch();
+            return $this->fetch('',$data);
 
         }else{
             return $this->redirect('/index.php/Index/Login/login');
         }
-
     }
 
     public function store_data1(){
@@ -161,19 +161,20 @@ class Store extends Controller{
 
             $store_datas=Db::query($sqlstr2);
 
-            
-            $this->assign('title','店铺销售数据');
-            $this->assign('username',$username);
-            $this->assign("newLevel",$newLevel);
-            $this->assign("total",$total);
-            $this->assign('pagecount',$pagecount);
-            $this->assign('page',$page);
-            $this->assign('pagesize',15);
-            $this->assign('store_datas',$store_datas);
-            $this->assign('department',$department);
-            $this->assign('date',$date);
+            $data=[
+                'title' => '店铺销售数据',
+                'username' => $username,
+                "newLevel" => $newLevel,
+                "total" => $total,
+                'pagecount' => $pagecount,
+                'page' => $page,
+                'pagesize' => 15,
+                'store_datas' => $store_datas,
+                'department' => $department,
+                'date' => $date
+            ];
 
-            return $this->fetch();
+            return $this->fetch('',$data);
         }else{
             return $this->redirect('/index.php/Index/Login/login');
         }
@@ -247,46 +248,189 @@ class Store extends Controller{
 
             $store_datas=Db::query($sqlstr2);
 
-            $this->assign('title','店铺回款数据');
-            $this->assign('username',$username);
-            $this->assign("newLevel",$newLevel);
-            $this->assign("total",$total);
-            $this->assign('pagecount',$pagecount);
-            $this->assign('page',$page);
-            $this->assign('pagesize',15);
-            $this->assign('store_datas',$store_datas);
-            $this->assign('department',$department);
-            $this->assign('date',$date);
+            $data=[
+                'title' => '店铺回款数据',
+                'username' => $username,
+                'newLevel' => $newLevel,
+                "total" => $total,
+                'pagecount' => $pagecount,
+                'page' => $page,
+                'pagesize' => 15,
+                'store_datas' => $store_datas,
+                'department' => $department,
+                'date' => $date
+            ];
 
-            return $this->fetch();
+            return $this->fetch('',$data);
         
         }else{
             return $this->redirect('/index.php/Index/Login/login');
         }
     }
 
-    public function store_data_details1(){
+    public function store_data_details1($storeID){
         session_start();
 
         if(isset($_SESSION["username"])){
             
+            $username=$_SESSION["username"];
+
+            $sqlstr1=Db::name("user_form")->field(["department","newLevel"])->where("username",$username)->find();
+
+            $department=$sqlstr1["department"];
+            $newLevel=$sqlstr1["newLevel"];
+
+            //分页代码
+            if(!isset($_GET["page"]) || !is_numeric($_GET["page"])){
+                $page=1;
+            }else{
+                $page=intval($_GET["page"]);
+            }
+
+            $pagesize=15;
+
+
+            $sqlstr3="select count(*) as total from store a,store_data_sales b where a.storeID=b.storeID and a.storeID='$storeID'";
+
+            if($newLevel !="ADMIN" and $department != "商业运营部"){
+                if($newLevel == "KA"){
+                    $sqlstr3=$sqlstr3." and a.staff like '%$username%'"; 
+                }else{
+                    $sqlstr3=$sqlstr3." and '$department' like concat('%',a.department,'%') ";
+                }
+            }
+
+            $sqlstr1=Db::query($sqlstr3);
+            $total=$sqlstr1[0]["total"];
+
+            if($total%$pagesize==0){
+                $pagecount=intval($total/$pagesize);
+            }else{
+                $pagecount=ceil($total/$pagesize);
+            }
+
+            $store_line=Db::name("store")->field(["storeID","client","storeName","pingtai","category","department","staff","status"])->where("storeID",$storeID)->find();
+
+            $date=$this->request->param("date");
+
+            if($date==""){
+                date_default_timezone_set("Asia/Shanghai");
+                $date=date('Y-m-d', time());
+            }
+
+            $sqlstr2="select a.storeID,a.client,a.storeName,a.pingTai,a.category,b.salesMoney,b.salesNum,b.date,a.id from store a,store_data_sales b where a.storeID=b.storeID and a.storeID='$storeID'";
+                        
+            if($newLevel !="ADMIN" and $department != "商业运营部"){
+                if($newLevel == "KA"){
+                    $sqlstr2=$sqlstr2." and a.staff like '%$username%'"; 
+                }else{
+                    $sqlstr2=$sqlstr2." and '$department' like concat('%',a.department,'%') ";
+                }
+            }
+
+            $sqlstr2=$sqlstr2." order by b.date desc limit ".($page-1)*$pagesize.",$pagesize";
+
+            $store_datas=Db::query($sqlstr2);
             
+            $data=[
+                'title' => '店铺销售数据',
+                'username' => $username,
+                'department' => $department,
+                'newLevel' => $newLevel,
+                "total" => $total,
+                'pagecount' => $pagecount,
+                'pagesize' => 15,
+                'page' => $page,
+                'storeID' => $storeID,
+                'store_line' => $store_line,
+                'store_datas' => $store_datas
+            ];
 
 
-            return $this->fetch();
+            return $this->fetch('',$data);
         }else{
             return $this->redirect('/index.php/Index/Login/login');
         }
     }
 
-    public function store_data_details2(){
+    public function store_data_details2($storeID){
         session_start();
 
         if(isset($_SESSION["username"])){
 
             $username=$_SESSION["username"];
+
+            $sqlstr1=Db::name("user_form")->field(["department","newLevel"])->where("username",$username)->find();
+
+            $department=$sqlstr1["department"];
+            $newLevel=$sqlstr1["newLevel"];
+
+            //分页代码
+            if(!isset($_GET["page"]) || !is_numeric($_GET["page"])){
+                $page=1;
+            }else{
+                $page=intval($_GET["page"]);
+            }
+
+            $pagesize=15;
+
+            $sqlstr3="select count(*) as total from store a,store_data_hk b where a.storeID=b.storeID and a.storeID='$storeID'";
+
+            if($newLevel !="ADMIN" and $department != "商业运营部"){
+                if($newLevel == "KA"){
+                    $sqlstr3=$sqlstr3." and a.staff like '%$username%'"; 
+                }else{
+                    $sqlstr3=$sqlstr3." and '$department' like concat('%',a.department,'%') ";
+                }
+            }
+
+            $sqlstr1=Db::query($sqlstr3);
+            $total=$sqlstr1[0]["total"];
+
+            if($total%$pagesize==0){
+                $pagecount=intval($total/$pagesize);
+            }else{
+                $pagecount=ceil($total/$pagesize);
+            }
+
+            $store_line=Db::name("store")->field(["storeID","client","storeName","pingtai","category","department","staff","status","id"])->where("storeID",$storeID)->find();
+
+            $date=$this->request->param("date");
+
+            if($date==""){
+                date_default_timezone_set("Asia/Shanghai");
+                $date=date('Y-m-d', time());
+            }
+
+            $sqlstr2="select a.storeID,a.client,a.storeName,a.pingTai,a.category,b.backMoney,b.date from store a,store_data_hk b where a.storeID=b.storeID and a.storeID='$storeID'";
+                        
+            if($newLevel !="ADMIN" and $department != "商业运营部"){
+                if($newLevel == "KA"){
+                    $sqlstr2=$sqlstr2." and a.staff like '%$username%'"; 
+                }else{
+                    $sqlstr2=$sqlstr2." and '$department' like concat('%',a.department,'%') ";
+                }
+            }
+
+            $sqlstr2=$sqlstr2." order by b.date desc limit ".($page-1)*$pagesize.",$pagesize";
+
+            $store_datas=Db::query($sqlstr2);
+
+            $data=[
+                'title' => '店铺回款数据',
+                'username' => $username,
+                'department' => $department,
+                'newLevel' => $newLevel,
+                "total" => $total,
+                'pagecount' => $pagecount,
+                'pagesize' => 15,
+                'page' => $page,
+                'storeID' => $storeID,
+                'store_line' => $store_line,
+                'store_datas' => $store_datas
+            ];
         
-            return $this->fetch();
+            return $this->fetch('',$data);
 
         }else{
             return $this->redirect('/index.php/Index/Login/login');
@@ -370,24 +514,25 @@ class Store extends Controller{
 
             $store_qss=Db::query($sqlstr2);
 
-            $this->assign('title','店铺问题');
-            $this->assign('username',$username);
-            $this->assign("newLevel",$newLevel);
-            $this->assign("total",$total);
-            $this->assign('pagecount',$pagecount);
-            $this->assign('page',$page);
-            $this->assign('pagesize',15);
-            $this->assign('store_qss',$store_qss);
-            $this->assign('department',$department);
-            $this->assign('date',$date);
-            $this->assign('status',$status);
+            $data=[
+                'title' => '店铺问题',
+                'username' => $username,
+                'newLevel' => $newLevel,
+                "total" => $total,
+                'pagecount' => $pagecount,
+                'page' => $page,
+                'pagesize' => 15,
+                'store_qss' => $store_qss,
+                'department' => $department,
+                'date' => $date,
+                'status' => $status,
+            ];
         
-            return $this->fetch();
+            return $this->fetch('',$data);
         
         }else{
             return $this->redirect('/index.php/Index/Login/login');
         }
-
     }
 
     public function store_daily($id){
@@ -407,16 +552,17 @@ class Store extends Controller{
 
             $store_line=Db::name("store")->where("storeID",$id)->find();
 
-            $this->assign('title','每日数据');
-            $this->assign('username',$username);
-            $this->assign('store_line',$store_line);
-            $this->assign('department',$department);
-            $this->assign('hk',$hk);
-            $this->assign('newLevel',$newLevel);
-            $this->assign('date',$date);
-            
+            $data=[
+                'title' => '每日数据',
+                'username' => $username,
+                'newLevel' => $newLevel,
+                'store_line' => $store_line,
+                'department' => $department,
+                'date' => $date,
+                'hk' => $hk,
+            ];
 
-            return $this->fetch();
+            return $this->fetch('',$data);
 
         }else{
             return $this->redirect('/index.php/Index/Login/login');
@@ -437,12 +583,14 @@ class Store extends Controller{
             
             $store_line=Db::name("store")->where("storeID",$id)->find();
 
-            $this->assign('title','店铺问题');
-            $this->assign('username',$username);
-            $this->assign("newLevel",$newLevel);
-            $this->assign('store_line',$store_line);
+            $data=[
+                'title' => '店铺问题',
+                'username' => $username,
+                'newLevel' => $newLevel,
+                'store_line' => $store_line,
+            ];
 
-            return $this->fetch();
+            return $this->fetch('',$data);
         }else{
             return $this->redirect('/index.php/Index/Login/login');
         }
@@ -576,17 +724,15 @@ class Store extends Controller{
 
             $users=Db::name("user_form")->field("username")->where("department",$department)->select();
 
-
-
-            $this->assign('title','店铺编辑');
-            $this->assign('username',$username);
-            $this->assign("newLevel",$newLevel);
-            $this->assign('store_line',$store_line);
-            $this->assign('users',$users);
+            $data=[
+                'title' => '店铺编辑',
+                'username' => $username,
+                'newLevel' => $newLevel,
+                'store_line' => $store_line,
+                'users' => $users
+            ];
 
             return $this->fetch();
-
-
 
         }else{
             return $this->redirect('/index.php/Index/Login/login');
@@ -677,11 +823,13 @@ class Store extends Controller{
 
             $store_line=DB::name("store")->where("storeID",$id)->find();
 
-            $this->assign('username',$username);
-            $this->assign('title','关闭店铺');
-            $this->assign('store_line',$store_line);
+            $data=[
+                'title' => '关闭店铺',
+                'username' => $username,
+                'store_line' => $store_line,
+            ];
 
-            return $this->fetch();
+            return $this->fetch('',$data);
 
         }else{
             return $this->redirect('/index.php/Index/Login/login');
@@ -697,8 +845,6 @@ class Store extends Controller{
     
         $sqlstr1=DB::query("update store set reason='$reason',status='关闭',createDate='$date1' where id='$id'");
     
-        echo DB::getLastSql("store");
-
         return $this->redirect('/index.php/Index/store/manage_store.html?status=0');
     }
 

@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width,initial-scale=1">
+        <title>{$title}</title>
+        <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" media="screen" />
+        <link href="/css/clientList.css" rel="stylesheet"/>
+        <link href="/lib/bootstrap-3.3.7-dist/css/bootstrap.css" rel="stylesheet"/>
+        <script src="/lib/bootstrap-3.3.7-dist/js/jquery-3.3.1.min.js"></script>
+    </head>
+    <body>
+        {include file="../application/index/view/common/header.html" /}
+        {include file="../application/index/view/common/leftBar.html" /}
+
+        <div class="container">
+            <p style="font-size: 18px;">客户详情</p>
+            <hr>
+            <p style="line-height: 25px;">主合同编号：{$client_line.contractID}</p>
+            <p style="line-height: 25px;">客户名称：{$client_line.clientName}</p>
+            <p style="line-height: 25px;">店铺名称：{$client_line.storeName}</p>
+            <p style="line-height: 25px;">事业部：{$client_line.department}</p>
+            <p style="line-height: 25px;">业务员：{$client_line.staff}</p>
+            <p style="line-height: 25px;">客户地址：{$client_line.address}</p>
+            <p style="line-height: 25px;">客户电话：{$client_line.telephone}</p>
+            <p style="line-height: 25px;">登记日期：{$client_line.re_date}</p>
+            <p style="line-height: 25px;">变更日期：{$client_line.change_date}</p>
+            <p style="line-height: 25px;">变更人：{$client_line.change_by}</p>
+            <p style="line-height: 25px;">合同是否生效：{$client_line.is_agree}</p>
+        </div>
+    </body>
+</html>
+
+<style>
+    .container{margin-left: 200px;margin-top:60px}
+</style>

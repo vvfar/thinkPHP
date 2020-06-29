@@ -62,25 +62,25 @@ class Meeting extends Controller
                 $startTime=$this->request->param("startTime");
                 $endTime=$this->request->param("endTime");
                 $chooseRoom=$this->request->param("chooseRoom");
-                $roomResource=$this->request->param("roomResource");
+                $roomResource=$_POST["roomResource"];
                 $apply=$this->request->param("apply");
                 $department=$this->request->param("department");
                 $people=$this->request->param("people");
-        
-                //$roomResource=implode(',',$roomResource);
+
+                $roomResource=implode(',',$roomResource);
 
                 $result=DB::table("meeting")->insert(
                     [
                         'title' => $title,
                         'department' => $department,
-                        'dateTime' => $dateTime,
+                        'date' => $dateTime,
                         'startTime' => $startTime,
                         'endTime' => $endTime,
-                        'chooseRoom' => $chooseRoom,
+                        'room' => $chooseRoom,
                         'roomResource' => $roomResource,
                         'apply' => $apply,
                         'status' => '已审核',
-                        'people' => '$people'
+                        'people' => $people
                     ]
                 );
 

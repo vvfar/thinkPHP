@@ -22,7 +22,7 @@
 
             <div style="clear: both;border-radius: 6px;width:1060px;">
                 <div class="nav nav-pills" style="float:left;margin-top:15px;margin-left:30px;">
-                    <li role="presentation"><a href="/index.php/Index/store/store_data1.html">销售额</a></li>
+                    <li role="presentation"><a href="/index.php/Index/store/store_data1.html?date={$date}">销售额</a></li>
                     <li role="presentation" class="active"><a href="#">回款</a></li>
                 </div>
 
@@ -69,7 +69,7 @@
                     {foreach name="store_datas" item="store_data" key="index"}
                         <tr>
                             <td>{$pagesize*($page-1) + $index+1}</td>
-                            <td><a href="dataStoreDetails.php?storeID={$store_data.storeID}">{$store_data.storeID}</a></td>
+                            <td><a href="/index.php/Index/store/store_data_details2.html?storeID={$store_data.storeID}">{$store_data.storeID}</a></td>
                             <td>{$store_data.storeName}</td>
                             <td>{$store_data.staff}</td>
                             <td>{$store_data.backMoney}</td>
@@ -77,7 +77,7 @@
                             <td>￥{$store_data.backMoney}</td>
                             <td>
                                 {if $store_data.hkTarget != ""}
-                                    {$store_data.backMoney}/{$store_data.hkTarget} *100?>%
+                                    {$store_data.backMoney/$store_data.hkTarget*100 |number_format=2}%
                                 {/if}
                             </td>
                             <td>{$store_data.status}</td>

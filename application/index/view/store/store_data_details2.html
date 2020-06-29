@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width,initial-scale=1">
+        <title>{$title}</title>
+        <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" media="screen" />
+        <link href="\lib\bootstrap-3.3.7-dist\css\bootstrap.css" rel="stylesheet"/>
+        <link href="\lib\bootstrap-3.3.7-dist\css\bootstrap-datetimepicker.min.css" rel="stylesheet" media="screen"/>
+        <link href="\lib\bootstrap-3.3.7-dist\css\bootstrap-theme.css" rel="stylesheet" media="screen"/>
+        <link href="\css/leftbar.css" rel="stylesheet"/>
+        <link href="\css/header.css" rel="stylesheet"/>
+        <script src="\lib\bootstrap-3.3.7-dist\js\jquery-3.3.1.min.js"></script>
+        <script src="\lib\bootstrap-3.3.7-dist\js\bootstrap.min.js"></script>
+        <script src="\lib\bootstrap-3.3.7-dist\js\bootstrap-datetimepicker.js"></script>
+    </head>
+    <body>
+        {include file="../application/index/view/common/header.html" /}
+        {include file="../application/index/view/common/leftBar.html" /}
+
+        <div style="margin-left: 190px;margin-top:50px;">
+            <div style="clear: both;border-radius: 6px;">
+                <div class="nav nav-pills" style="float:left;margin-left:30px;margin-top:20px;">
+                    <li role="presentation"><a href="/index.php/Index/store/store_data_details1.html?storeID={$storeID}">销售数据</a></li>
+                    <li role="presentation" class="active"><a href="#">回款数据</a></li>
+                    <li role="presentation"><a href="#">图表展示</a></li>
+                    <li role="presentation"><a href="#">资源活动</a></li>
+                </div>
+            </div>
+
+            <div style="clear:both;margin-left:30px">
+                <ul class="basicStore">
+                    <li>店铺名称：{$store_line.storeName}</li>
+                    <li>客户名称:{$store_line.client}</li>
+                    <li>平台:{$store_line.pingtai}</li>
+                    <li>授权类目:{$store_line.category}</li>
+                    <li>事业部:{$store_line.department}</li>
+                    <li>业务员:{$store_line.staff}</li>
+                    <li>店铺状态:{$store_line.status}</li>
+                </ul>
+            </div>
+            
+            <div style="clear:both;">
+                <div style="width:1050px;">
+                    <h4 style="float:left">
+                        <span class="label label-info" style="margin-left:30px;position:relative;top:20px;">共<?=$total?>条</span>
+                        <span class="label label-warning" style="margin-left:5px;position:relative;top:20px;">共<?=$pagecount?>页</span>
+                        <span class="label label-success" style="margin-left:5px;position:relative;top:20px;">第<?=$page?>页</span>
+                    </h4>
+
+                    <div style="float:right">
+                        <select style="padding-left:2px;padding-bottom:3px;margin-top:15px;">
+                            <option>日</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            
+            <div style="clear:both">
+                <table class="table table-responsive table-bordered table-hover" style="width:1020px;margin-top:50px;margin-left:30px;">
+                    <tr>
+                        <th>序号</th>
+                        <th>店铺编号</th>
+                        <th>公司名称</th>
+                        <th>店铺名</th>
+                        <th>平台</th>
+                        <th>类目</th>
+                        <th>回款</th>
+                        <th>日期</th>
+                    </tr>
+                
+                    {foreach name="store_datas" item="store_data" key="index"}
+                        <tr>
+                            <td>{$pagesize*($page-1) + $index+1}</td>
+                            <td><a href="/index.php/Index/store/store_daily.html?id={$store_data.storeID}&date={$store_data.date}&hk={$store_data.backMoney}" target="_blank">{$store_data.storeID}</a></td>
+                            <td>{$store_data.client}</td>
+                            <td>{$store_data.storeName}</td>
+                            <td>{$store_data.pingTai}</td>
+                            <td>{$store_data.category}</td>
+                            <td>{$store_data.backMoney}</td>
+                            <td>{$store_data.date}</td>
+                        </tr>
+                    {/foreach}
+                </table>
+            </div>
+
+            <div style="margin-left: 30px;">
+                <ul class="pager" style="float:left;width:150px;margin-top:0px;">
+                    <li><a href="<?php echo $_SERVER['PHP_SELF']?>?storeID=<?=$storeID?>&page=<?php
+                        if($page>1)
+                            echo $page-1;
+                        else
+                            echo 1;  
+                    ?>">上一页</a></li>
+                    <li><a href="<?php echo $_SERVER['PHP_SELF']?>?storeID=<?=$storeID?>&page=<?php
+                        if($page<$pagecount)
+                            echo $page+1;
+                        else
+                            echo $pagecount;  
+                    ?>">下一页</a></li>
+                </ul>
+
+                <div style="float:left;margin-left:530px;width:321px;">
+                    <ul class="pagination" style="float:right;margin-top:0px;">
+                        <li><a href="<?php echo $_SERVER['PHP_SELF']?>?storeID=<?=$storeID?>&page=1">&laquo;</a></li>
+                        <?php
+                            if($pagecount<=5){
+                                for($i=1;$i<=$pagecount;$i++){
+                                    if($i==$page){
+                                        ?>
+                                            <li  class="active"><a href="<?php echo $_SERVER['PHP_SELF']?>?storeID=<?=$storeID?>&page=<?=$i?>"><?=$i?></a></li>
+                                        <?php
+                                    }else{
+                                        ?>
+                                            <li><a href="<?php echo $_SERVER['PHP_SELF']?>?storeID=<?=$storeID?>&page=<?=$i?>"><?=$i?></a></li>
+                                        <?php
+                                    }
+                                }
+                            }else{
+                                for($i=1;$i<=$pagecount;$i++){
+                                    if($i==$page){
+                                        ?>
+                                            <li  class="active"><a href="<?php echo $_SERVER['PHP_SELF']?>?storeID=<?=$storeID?>&page=<?=$i?>"><?=$i?></a></li>
+                                        <?php
+                                    }elseif(($i>=$page-2 and $i<=$page+2 and $page>3) and $page !=$pagecount){
+                                        ?>
+                                            <li><a href="<?php echo $_SERVER['PHP_SELF']?>?storeID=<?=$storeID?>&page=<?=$i?>"><?=$i?></a></li>
+                                        <?php
+                                    }elseif($i<=5){
+                                        if($page<=3){
+                                        ?>
+                                            <li><a href="<?php echo $_SERVER['PHP_SELF']?>?storeID=<?=$storeID?>&page=<?=$i?>"><?=$i?></a></li>
+                                        <?php
+                                        }
+                                    }
+                                }
+                            }
+                            
+                        ?>
+                        
+                        <li><a href="<?php echo $_SERVER['PHP_SELF']?>?storeID=<?=$storeID?>&page=<?php echo $pagecount; ?>">&raquo;</a></li>
+                    </ul>
+                </div>
+            
+            </div>
+        </div>
+    </body>
+</html>
+
+<style>
+    .basicStore li{
+        float:left;
+        list-style:none;
+        margin-right:30px;
+        margin-top:20px;
+    }
+
+    th{background-color:rgb(67, 64, 255);color:#fff}
+
+    th,td{
+        text-align: center;
+    }
+
+    .breadcrumb a{
+        color:#333;
+    }
+
+    .breadcrumb a:hover{
+        color:#333;
+        text-decoration: underline;
+    }
+</style>
+
+<script>
+    $("#download").click(function(){
+        window.location.href="formHandle/download_it.php"
+    })
+
+    $(".form_datetime").datetimepicker({
+        format: 'yyyy-mm-dd',
+        weekStart: 1,
+        autoclose: true,
+        todayBtn: true,
+        startView: 2,  
+        minView: 2, 
+        forceParse: false,
+        language:'cn',
+        pickerPosition: "bottom-left"
+    });
+
+    $(".date").change(function(){
+        date=$("#dateTime").val();
+
+        window.location.href="/viewMeeting.php?date="+date;
+    })
+</script>

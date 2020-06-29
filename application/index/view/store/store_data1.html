@@ -23,7 +23,7 @@
             <div style="clear: both;border-radius: 6px;width:1060px;">
                 <div class="nav nav-pills" style="float:left;margin-top:15px;margin-left:30px;">
                     <li role="presentation" class="active"><a href="#">销售额</a></li>
-                    <li role="presentation"><a href="/index.php/Index/store/store_data2.html">回款</a></li>
+                    <li role="presentation"><a href="/index.php/Index/store/store_data2.html?date={$date}">回款</a></li>
                 </div>
 
                 <div style="float:right;margin-top:20px;">
@@ -38,9 +38,9 @@
             <div style="clear:both;width:1060px;">
                 <div style="position:relative;top:10px;">
                     <h4 style="float:left;margin-top:15px;">
-                        <span class="label label-info" style="margin-left:30px;">共<?=$total?>条</span>
-                        <span class="label label-warning" style="margin-left:5px;">共<?=$pagecount?>页</span>
-                        <span class="label label-success" style="margin-left:5px;">第<?=$page?>页</span>
+                        <span class="label label-info" style="margin-left:30px;">共{$total}条</span>
+                        <span class="label label-warning" style="margin-left:5px;">共{$pagecount}页</span>
+                        <span class="label label-success" style="margin-left:5px;">第{$page}页</span>
                     </h4>
 
                     <div style="float:right;">
@@ -70,7 +70,7 @@
                     {foreach name="store_datas" item="store_data" key="index"}
                         <tr>
                             <td>{$pagesize*($page-1) + $index+1}</td>
-                            <td><a href="dataStoreDetails.php?storeID={$store_data.storeID}">{$store_data.storeID}</a></td>
+                            <td><a href="/index.php/Index/store/store_data_details1.html?storeID={$store_data.storeID}" target="_blank">{$store_data.storeID}</a></td>
                             <td>{$store_data.storeName}</td>
                             <td>{$store_data.staff}</td>
                             <td>￥{$store_data.salesMoney}</td>
@@ -78,7 +78,7 @@
                             <td>￥{$store_data.sumMoney}</td>
                             <td>
                                 {if $store_data.storeTarget != ""}
-                                    {$store_data.sumMoney/$store_data.storeTarget *100}%
+                                    {$store_data.sumMoney/$store_data.storeTarget *100 |number_format=2}%
                                 {/if}
                             </td>
                             <td>{$store_data.status}</td>

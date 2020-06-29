@@ -1,6 +1,7 @@
 <?php
 namespace app\index\controller;
 use think\Controller;
+use think\Db;
 
 class Index extends Controller
 {
@@ -12,19 +13,23 @@ class Index extends Controller
         if(isset($_SESSION["username"])){
             $username=$_SESSION["username"];
 
-            $department=\think\Db::query("select department from user_form where username='$username'");
-            $newLevel=\think\Db::query("select newLevel from user_form where username='$username'");
+            $sqlstr1=Db::name("user_form")->field(["department","newLevel"])->where("username",$username)->find();
 
-            $news_dt=\think\Db::name('news')->field('id,title,time')->limit(4)->where('newsType','公司动态')->select();
-            $news_ggl=\think\Db::name('news')->field('id,title,time')->limit(10)->where('newsType','公司公告')->select();
-            $files=\think\Db::name('files')->field('id,title,fileName,createUser,time')->limit(7)->select();
+            $department=$sqlstr1["department"];
+            $newLevel=$sqlstr1["newLevel"];
 
-            $this->assign('username',$username);
-            $this->assign('news_dt',$news_dt);
-            $this->assign('files',$files);
-            $this->assign('news_ggl',$news_ggl);
+            $news_dt=Db::name('news')->field('id,title,time')->limit(4)->where('newsType','公司动态')->select();
+            $news_ggl=Db::name('news')->field('id,title,time')->limit(10)->where('newsType','公司公告')->select();
+            $files=Db::name('files')->field('id,title,fileName,createUser,time')->limit(7)->select();
 
-            return $this->fetch();
+            $data=[
+                'username' => $username,
+                'news_dt' => $news_dt,
+                'files' => $files,
+                'news_ggl' => $news_ggl
+            ];
+
+            return $this->fetch('',$data);
         }else{
             return $this->redirect('/index.php/Index/Login/login');
         }
@@ -38,10 +43,12 @@ class Index extends Controller
             $username=$_SESSION["username"];
             $fileName="";
 
-            $this->assign('username',$username);
-            $this->assign('fileName',$fileName);
+            $data=[
+                'username' => $username,
+                'fileName' => $fileName,
+            ];
 
-            return $this->fetch();
+            return $this->fetch('',$data);
         }else{
             return $this->redirect('/index.php/Index/Login/login');
         }
@@ -51,7 +58,7 @@ class Index extends Controller
         session_start();
         $username=$_SESSION["username"];
 
-        $user=\think\Db::name('user_form')->where('username',$username)->select();
+        $user=Db::name('user_form')->where('username',$username)->select();
 
         $department=$user[0]["department"];
         $newLevel=$user[0]["newLevel"];
@@ -61,9 +68,9 @@ class Index extends Controller
        
         //计算待审核辅料
         $count_fl=0;
-        $link_fl="../../home/fl/flList.php";
+        $link_fl="/index.php/Index/fl/w_fl.html";
 
-        $sqlstr=\think\Db::name('flsqd')->where('shr','like','%'.$username.'%')->where('status','notlike','%已归档%')->select();
+        $sqlstr=Db::name('flsqd')->where('shr','like','%'.$username.'%')->where('status','notlike','%已归档%')->select();
 
         for($i=0;$i<sizeof($sqlstr);$i++){
             
@@ -73,7 +80,7 @@ class Index extends Controller
 
             if($username == $my_shr and $newLevel == "KA"){
                 $count_fl=$count_fl+1;
-                $link_fl="../../home/fl/saveFL.php";
+                $link_fl="/index.php/Index/fl/save_fl.html";
             }elseif($username == $my_shr){
                 $count_fl=$count_fl+1;
             }
@@ -81,9 +88,9 @@ class Index extends Controller
 
         //计算待审核授信
         $count_sx=0;
-        $link_sx="../../home/sx/zhangmu.php";
+        $link_sx="/index.php/Index/sx/dsh_sx.html";
 
-        $sqlstr2=\think\Db::name('sx_form')->field(['ywy','status'])->select();
+        $sqlstr2=Db::name('sx_form')->field(['ywy','status'])->select();
 
         $ywy="";
 
@@ -94,10 +101,10 @@ class Index extends Controller
 
             if($username == $ywy and $status == "待生效"){
                 $count_sx=$count_sx+1;
-                $link_sx='../../home/sx/djLoad.php';
+                $link_sx='/index.php/Index/sx/djLoad.html';
             }elseif($username == $ywy and $status == "已拒绝"){
                 $count_sx=$count_sx+1;
-                $link_sx='../../home/sx/zhangmu.php';
+                $link_sx='/index.php/Index/sx/dsh_sx.html';
             }elseif($department == "商业运营部" and  $status == "待归档"){
                 $count_sx=$count_sx+1;
             }
@@ -105,16 +112,16 @@ class Index extends Controller
 
         //计算待审核合同
         $count_contract=0;
-        $link_contract="../../home/contract/w_contract.php";
+        $link_contract="/index.php/Index/contract/w_contract.html";
 
-        $sqlstr3=\think\Db::name('contract')->field(['shr','status'])->select();
+        $sqlstr3=Db::name('contract')->field(['shr','status'])->select();
 
         for($i=0;$i<sizeof($sqlstr3);$i++){
             
             $shr=$sqlstr3[$i]["shr"];
             $status=$sqlstr3[$i]["status"];
 
-            if($shr == $ywy and $status == "审核拒绝" and $newLevel == "KA"){
+            if($shr == $username and $status == "审核拒绝"){
                 $count_contract=$count_contract+1;
             }elseif($department == "商业运营部" and  $status == "待归档"){
                 $count_contract=$count_contract+1;
@@ -123,16 +130,16 @@ class Index extends Controller
 
         //计算待审核授权
         $count_sq=0;
-        $link_sq="../../home/contract/w_sq.php";
+        $link_sq="/index.php/Index/contract/w_contract.html";
 
-        $sqlstr4=\think\Db::name('sq')->field(['shr','status'])->select();
+        $sqlstr4=Db::name('sq')->field(['shr','status'])->select();
 
         for($i=0;$i<sizeof($sqlstr4);$i++){
             
             $shr=$sqlstr4[$i]["shr"];
             $status=$sqlstr4[$i]["status"];
 
-            if($shr == $ywy and $status == "审核拒绝" and $newLevel == "KA"){
+            if($shr == $username and $status == "审核拒绝" and $newLevel == "KA"){
                 $count_sq=$count_sq+1;
             }elseif($department == "商业运营部" and  $status == "待归档"){
                 $count_sq=$count_sq+1;
@@ -142,9 +149,9 @@ class Index extends Controller
 
         //计算待审核回款
         $count_hk=0;
-        $link_hk="../../home/sx/sx_cw.php";
+        $link_hk="/index.php/Index/sx/sx_cw.html";
 
-        $sqlstr5=\think\Db::name('hk_form2')->field('status')->where('status','待财务审批')->select();
+        $sqlstr5=Db::name('hk_form2')->field('status')->where('status','待财务审批')->select();
 
         for($i=0;$i<sizeof($sqlstr5);$i++){
             
@@ -158,9 +165,9 @@ class Index extends Controller
 
         //计算待处理问题
         $count_qs=0;
-        $link_qs="../../home/store/storeQS.php";
+        $link_qs="/index.php/Index/store/store_qs.html";
 
-        $sqlstr6=\think\Db::query("select username from user_form where department  like concat('%', (select department from store where storeID = (select storeID from store_qs where status='待处理')),'%') and newLevel='M'");
+        $sqlstr6=Db::query("select username from user_form where department  like concat('%', (select department from store where storeID = (select storeID from store_qs where status='待处理')),'%') and newLevel='M'");
 
 
         for($i=0;$i<sizeof($sqlstr6);$i++){
@@ -190,7 +197,7 @@ class Index extends Controller
         session_start();
         $username=$_SESSION["username"];
 
-        $user=\think\Db::name('user_form')->where('username',$username)->select();
+        $user=Db::name('user_form')->where('username',$username)->select();
 
         $department=$user[0]["department"];
         $newLevel=$user[0]["newLevel"];
@@ -205,7 +212,7 @@ class Index extends Controller
         
         $object="全公司";
 
-        $sqlstr1=\think\Db::name('store_data_sales')->field(['sum(salesMoney)','date'])->limit(30)->group('date')->order('date desc')->select();
+        $sqlstr1=Db::name('store_data_sales')->field(['sum(salesMoney)','date'])->limit(30)->group('date')->order('date desc')->select();
 
 
         for($i=sizeof($sqlstr1)-1;$i>=0;$i--){
@@ -226,7 +233,7 @@ class Index extends Controller
 
         $username=$_SESSION["username"];
 
-        $user=\think\Db::name('user_form')->where('username',$username)->select();
+        $user=Db::name('user_form')->where('username',$username)->select();
 
         $department=$user[0]["department"];
         $newLevel=$user[0]["newLevel"];
@@ -248,28 +255,28 @@ class Index extends Controller
             $dateEnd=($year+1)."-".$month."-01";
         }
     
-        $sqlstr1=\think\Db::name('store_data_sales')->field("sum(salesMoney)")->where("staff",$username)->where("date",">=",$dateStart)->where("date","<",$dateEnd)->select();
+        $sqlstr1=Db::name('store_data_sales')->field("sum(salesMoney)")->where("staff",$username)->where("date",">=",$dateStart)->where("date","<",$dateEnd)->select();
         $num1=$sqlstr1[0]["sum(salesMoney)"];
     
-        $sqlstr2=\think\Db::query("select sum(storeTarget)  from store_target where storeID =any (select storeID from store where staff='$username') and dateMonth='$dateMonth'");    
+        $sqlstr2=Db::query("select sum(storeTarget)  from store_target where storeID =any (select storeID from store where staff='$username') and dateMonth='$dateMonth'");    
         $num2=$sqlstr2[0]["sum(storeTarget)"];
     
-        $sqlstr3=\think\Db::query("select sum(a.salesMoney) from store_data_sales a,store b where '$department' like concat('%',b.department,'%') and a.date >= '$dateStart' and a.date < '$dateEnd' and  a.storeID=b.storeID");    
+        $sqlstr3=Db::query("select sum(a.salesMoney) from store_data_sales a,store b where '$department' like concat('%',b.department,'%') and a.date >= '$dateStart' and a.date < '$dateEnd' and  a.storeID=b.storeID");    
         $num3=$sqlstr3[0]["sum(a.salesMoney)"];
 
-        $sqlstr4=\think\Db::query("select sum(storeTarget)  from store_target where storeID =any (select storeID from store where '$department' like concat('%',department,'%')) and dateMonth='$dateMonth'");
+        $sqlstr4=Db::query("select sum(storeTarget)  from store_target where storeID =any (select storeID from store where '$department' like concat('%',department,'%')) and dateMonth='$dateMonth'");
         $num4=$sqlstr4[0]["sum(storeTarget)"];
     
-        $sqlstr5=\think\Db::query("select sum(backMoney) from store_data_hk where staff='$username' and date >= '$dateStart' and date < '$dateEnd'");
+        $sqlstr5=Db::query("select sum(backMoney) from store_data_hk where staff='$username' and date >= '$dateStart' and date < '$dateEnd'");
         $num5=$sqlstr5[0]["sum(backMoney)"];
     
-        $sqlstr6=\think\Db::query("select sum(hkTarget)  from store_target where storeID =any (select storeID from store where staff='$username') and dateMonth='$dateMonth'");
+        $sqlstr6=Db::query("select sum(hkTarget)  from store_target where storeID =any (select storeID from store where staff='$username') and dateMonth='$dateMonth'");
         $num6=$sqlstr6[0]["sum(hkTarget)"];
     
-        $sqlstr7=\think\Db::query("select sum(a.backMoney) from store_data_hk a,store b where '$department' like concat('%',b.department,'%') and a.date >= '$dateStart' and a.date < '$dateEnd' and  a.storeID=b.storeID");
+        $sqlstr7=Db::query("select sum(a.backMoney) from store_data_hk a,store b where '$department' like concat('%',b.department,'%') and a.date >= '$dateStart' and a.date < '$dateEnd' and  a.storeID=b.storeID");
         $num7=$sqlstr7[0]["sum(a.backMoney)"];
     
-        $sqlstr8=\think\Db::query("select sum(hkTarget)  from store_target where storeID =any (select storeID from store where '$department' like concat('%',department,'%')) and dateMonth='$dateMonth'");
+        $sqlstr8=Db::query("select sum(hkTarget)  from store_target where storeID =any (select storeID from store where '$department' like concat('%',department,'%')) and dateMonth='$dateMonth'");
         $num8=$sqlstr8[0]["sum(hkTarget)"];
     
         $num1=($num1=="")?0:$num1;
@@ -316,7 +323,7 @@ class Index extends Controller
         session_start();
         $username=$_SESSION["username"];
 
-        $user=\think\Db::name('user_form')->where('username',$username)->select();
+        $user=Db::name('user_form')->where('username',$username)->select();
 
         $my_department=$user[0]["department"];
         $newLevel=$user[0]["newLevel"];
@@ -339,7 +346,7 @@ class Index extends Controller
             $sqlstr1=$sqlstr1."and department='$my_department'";
         }
 
-        $sqlstr1=\think\Db::query($sqlstr1);
+        $sqlstr1=Db::query($sqlstr1);
 
         for($i=0;$i<sizeof($sqlstr1);$i++){
             if(strpos($sqlstr1[$i]["department"],'/') != true and strpos($sqlstr1[$i]["department"],'事业管理部') == true){
@@ -368,7 +375,7 @@ class Index extends Controller
             }
         }
         
-        $sqlstr2=\think\Db::query($sqlstr2);
+        $sqlstr2=Db::query($sqlstr2);
 
         for($i=0;$i<sizeof($sqlstr2);$i++){
             $pingtai_list=$pingtai_list.'"'.$sqlstr2[$i]["pingtai"].'",';  
@@ -397,7 +404,7 @@ class Index extends Controller
             
         }
 
-        $sqlstr3=\think\Db::query($sqlstr3);
+        $sqlstr3=Db::query($sqlstr3);
 
         for($i=0;$i<sizeof($sqlstr3);$i++){
             $category_list=$category_list.'"'.$sqlstr3[$i]["category"].'",';  
@@ -425,7 +432,7 @@ class Index extends Controller
             
         }
         
-        $sqlstr4=\think\Db::query($sqlstr4);
+        $sqlstr4=Db::query($sqlstr4);
 
         for($i=0;$i<sizeof($sqlstr4);$i++){
             $store_list=$store_list.'"'.$sqlstr4[$i]["storeName"].'",';  
@@ -453,7 +460,7 @@ class Index extends Controller
             
         }
 
-        $sqlstr5_a=\think\Db::query($sqlstr5);
+        $sqlstr5_a=Db::query($sqlstr5);
 
         for($i=0;$i<sizeof($sqlstr5_a);$i++){
             $ywy_list=$ywy_list.'"'.$sqlstr5_a[$i]["username"].'",';  
@@ -494,7 +501,7 @@ class Index extends Controller
 
         $sqlstr6=$sqlstr6." order by dateTime desc";
 
-        $sqlstr6=\think\Db::query($sqlstr6);
+        $sqlstr6=Db::query($sqlstr6);
 
         $date_list="";
         
@@ -525,7 +532,7 @@ class Index extends Controller
         session_start();
         $username=$_SESSION["username"];
 
-        $user=\think\Db::name('user_form')->where('username',$username)->select();
+        $user=Db::name('user_form')->where('username',$username)->select();
 
         $department=$user[0]["department"];
         $newLevel=$user[0]["newLevel"];
@@ -628,15 +635,16 @@ class Index extends Controller
         }
     
         
+        //当期销售额
+        $result1=Db::query($sqlstr);
+        $num=$result1[0]["num"];
     
-        $sqlstr=\think\Db::query($sqlstr);
-        $num=$sqlstr[0]["num"];
+        //环比销售额
+        $result2=Db::query($sqlstr2);
+        $num2=$result2[0]["num"];
     
-        $sqlstr2=\think\Db::query($sqlstr2);
-        $num2=$sqlstr2[0]["num"];
-    
-        $sqlstr3=\think\Db::query($sqlstr3);
-        $num3=$sqlstr2[0]["num"];
+        $result3=Db::query($sqlstr3);
+        $num3=$result3[0]["num"];
         
         if($num3 !="" and $num !="" and $chooseSeven !="年"){
             $tb=($num-$num3)/$num3*100;
@@ -666,7 +674,7 @@ class Index extends Controller
         session_start();
         $username=$_SESSION["username"];
 
-        $user=\think\Db::name('user_form')->where('username',$username)->select();
+        $user=Db::name('user_form')->where('username',$username)->select();
 
         $department=$user[0]["department"];
         $newLevel=$user[0]["newLevel"];
@@ -768,9 +776,9 @@ class Index extends Controller
             $sqlstr__sjtb=$sqlstr1."and date like '%$dateYear3%' ";  //同比
         }
     
-        $sqlstr_sj=\think\Db::query($sqlstr_sj);
-
-        $num=$sqlstr_sj[0]["num"];
+        //当期销售额
+        $result1=Db::query($sqlstr_sj);
+        $num=$result1[0]["num"];
     
         //销售额目标&回款目标
         if($chooseOne == "销售额"){
@@ -828,17 +836,17 @@ class Index extends Controller
         }
        
     
-        //当期
-        $sqlstr=\think\Db::query($sqlstr);
+        //当期销售目标
+        $result2=Db::query($sqlstr);
     
         $num_t=0;
     
         if($chooseSeven == "日"){
-            $num_t=$sqlstr[0]["num_t"]/30;
+            $num_t=$result2[0]["num_t"]/30;
         }elseif($chooseSeven == "月"){
-            $num_t=$sqlstr[0]["num_t"];
+            $num_t=$result2[0]["num_t"];
         }elseif($chooseSeven == "年"){
-            $num_t=$sqlstr[0]["num_t"];
+            $num_t=$result2[0]["num_t"];
         }
     
         if($num_t !=0){
@@ -848,58 +856,57 @@ class Index extends Controller
         }
 
        
-        //环比
-        $sqlstr_sjhb=\think\Db::query($sqlstr_sjhb);
+
+
+        //环比销售额
+        $num2=0;
         
-        $num=0;
-    
-        $num=$sqlstr_sjhb[0]["num"];
-    
-        $sqlstr2_1=\think\Db::query($sqlstr2_);
+        $sqlstr_sjhb=Db::query($sqlstr_sjhb);
+        $num2=$sqlstr_sjhb[0]["num"];
         
+        //环比目标
         $num_t2=0;
+        
+        $result2_1=Db::query($sqlstr2_);
+        $num_t2=$result2_1[0]["num_t"];
     
-        $num_t2=$sqlstr2_1[0]["num_t"];
-    
+        if($chooseSeven == "日"){
+            $num_t2=$result2_1[0]["num_t"]/30;
+        }elseif($chooseSeven == "月"){
+            $num_t2=$result2_1[0]["num_t"];
+        }elseif($chooseSeven == "年"){
+            $num_t2=$result2_1[0]["num_t"];
+        }
+
         if($num_t2 !=0){
-            $percent2=number_format($num/$num_t2, 2);
+            $percent2=number_format($num2/$num_t2, 2);
         }else{
             $percent2="100";
         }
     
-        //同比
-        $sqlstr_sjtb=\think\Db::query($sqlstr__sjtb);
-        
-        $num=0;
-    
-        $num=$sqlstr_sjtb[0]["num"];
+        //同比销售额
+        $num3=0;
 
-        $sqlstr3_=\think\Db::query($sqlstr3_);
-    
-    
+        $sqlstr_sjtb=Db::query($sqlstr__sjtb);
+        $num3=$sqlstr_sjtb[0]["num"];
+
+        //同比目标销售额
         $num_t3=0;
-    
-        $sqlstr2_=\think\Db::query($sqlstr2_);
+        $result3=Db::query($sqlstr3_);
+        $num_t3=$result3[0]["num_t"];
         
-        
-        $num_t3=$sqlstr2_[0]["num_t"];
-        
+        if($chooseSeven == "日"){
+            $num_t3=$result3[0]["num_t"]/30;
+        }elseif($chooseSeven == "月"){
+            $num_t3=$result3[0]["num_t"];
+        }elseif($chooseSeven == "年"){
+            $num_t3=$result3[0]["num_t"];
+        }
+
         if($num_t3 !=0){
-            $percent3=number_format($num/$num_t3, 2);
+            $percent3=number_format($num3/$num_t3, 2);
         }else{
             $percent3="100";
-        }
-        
-        if($percent2!=0){
-            $tb=number_format(($percent-$percent3)/$percent3*100,2);
-        }else{
-            $tb="0.00";
-        }
-        
-        if($percent2!=0){
-            $hb=number_format(($percent-$percent2)/$percent2*100,2);
-        }else{
-            $hb="0.00";
         }
         
     
@@ -907,8 +914,8 @@ class Index extends Controller
             {"name":"title","value":"完成比"},
             {"name":"time","value":"'.$chooseSeven.'"},
             {"name":"num","value":"'.$percent.'%"},
-            {"name":"tb","value":"'.$tb.'"},
-            {"name":"hb","value":"'.$hb.'"}
+            {"name":"tb","value":"'.$percent3.'"},
+            {"name":"hb","value":"'.$percent2.'"}
         ]';
     
         echo $data;
@@ -923,7 +930,7 @@ class Index extends Controller
         $dateMonth=date('Y-m', time());
         $dateYear=date('Y', time());
 
-        $user=\think\Db::name('user_form')->where('username',$username)->select();
+        $user=Db::name('user_form')->where('username',$username)->select();
 
         $department=$user[0]["department"];
         $newLevel=$user[0]["newLevel"];
@@ -999,7 +1006,7 @@ class Index extends Controller
         
         $sqlstr1=$sqlstr1." desc limit 0,5";
 
-        $sqlstr1=\think\Db::query($sqlstr1);
+        $sqlstr1=Db::query($sqlstr1);
         
         $staff_list1='[';
         $staff_list_str="";
@@ -1044,7 +1051,7 @@ class Index extends Controller
         $dateYear=date('Y', time());
 
 
-        $user=\think\Db::name('user_form')->where('username',$username)->select();
+        $user=Db::name('user_form')->where('username',$username)->select();
 
         $department=$user[0]["department"];
         $newLevel=$user[0]["newLevel"];
@@ -1143,7 +1150,7 @@ class Index extends Controller
         }
         
     
-        $sqlstr1_a=\think\Db::query($sqlstr1);
+        $sqlstr1_a=Db::query($sqlstr1);
     
         for($i=0;$i<sizeof($sqlstr1_a);$i++){
     
@@ -1179,7 +1186,7 @@ class Index extends Controller
         session_start();
         $username=$_SESSION["username"];
 
-        $user=\think\Db::name('user_form')->where('username',$username)->select();
+        $user=Db::name('user_form')->where('username',$username)->select();
 
         $department=$user[0]["department"];
         $newLevel=$user[0]["newLevel"];
@@ -1198,8 +1205,8 @@ class Index extends Controller
         if($chooseEight=="默认"){
             date_default_timezone_set("Asia/Shanghai");
             $date1=date('Y-m-d', strtotime("-1 day"));
-            $date2=date("Y-m-d", strtotime("-1 month"));
-            $date3=date("Y-m-d", strtotime("-1 year"));
+            $date2=date("Y-m-d", strtotime("$date1 -1 month"));
+            $date3=date("Y-m-d", strtotime("$date1 -1 year"));
     
             $dateMonth=date('Y-m', time());
             $dateMonth2=date('Y-m', strtotime("-1 month"));
@@ -1280,32 +1287,16 @@ class Index extends Controller
         }
 
         //当期
-
-        $sqlstr=\think\Db::query($sqlstr);
-        
-        $num=0;
-
-        for($i=0;$i<sizeof($sqlstr);$i++){
-            $num=$sqlstr[$i]["count"];
-        }
+        $result=Db::query($sqlstr);
+        $num=$result[0]["count"];
 
         //环比
-        $sqlstr2=\think\Db::query($sqlstr2);
-        
-        $num2=0;
-
-        for($i=0;$i<sizeof($sqlstr2);$i++){
-            $num2=$sqlstr2[$i]["count"];
-        }
+        $result2=Db::query($sqlstr2);
+        $num2=$result2[0]["count"];
 
         //同比
-        $sqlstr3=\think\Db::query($sqlstr3);
-        
-        $num3=0;
-
-        for($i=0;$i<sizeof($sqlstr3);$i++){
-            $num3=$sqlstr3[$i]["count"];
-        }
+        $sqlstr3=Db::query($sqlstr3);
+        $num3=$sqlstr3[0]["count"];
 
 
         if($num3 !="" and $num !=""){
@@ -1326,7 +1317,8 @@ class Index extends Controller
             {"name":"time","value":"'.$chooseSeven.'"},
             {"name":"num","value":"'.$num.'"},
             {"name":"tb","value":"'.number_format($tb, 2).'"},
-            {"name":"hb","value":"'.number_format($hb, 2).'"}  
+            {"name":"hb","value":"'.number_format($hb, 2).'"},
+            {"name":"hb","value":"'.$sqlstr2.'"}    
         ]';
 
         echo $data;
@@ -1337,7 +1329,7 @@ class Index extends Controller
         session_start();
         $username=$_SESSION["username"];
 
-        $user=\think\Db::name('user_form')->where('username',$username)->select();
+        $user=Db::name('user_form')->where('username',$username)->select();
 
         $department=$user[0]["department"];
         $newLevel=$user[0]["newLevel"];
@@ -1356,8 +1348,8 @@ class Index extends Controller
         if($chooseEight=="默认"){
             date_default_timezone_set("Asia/Shanghai");
             $date1=date('Y-m-d', strtotime("-1 day"));
-            $date2=date("Y-m-d", strtotime("-1 month"));
-            $date3=date("Y-m-d", strtotime("-1 year"));
+            $date2=date("Y-m-d", strtotime("$date1 -1 month"));
+            $date3=date("Y-m-d", strtotime("$date1 -1 year"));
     
             $dateMonth=date('Y-m', time());
             $dateMonth2=date('Y-m', strtotime("-1 month"));
@@ -1430,32 +1422,16 @@ class Index extends Controller
         
 
         //当期
-
-        $sqlstr=\think\Db::query($sqlstr);
-        
-        $num=0;
-
-        for($i=0;$i<sizeof($sqlstr);$i++){
-            $num=$sqlstr[$i]["count"];
-        }
+        $result=Db::query($sqlstr);
+        $num=$result[0]["count"];
 
         //环比
-        $sqlstr2=\think\Db::query($sqlstr2);
-        
-        $num2=0;
-
-        for($i=0;$i<sizeof($sqlstr2);$i++){
-            $num2=$sqlstr2[$i]["count"];
-        }
+        $result2=Db::query($sqlstr2);
+        $num2=$result2[0]["count"];
 
         //同比
-        $sqlstr3=\think\Db::query($sqlstr3);
-        
-        $num3=0;
-
-        for($i=0;$i<sizeof($sqlstr3);$i++){
-            $num3=$sqlstr3[$i]["count"];
-        }
+        $sqlstr3=Db::query($sqlstr3);
+        $num3=$sqlstr3[0]["count"];
 
 
         if($num3 !="" and $num !=""){
@@ -1476,7 +1452,8 @@ class Index extends Controller
             {"name":"time","value":"'.$chooseSeven.'"},
             {"name":"num","value":"'.$num.'"},
             {"name":"tb","value":"'.number_format($tb, 2).'"},
-            {"name":"hb","value":"'.number_format($hb, 2).'"}  
+            {"name":"hb","value":"'.number_format($hb, 2).'"},
+            {"name":"hb","value":"'.$sqlstr2.'"}    
         ]';
 
         echo $data;
@@ -1488,7 +1465,7 @@ class Index extends Controller
         session_start();
         $username=$_SESSION["username"];
 
-        $user=\think\Db::name('user_form')->where('username',$username)->select();
+        $user=Db::name('user_form')->where('username',$username)->select();
 
         $department=$user[0]["department"];
         $newLevel=$user[0]["newLevel"];
@@ -1585,7 +1562,7 @@ class Index extends Controller
 
         //当期
 
-        $sqlstr=\think\Db::query($sqlstr);
+        $sqlstr=Db::query($sqlstr);
         
         $num=0;
 
@@ -1595,7 +1572,7 @@ class Index extends Controller
 
         //当期全部
 
-        $sqlstr_b=\think\Db::query($sqlstr_b);
+        $sqlstr_b=Db::query($sqlstr_b);
 
         $num_b=0;
 
@@ -1611,7 +1588,7 @@ class Index extends Controller
         
 
         //环比
-        $sqlstr2=\think\Db::query($sqlstr2);
+        $sqlstr2=Db::query($sqlstr2);
         
         $num2=0;
 
@@ -1620,7 +1597,7 @@ class Index extends Controller
         }
 
         //环比全部
-        $sqlstr2_b=\think\Db::query($sqlstr2_b);
+        $sqlstr2_b=Db::query($sqlstr2_b);
         
         $num2=0;
 
@@ -1635,7 +1612,7 @@ class Index extends Controller
         }
 
         //同比
-        $sqlstr3=\think\Db::query($sqlstr3);
+        $sqlstr3=Db::query($sqlstr3);
         
         $num3=0;
 
@@ -1644,7 +1621,7 @@ class Index extends Controller
         }
 
         //同比全部
-        $sqlstr3_b=\think\Db::query($sqlstr3_b);
+        $sqlstr3_b=Db::query($sqlstr3_b);
         
         $num3_b=0;
 
@@ -1675,7 +1652,7 @@ class Index extends Controller
         session_start();
         $username=$_SESSION["username"];
 
-        $user=\think\Db::name('user_form')->where('username',$username)->select();
+        $user=Db::name('user_form')->where('username',$username)->select();
 
         $department=$user[0]["department"];
         $newLevel=$user[0]["newLevel"];
@@ -1746,7 +1723,7 @@ class Index extends Controller
 
         $sqlstr=$sqlstr."group by b.department";
 
-        $sqlstr=\think\Db::query($sqlstr);
+        $sqlstr=Db::query($sqlstr);
         $label=["TOMMY","自营","服饰","家纺","居家","母婴","京东","拼多多","天猫","女装","线下"];
 
         for($i=0;$i<sizeof($sqlstr);$i++){
@@ -1766,7 +1743,7 @@ class Index extends Controller
         session_start();
         $username=$_SESSION["username"];
 
-        $user=\think\Db::name('user_form')->where('username',$username)->select();
+        $user=Db::name('user_form')->where('username',$username)->select();
 
         $department=$user[0]["department"];
         $newLevel=$user[0]["newLevel"];
@@ -1839,7 +1816,7 @@ class Index extends Controller
 
         $sqlstr=$sqlstr."group by b.pingtai order by num desc  limit 10";
 
-        $sqlstr=\think\Db::query($sqlstr);
+        $sqlstr=Db::query($sqlstr);
 
         // $data=array();
 
