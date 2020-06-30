@@ -25,10 +25,6 @@
             <div class="search_bar">
                 <p class="search_bar_p1">辅料单查询</p>
 
-                <select class="form-control search_bar_s1" id="status">
-                    <option>未完成</option>
-                </select>
-
                 <select class="form-control search_bar_s2" id="time1">
                     <option>流程开始时间</option>
                 </select>
@@ -47,7 +43,7 @@
                     <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
                 </div>
 
-                <input type="text" class="form-control company_name" id="clientName" placeholder="请输入公司名称" value="<?=$clientName?>">
+                <input type="text" class="form-control company_name" id="keywords" placeholder="请输入编号/公司/部门/业务员关键字" value="<?=$keywords?>">
                 
                 <button class="btn btn-warning btn-sm search_bar_btn" id="query_fl">查询</button>
                 <button class="btn btn-success btn-sm search_bar_btn" id="download_fl">下载</button>
@@ -109,28 +105,28 @@
                                 echo $page-1;
                             else
                                 echo 1;  
-                        ?>&status=<?=$status2?>&time=<?=$time?>&input_time=<?=$input_time?>&input_time2=<?=$input_time2?>&clientName=<?=$clientName?>">上一页</a></li>
+                        ?>&status=<?=$status2?>&time=<?=$time?>&input_time=<?=$input_time?>&input_time2=<?=$input_time2?>&clientName=<?=$keywords?>">上一页</a></li>
                         <li><a href="<?php echo $_SERVER['PHP_SELF']?>?page=<?php
                             if($page<$pagecount)
                                 echo $page+1;
                             else
                                 echo $pagecount;  
-                        ?>&status=<?=$status2?>&time=<?=$time?>&input_time=<?=$input_time?>&input_time2=<?=$input_time2?>&clientName=<?=$clientName?>">下一页</a></li>
+                        ?>&status=<?=$status2?>&time=<?=$time?>&input_time=<?=$input_time?>&input_time2=<?=$input_time2?>&clientName=<?=$keywords?>">下一页</a></li>
                     </ul>
 
                     <div style="float:left;margin-left:560px;width:321px;">
                         <ul class="pagination" style="float:right;margin-top:0px">
-                            <li><a href="<?php echo $_SERVER['PHP_SELF']?>?page=1&status=<?=$status2?>&time=<?=$time?>&input_time=<?=$input_time?>&input_time2=<?=$input_time2?>&clientName=<?=$clientName?>">&laquo;</a></li>
+                            <li><a href="<?php echo $_SERVER['PHP_SELF']?>?page=1&status=<?=$status2?>&time=<?=$time?>&input_time=<?=$input_time?>&input_time2=<?=$input_time2?>&clientName=<?=$keywords?>">&laquo;</a></li>
                             <?php
                                 if($pagecount<=5){
                                     for($i=1;$i<=$pagecount;$i++){
                                         if($i==$page){
                                             ?>
-                                                <li  class="active"><a href="<?php echo $_SERVER['PHP_SELF']?>?page=<?=$i?>&status=<?=$status2?>&time=<?=$time?>&input_time=<?=$input_time?>&input_time2=<?=$input_time2?>&clientName=<?=$clientName?>"><?=$i?></a></li>
+                                                <li  class="active"><a href="<?php echo $_SERVER['PHP_SELF']?>?page=<?=$i?>&status=<?=$status2?>&time=<?=$time?>&input_time=<?=$input_time?>&input_time2=<?=$input_time2?>&clientName=<?=$keywords?>"><?=$i?></a></li>
                                             <?php
                                         }else{
                                             ?>
-                                                <li><a href="<?php echo $_SERVER['PHP_SELF']?>?page=<?=$i?>&status=<?=$status2?>&time=<?=$time?>&input_time=<?=$input_time?>&input_time2=<?=$input_time2?>&clientName=<?=$clientName?>"><?=$i?></a></li>
+                                                <li><a href="<?php echo $_SERVER['PHP_SELF']?>?page=<?=$i?>&status=<?=$status2?>&time=<?=$time?>&input_time=<?=$input_time?>&input_time2=<?=$input_time2?>&clientName=<?=$keywords?>"><?=$i?></a></li>
                                             <?php
                                         }
                                     }
@@ -138,11 +134,11 @@
                                     for($i=1;$i<=$pagecount;$i++){
                                         if($i==$page){
                                             ?>
-                                                <li  class="active"><a href="<?php echo $_SERVER['PHP_SELF']?>?page=<?=$i?>&status=<?=$status2?>&time=<?=$time?>&input_time=<?=$input_time?>&input_time2=<?=$input_time2?>&clientName=<?=$clientName?>"><?=$i?></a></li>
+                                                <li  class="active"><a href="<?php echo $_SERVER['PHP_SELF']?>?page=<?=$i?>&status=<?=$status2?>&time=<?=$time?>&input_time=<?=$input_time?>&input_time2=<?=$input_time2?>&clientName=<?=$keywords?>"><?=$i?></a></li>
                                             <?php
                                         }elseif(($i>=$page-2 or $i<=$page+2) and $page !=$pagecount){
                                             ?>
-                                                <li><a href="<?php echo $_SERVER['PHP_SELF']?>?page=<?=$i?>&status=<?=$status2?>&time=<?=$time?>&input_time=<?=$input_time?>&input_time2=<?=$input_time2?>&clientName=<?=$clientName?>"><?=$i?></a></li>
+                                                <li><a href="<?php echo $_SERVER['PHP_SELF']?>?page=<?=$i?>&status=<?=$status2?>&time=<?=$time?>&input_time=<?=$input_time?>&input_time2=<?=$input_time2?>&clientName=<?=$keywords?>"><?=$i?></a></li>
                                             <?php
                                         }
                                     }
@@ -150,7 +146,7 @@
                                 
                             ?>
 
-                            <li><a href="<?php echo $_SERVER['PHP_SELF']?>?page=<?php echo $pagecount; ?>&status=<?=$status2?>&time=<?=$time?>&input_time=<?=$input_time?>&input_time2=<?=$input_time2?>&clientName=<?=$clientName?>">&raquo;</a></li>
+                            <li><a href="<?php echo $_SERVER['PHP_SELF']?>?page=<?php echo $pagecount; ?>&status=<?=$status2?>&time=<?=$time?>&input_time=<?=$input_time?>&input_time2=<?=$input_time2?>&clientName=<?=$keywords?>">&raquo;</a></li>
                         </ul>
                     </div>
                 </div>

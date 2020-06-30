@@ -2,6 +2,7 @@
 namespace app\index\controller;
 use think\Controller;
 use think\Request;
+use think\Db;
 
 class Fl extends Controller{
     
@@ -13,16 +14,16 @@ class Fl extends Controller{
         session_start();
         $username=$_SESSION["username"];
 
-        $sqlstr1=\think\Db::name("user_form")->field(["department","newLevel"])->where("username",$username)->select();
+        $sqlstr1=Db::name("user_form")->field(["department","newLevel"])->where("username",$username)->select();
 
         $department=$sqlstr1[0]["department"];
         $newLevel=$sqlstr1[0]["newLevel"];
 
         if($id != ""){
-            $fl_infos=\think\Db::name("flsqd")->where("id",$id)->select();
+            $fl_infos=Db::name("flsqd")->where("id",$id)->select();
             $fl_info=$fl_infos[0];
 
-            $fl_sxs=\think\Db::name("use_sx")->field(["sqid","nowUseMoney"])->where("fl_no",$fl_info["no"])->select();
+            $fl_sxs=Db::name("use_sx")->field(["sqid","nowUseMoney"])->where("fl_no",$fl_info["no"])->select();
             
             if($fl_sxs != []){
                 $fl_sx=$fl_sxs[0];
@@ -76,7 +77,7 @@ class Fl extends Controller{
 
             //订单自动编号
 
-            $fl_infos=\think\Db::name("fl_no")->field("no")->where("department",$department)->select();
+            $fl_infos=Db::name("fl_no")->field("no")->where("department",$department)->select();
             
             if($fl_infos != []){
                 $fl_no=$fl_infos[0]["no"];
@@ -127,13 +128,13 @@ class Fl extends Controller{
             $fl_info["no"]=str_replace($fl_no_date,$fl_no_date_new,$fl_no);
         }
 
-        $fl_wlfs=\think\Db::name("fl_wlfs")->field("name")->select();
+        $fl_wlfs=Db::name("fl_wlfs")->field("name")->select();
 
-        $fl_names=\think\Db::name("fl")->field("fl_name")->order("fl_name")->select();
+        $fl_names=Db::name("fl")->field("fl_name")->order("fl_name")->select();
 
-        $fl_jkfss=\think\Db::name("fl_jkfs")->field("name")->select();
+        $fl_jkfss=Db::name("fl_jkfs")->field("name")->select();
 
-        $fl_sxInfos=\think\Db::query("select distinct a.sqid from sx_form a,use_sx b where a.sqid=b.sqid and (a.department='$department' or a.gxDepartment='$department') and a.status='已生效' and b.newMoney > 0");
+        $fl_sxInfos=Db::query("select distinct a.sqid from sx_form a,use_sx b where a.sqid=b.sqid and (a.department='$department' or a.gxDepartment='$department') and a.status='已生效' and b.newMoney > 0");
         if($fl_sxInfos !=[]){
             $fl_sxInfo=$fl_sxInfos[0];
         }else{
@@ -187,7 +188,7 @@ class Fl extends Controller{
         $input_time2=$this->request->param("input_time2");
         $clientName=$this->request->param("clientName");
 
-        $sqlstr1=\think\Db::name("user_form")->field(["department","newLevel"])->where("username",$username)->select();
+        $sqlstr1=Db::name("user_form")->field(["department","newLevel"])->where("username",$username)->select();
 
         $department=$sqlstr1[0]["department"];
         $newLevel=$sqlstr1[0]["newLevel"];
@@ -223,7 +224,7 @@ class Fl extends Controller{
             $sqlstr3=$sqlstr3." and company like '%$clientName%' ";
         }
 
-        $fl_counts=\think\Db::query($sqlstr3);
+        $fl_counts=Db::query($sqlstr3);
         $total=$fl_counts[0]["total"];
 
         if($total%$pagesize==0){
@@ -254,7 +255,7 @@ class Fl extends Controller{
 
         $sqlstr2=$sqlstr2." order by id desc limit ".($page-1)*$pagesize.",$pagesize";
 
-        $fls=\think\Db::query($sqlstr2);
+        $fls=Db::query($sqlstr2);
 
         for($i=0;$i<sizeof($fls);$i++){
             $arr_status=explode(",",$fls[$i]["status"]);
@@ -293,9 +294,27 @@ class Fl extends Controller{
         $time=$this->request->param("time");
         $input_time=$this->request->param("input_time");
         $input_time2=$this->request->param("input_time2");
-        $clientName=$this->request->param("clientName");
+        
+        //逻辑判断，关键字属于哪一类
+        $keywords=$this->request->param("keywords");
+        $option=0;
 
-        $sqlstr1=\think\Db::name("user_form")->field(["department","newLevel"])->where("username",$username)->select();
+        $fl_no_count=Db::name("flsqd")->field("count(*)")->where("no","like",'%'.$keywords.'%')->find();
+        $fl_company_count=Db::name("flsqd")->field("count(*)")->where("company","like",'%'.$keywords.'%')->find();
+        $fl_department_count=Db::name("flsqd")->field("count(*)")->where("department","like",'%'.$keywords.'%')->find();
+        $fl_people_count=Db::name("flsqd")->field("count(*)")->where("people","like",'%'.$keywords.'%')->find();
+        
+        if($fl_no_count["count(*)"] != 0){
+            $option=1;
+        }elseif($fl_company_count["count(*)"] != 0){
+            $option=2;
+        }elseif($fl_department_count["count(*)"] != 0){
+            $option=3;
+        }elseif($fl_people_count["count(*)"] != 0){
+            $option=4;
+        }
+
+        $sqlstr1=Db::name("user_form")->field(["department","newLevel"])->where("username",$username)->select();
 
         $department=$sqlstr1[0]["department"];
         $newLevel=$sqlstr1[0]["newLevel"];
@@ -327,12 +346,18 @@ class Fl extends Controller{
             $sqlstr3=$sqlstr3." and date <='$input_time2_full' ";
         }
 
-        if($clientName != ""){
-            $sqlstr3=$sqlstr3." and company like '%$clientName%' ";
+        if($option==1){
+            $sqlstr3=$sqlstr3." and no like '%$keywords%' ";
+        }elseif($option==2){
+            $sqlstr3=$sqlstr3." and company like '%$keywords%' ";
+        }elseif($option==3){
+            $sqlstr3=$sqlstr3." and department like '%$keywords%' ";
+        }elseif($option==4){
+            $sqlstr3=$sqlstr3." and people like '%$keywords%' ";
         }
 
 
-        $fl_counts=\think\Db::query($sqlstr3);
+        $fl_counts=Db::query($sqlstr3);
         $total=$fl_counts[0]["total"];
 
         if($total%$pagesize==0){
@@ -362,13 +387,19 @@ class Fl extends Controller{
             $sqlstr2=$sqlstr2." and date <='$input_time2_full' ";
         }
 
-        if($clientName != ""){
-            $sqlstr2=$sqlstr2." and company like '%$clientName%' ";
+        if($option==1){
+            $sqlstr2=$sqlstr2." and no like '%$keywords%' ";
+        }elseif($option==2){
+            $sqlstr2=$sqlstr2." and company like '%$keywords%' ";
+        }elseif($option==3){
+            $sqlstr2=$sqlstr2." and department like '%$keywords%' ";
+        }elseif($option==4){
+            $sqlstr2=$sqlstr2." and people like '%$keywords%' ";
         }
 
         $sqlstr2=$sqlstr2." order by id desc limit ".($page-1)*$pagesize.",$pagesize";
 
-        $fls=\think\Db::query($sqlstr2);
+        $fls=Db::query($sqlstr2);
 
         for($i=0;$i<sizeof($fls);$i++){
             $arr_status=explode(",",$fls[$i]["status"]);
@@ -380,28 +411,28 @@ class Fl extends Controller{
             $fls[$i]["shr"]=$shr;
 
             //加入key
-            $key_count=\think\Db::name("fl_key")->field("count(*)")->where("fl_no",$fls[$i]["id"])->select();
+            $key_count=Db::name("fl_key")->field("count(*)")->where("fl_no",$fls[$i]["id"])->select();
             $fls[$i]["key"]=$key_count[0]["count(*)"];
 
         }
 
-        $this->assign("username",$username);
-        $this->assign('title','待审核辅料单');
-        $this->assign('total',$total);
-        $this->assign('pagecount',$pagecount);
-        $this->assign('page',$page);
-        $this->assign('pagesize',15);
-        $this->assign('i',1);
-        $this->assign("input_time",$input_time);
-        $this->assign("input_time2",$input_time2);
-        $this->assign("clientName",$clientName);
-        $this->assign("fls",$fls);
-        $this->assign("status2",$status2);
-        $this->assign("time",$time);
-        $this->assign("newLevel",$newLevel);
+        $data=[
+            'title' => '待审核辅料单',
+            'username' => $username,
+            'keywords' => $keywords,
+            'fls' => $fls,
+            'status2' => $status2,
+            'newLevel' => $newLevel,
+            'time' => $time,
+            'input_time' => $input_time,
+            'input_time2' => $input_time2,
+            'total' => $total,
+            'pagecount' => $pagecount,
+            'page' => $page,
+            'pagesize' => 15
+        ];
 
-
-        return $this->fetch();
+        return $this->fetch('',$data);
     }
 
     public function d_fl(){
@@ -413,10 +444,28 @@ class Fl extends Controller{
         $time=$this->request->param("time");
         $input_time=$this->request->param("input_time");
         $input_time2=$this->request->param("input_time2");
-        $clientName=$this->request->param("clientName");
+
+        //逻辑判断，关键字属于哪一类
+        $keywords=$this->request->param("keywords");
+        $option=0;
+
+        $fl_no_count=Db::name("flsqd")->field("count(*)")->where("no","like",'%'.$keywords.'%')->find();
+        $fl_company_count=Db::name("flsqd")->field("count(*)")->where("company","like",'%'.$keywords.'%')->find();
+        $fl_department_count=Db::name("flsqd")->field("count(*)")->where("department","like",'%'.$keywords.'%')->find();
+        $fl_people_count=Db::name("flsqd")->field("count(*)")->where("people","like",'%'.$keywords.'%')->find();
+        
+        if($fl_no_count["count(*)"] != 0){
+            $option=1;
+        }elseif($fl_company_count["count(*)"] != 0){
+            $option=2;
+        }elseif($fl_department_count["count(*)"] != 0){
+            $option=3;
+        }elseif($fl_people_count["count(*)"] != 0){
+            $option=4;
+        }
 
 
-        $sqlstr1=\think\Db::name("user_form")->field(["department","newLevel"])->where("username",$username)->select();
+        $sqlstr1=Db::name("user_form")->field(["department","newLevel"])->where("username",$username)->select();
 
         $department=$sqlstr1[0]["department"];
         $newLevel=$sqlstr1[0]["newLevel"];
@@ -457,11 +506,17 @@ class Fl extends Controller{
             }
         }
 
-        if($clientName != ""){
-            $sqlstr3=$sqlstr3." and company like '%$clientName%' ";
+        if($option==1){
+            $sqlstr3=$sqlstr3." and no like '%$keywords%' ";
+        }elseif($option==2){
+            $sqlstr3=$sqlstr3." and company like '%$keywords%' ";
+        }elseif($option==3){
+            $sqlstr3=$sqlstr3." and department like '%$keywords%' ";
+        }elseif($option==4){
+            $sqlstr3=$sqlstr3." and people like '%$keywords%' ";
         }
 
-        $fl_counts=\think\Db::query($sqlstr3);
+        $fl_counts=Db::query($sqlstr3);
         $total=$fl_counts[0]["total"];
 
         if($total%$pagesize==0){
@@ -500,13 +555,19 @@ class Fl extends Controller{
             }
         }
 
-        if($clientName != ""){
-            $sqlstr2=$sqlstr2." and company like '%$clientName%' ";
+        if($option==1){
+            $sqlstr2=$sqlstr2." and no like '%$keywords%' ";
+        }elseif($option==2){
+            $sqlstr2=$sqlstr2." and company like '%$keywords%' ";
+        }elseif($option==3){
+            $sqlstr2=$sqlstr2." and department like '%$keywords%' ";
+        }elseif($option==4){
+            $sqlstr2=$sqlstr2." and people like '%$keywords%' ";
         }
 
         $sqlstr2=$sqlstr2." order by date2 desc limit ".($page-1)*$pagesize.",$pagesize";
 
-        $fls=\think\Db::query($sqlstr2);
+        $fls=Db::query($sqlstr2);
 
         for($i=0;$i<sizeof($fls);$i++){
             $arr_status=explode(",",$fls[$i]["status"]);
@@ -518,26 +579,28 @@ class Fl extends Controller{
             $fls[$i]["shr"]=$shr;
 
             //加入key
-            $key_count=\think\Db::name("fl_key")->field("count(*)")->where("fl_no",$fls[$i]["id"])->select();
+            $key_count=Db::name("fl_key")->field("count(*)")->where("fl_no",$fls[$i]["id"])->select();
             $fls[$i]["key"]=$key_count[0]["count(*)"];
 
         }
 
-        $this->assign("username",$username);
-        $this->assign("time",$time);
-        $this->assign("input_time",$input_time);
-        $this->assign("input_time2",$input_time2);
-        $this->assign("clientName",$clientName);
-        $this->assign('total',$total);
-        $this->assign('pagecount',$pagecount);
-        $this->assign('page',$page);
-        $this->assign('pagesize',15);
-        $this->assign('i',1);
-        $this->assign("fls",$fls);
-        $this->assign("newLevel",$newLevel);
-        $this->assign("status2",$status2);
+        $data=[
+            'title' => '已完成辅料单',
+            'username' => $username,
+            'keywords' => $keywords,
+            'fls' => $fls,
+            'status2' => $status2,
+            'newLevel' => $newLevel,
+            'time' => $time,
+            'input_time' => $input_time,
+            'input_time2' => $input_time2,
+            'total' => $total,
+            'pagecount' => $pagecount,
+            'page' => $page,
+            'pagesize' => 15
+        ];
 
-        return $this->fetch();
+        return $this->fetch('',$data);
     }
 
     public function old_fl(){
@@ -551,7 +614,7 @@ class Fl extends Controller{
         $input_time2=$this->request->param("input_time2");
         $clientName=$this->request->param("clientName");
 
-        $sqlstr1=\think\Db::name("user_form")->field(["department","newLevel"])->where("username",$username)->select();
+        $sqlstr1=Db::name("user_form")->field(["department","newLevel"])->where("username",$username)->select();
 
         $department=$sqlstr1[0]["department"];
         $newLevel=$sqlstr1[0]["newLevel"];
@@ -583,7 +646,7 @@ class Fl extends Controller{
             $sqlstr3=$sqlstr3." and company like '%$clientName%' ";
         }
 
-        $fl_counts=\think\Db::query($sqlstr3);
+        $fl_counts=Db::query($sqlstr3);
         $total=$fl_counts[0]["total"];
 
         if($total%$pagesize==0){
@@ -616,7 +679,7 @@ class Fl extends Controller{
         $sqlstr2=$sqlstr2." order by date2 desc limit ".($page-1)*$pagesize.",$pagesize";
 
 
-        $fls=\think\Db::query($sqlstr2);
+        $fls=Db::query($sqlstr2);
 
         $this->assign("username",$username);
         $this->assign("time",$time);
@@ -640,12 +703,12 @@ class Fl extends Controller{
         session_start();
         $username=$_SESSION["username"];
 
-        $sqlstr1=\think\Db::name("user_form")->field(["department","newLevel"])->where("username",$username)->select();
+        $sqlstr1=Db::name("user_form")->field(["department","newLevel"])->where("username",$username)->select();
 
         $department=$sqlstr1[0]["department"];
         $newLevel=$sqlstr1[0]["newLevel"];
 
-        $fl_lines=\think\Db::name("flsqd")->where("id",$id)->select();
+        $fl_lines=Db::name("flsqd")->where("id",$id)->select();
         $fl_line=$fl_lines[0];
 
         $status_arr2=explode(",",$fl_line["status"]);
@@ -670,12 +733,12 @@ class Fl extends Controller{
         $flfxj_arr=explode(',',$fl_line["flfxj"]);
         $hd_count=$fl_line["hd_count"];
 
-        $sx_infos=\think\Db::name("use_sx")->field(["sqid","nowUseMoney","newMoney"])->where("fl_no",$fl_line["no"])->select();
+        $sx_infos=Db::name("use_sx")->field(["sqid","nowUseMoney","newMoney"])->where("fl_no",$fl_line["no"])->select();
         
         if($sx_infos !=[]){
             $sx_info=$sx_infos[0];
 
-            $sx_filesNames=\think\Db::name("sx_form")->field("file_name")->where("sqid",$sx_info["sqid"])->select();
+            $sx_filesNames=Db::name("sx_form")->field("file_name")->where("sqid",$sx_info["sqid"])->select();
 
             if($sx_filesNames !=[]){
                 $sx_filesName=$sx_filesNames[0];
@@ -692,7 +755,7 @@ class Fl extends Controller{
 
         
 
-        $phones=\think\Db::name("user_form")->field("phone")->where("username",$username)->select();
+        $phones=Db::name("user_form")->field("phone")->where("username",$username)->select();
         $phone=$phones[0];
 
 
@@ -732,12 +795,12 @@ class Fl extends Controller{
         session_start();
         $username=$_SESSION["username"];
 
-        $sqlstr1=\think\Db::name("user_form")->field(["department","newLevel"])->where("username",$username)->select();
+        $sqlstr1=Db::name("user_form")->field(["department","newLevel"])->where("username",$username)->select();
 
         $department=$sqlstr1[0]["department"];
         $newLevel=$sqlstr1[0]["newLevel"];
 
-        $old_fls=\think\Db::name("oldflsqd")->where("id",$id)->select();
+        $old_fls=Db::name("oldflsqd")->where("id",$id)->select();
         $old_fl=$old_fls[0];
     
         $status_arr=explode(",",$old_fl["status"]);
@@ -782,7 +845,7 @@ class Fl extends Controller{
 
     public function fldj($fl){
   
-        $prices=\think\Db::name("fl")->field("fl_price")->where("fl_name",$fl)->select();
+        $prices=Db::name("fl")->field("fl_price")->where("fl_name",$fl)->select();
         $price=$prices[0]["fl_price"];
 
         return $price;
@@ -793,7 +856,7 @@ class Fl extends Controller{
         session_start();   
         $username=$_SESSION["username"];
         
-        $sqlstr1=\think\Db::name("user_form")->field(["department","newLevel"])->where("username",$username)->select();
+        $sqlstr1=Db::name("user_form")->field(["department","newLevel"])->where("username",$username)->select();
 
         $department=$sqlstr1[0]["department"];
         $newLevel=$sqlstr1[0]["newLevel"];
@@ -860,21 +923,21 @@ class Fl extends Controller{
             $flfxj=$flfxj.(float)$this->request->param('dj'.$i)*(float)$this->request->param('sl'.$i).",";
         }
     
-        $maxIDs=\think\Db::name("flsqd")->field("max(id)")->select();
+        $maxIDs=Db::name("flsqd")->field("max(id)")->select();
         $maxID=$maxIDs[0]["max(id)"];
     
         //获取当前流程审批节点
         $p_no=$this->request->get("no");
     
         //获取下个节点名称
-        $names=\think\Db::name("flprogress")->field("name")->where("number",(int)$p_no+1)->select();
+        $names=Db::name("flprogress")->field("name")->where("number",(int)$p_no+1)->select();
         $name=$names[0]["name"];
     
 
         //M级审批单据
         if($name == "M级审批单据"){
             
-            $sps=\think\Db::name("user_form")->field("username")->where("department","like","%$department%")->where("newLevel","M")->select();
+            $sps=Db::name("user_form")->field("username")->where("department","like","%$department%")->where("newLevel","M")->select();
             $sp=$sps[0]["username"];
         
             $sp=$username.",".$sp;
@@ -886,11 +949,11 @@ class Fl extends Controller{
             //防止辅料单重号
             if($id==""){
 
-                $count_nos=\think\Db::name("flsqd")->field("count(*)")->where("no",$no)->select();
+                $count_nos=Db::name("flsqd")->field("count(*)")->where("no",$no)->select();
                 $count_no=$count_nos[0]["count(*)"];
     
                 if($count_no != '0'){
-                    $no_sqls=\think\Db::name("fl_no")->field("no")->where("department",$department)->select();
+                    $no_sqls=Db::name("fl_no")->field("no")->where("department",$department)->select();
                     $no_sql=$no_sqls[0]["no"];
     
                     $no_arr=explode("-",$no_sql);  
@@ -905,16 +968,16 @@ class Fl extends Controller{
                 //未被保存过的单据
                 if($id =="" and $no != ""){
 
-                    $no_update=\think\Db::query("update fl_no set no='$no' where department='$department'");
+                    $no_update=Db::query("update fl_no set no='$no' where department='$department'");
             
-                    $sqlstr1=\think\Db::query("insert into flsqd values('$maxID'+1,'$no','$company','$people','$department','$date','$address',".
+                    $sqlstr1=Db::query("insert into flsqd values('$maxID'+1,'$no','$company','$people','$department','$date','$address',".
                         "'$connection','$phone','$driving','$ishs','$category','$productNo','$productName',".
                         "'$amount','$price','$fls','$fwfxj','$flsName','$dj','$sl','$flfxj','$sd','$jkfs',".
                         "'$wlfs','$wlno','$wlprice','$note','$hd_sqslhj','$hd_fwfhj','$hd_flsl','$hd_flfhjsh',".
                         "'$hd_fwfflfzj','$hd_count'+1,'$ywy','$name','','','$sp','','$date','$fileName')");
                 //已被保存或提交后拒绝的单据
                 }else{
-                    $sqlstr1=\think\Db::query("update flsqd set no='$no',company='$company',people='$people',department='$department',date='$date',address='$address',".
+                    $sqlstr1=Db::query("update flsqd set no='$no',company='$company',people='$people',department='$department',date='$date',address='$address',".
                     "connection='$connection',phone='$phone',driving='$driving',ishs='$ishs',category='$category',productName='$productName',productNo='$productNo',".
                     "amount='$amount',price='$price',fls='$fls',fwfxj='$fwfxj',flsName='$flsName',dj='$dj',sl='$sl',flfxj='$flfxj',sd='$sd',jkfs='$jkfs',".
                     "wlfs='$wlfs',wlno='$wlno',wlprice='$wlprice',note='$note',hd_sqslhj='$hd_sqslhj',hd_fwfhj='$hd_fwfhj',hd_flsl='$hd_flsl',hd_flfhjsh='$hd_flfhjsh',".
@@ -923,16 +986,16 @@ class Fl extends Controller{
             }else{
                 //点击一键保存的执行流程
                 if($id =="" and $no != ""){
-                    $no_update=\think\Db::query("update fl_no set no='$no' where department='$department'");
+                    $no_update=Db::query("update fl_no set no='$no' where department='$department'");
             
-                    $sqlstr1=\think\Db::query("insert into flsqd values('$maxID'+1,'$no','$company','$people','$department','$date','$address',".
+                    $sqlstr1=Db::query("insert into flsqd values('$maxID'+1,'$no','$company','$people','$department','$date','$address',".
                         "'$connection','$phone','$driving','$ishs','$category','$productNo','$productName',".
                         "'$amount','$price','$fls','$fwfxj','$flsName','$dj','$sl','$flfxj','$sd','$jkfs',".
                         "'$wlfs','$wlno','$wlprice','$note','$hd_sqslhj','$hd_fwfhj','$hd_flsl','$hd_flfhjsh',".
                         "'$hd_fwfflfzj','$hd_count'+1,'$ywy','KA级提交单据','','','$username','','','$fileName')");
                 }else{
     
-                    $sqlstr1=\think\Db::query("update flsqd set no='$no',company='$company',people='$people',department='$department',date='$date',address='$address',".
+                    $sqlstr1=Db::query("update flsqd set no='$no',company='$company',people='$people',department='$department',date='$date',address='$address',".
                     "connection='$connection',phone='$phone',driving='$driving',ishs='$ishs',category='$category',productName='$productName',productNo='$productNo',".
                     "amount='$amount',price='$price',fls='$fls',fwfxj='$fwfxj',flsName='$flsName',dj='$dj',sl='$sl',flfxj='$flfxj',sd='$sd',jkfs='$jkfs',".
                     "wlfs='$wlfs',wlno='$wlno',wlprice='$wlprice',note='$note',hd_sqslhj='$hd_sqslhj',hd_fwfhj='$hd_fwfhj',hd_flsl='$hd_flsl',hd_flfhjsh='$hd_flfhjsh',".
@@ -943,14 +1006,14 @@ class Fl extends Controller{
             //提交后扣减授信金额
             if($sqid !="" and $usesqmoney !=""){
 
-                $maxID2s=\think\Db::name("use_sx")->field("max(id)")->select();
+                $maxID2s=Db::name("use_sx")->field("max(id)")->select();
                 $maxID2=$maxID2s[0]["max(id)"];
     
                 if($maxID==""){
                     $maxID2=0;
                 }
     
-                $sqlstr3=\think\Db::query("select distinct sqmoney,newMoney from use_sx where sqid='$sqid'");
+                $sqlstr3=Db::query("select distinct sqmoney,newMoney from use_sx where sqid='$sqid'");
                     
                 $sqmoney=$sqlstr3[0]["sqmoney"];
                 $newMoney=$sqlstr3[0]["newMoney"];
@@ -959,8 +1022,8 @@ class Fl extends Controller{
                             
                 $remainMoney=(int)$sqmoney-(int)$useMoney-(int)$usesqmoney;
                 
-                $sqlstr4=\think\Db::query("insert into use_sx values('$maxID2'+1,'$sqid','$sqmoney','$useMoney','$usesqmoney','$remainMoney','$no','$department','$date','使用授信','$remainMoney')");
-                $sqlstr5=\think\Db::query("update use_sx set newMoney='$remainMoney' where sqid='$sqid'");
+                $sqlstr4=Db::query("insert into use_sx values('$maxID2'+1,'$sqid','$sqmoney','$useMoney','$usesqmoney','$remainMoney','$no','$department','$date','使用授信','$remainMoney')");
+                $sqlstr5=Db::query("update use_sx set newMoney='$remainMoney' where sqid='$sqid'");
     
             }
         }
@@ -1064,7 +1127,7 @@ class Fl extends Controller{
         if($id != ""){
 
             if($department=="义乌部"){
-                $update_fl_print=\think\Db::query("update flsqd set isprint='1' where id=$id");
+                $update_fl_print=Db::query("update flsqd set isprint='1' where id=$id");
             }
 
             echo 0;
@@ -1078,7 +1141,7 @@ class Fl extends Controller{
         session_start();
         $username=$_SESSION["username"];
 
-        $sqlstr=\think\Db::query("select newMoney from use_sx where sqid='$sxid'");
+        $sqlstr=Db::query("select newMoney from use_sx where sqid='$sxid'");
     
         $newMoney="";
     
@@ -1099,28 +1162,28 @@ class Fl extends Controller{
         $id=$this->request->param("id");
         $zf_note=$this->request->param("zf_note");
 
-        $notes=\think\Db::name("flsqd")->field("note")->where("id",$id)->select();
+        $notes=Db::name("flsqd")->field("note")->where("id",$id)->select();
         $note=$notes[0]["flsqd"];
 
         $note=$note."/辅料单作废，备注：".$zf_note;
 
         //重新编辑需要返还授信金额
-        $sqlstr4=\think\Db::query("select count(*) from use_sx where fl_no = (select no from flsqd where id=$id)");
+        $sqlstr4=Db::query("select count(*) from use_sx where fl_no = (select no from flsqd where id=$id)");
         $count=$sqlstr4[0]["count(*)"];
 
         if($count > 0){
-            $sqlstr5=\think\Db::query("select nowUseMoney,sqid from use_sx where  fl_no = (select no from flsqd where id=$id)");
+            $sqlstr5=Db::query("select nowUseMoney,sqid from use_sx where  fl_no = (select no from flsqd where id=$id)");
 
             $nowUseMoney=$sqlstr5[0]["nowUseMoney"];
             $sqid=$sqlstr5[0]["sqid"];
 
-            $update_sx=\think\Db::query("update use_sx set newMoney= $nowUseMoney + newMoney where sqid='$sqid'");
+            $update_sx=Db::query("update use_sx set newMoney= $nowUseMoney + newMoney where sqid='$sqid'");
 
-            $del_sx=\think\Db::query("delete from use_sx where fl_no = (select no from flsqd where id=$id)");
+            $del_sx=Db::query("delete from use_sx where fl_no = (select no from flsqd where id=$id)");
         }
 
 
-        $update_zf=\think\Db::query("update flsqd set note='$note',status='作废' where id=$id");
+        $update_zf=Db::query("update flsqd set note='$note',status='作废' where id=$id");
         
         return redirect("/index.php/Index/fl/fl_line.php?id=".$id);
           
@@ -1130,7 +1193,7 @@ class Fl extends Controller{
         session_start();
         $username=$_SESSION["username"]; 
 
-        $sqlstr1=\think\Db::name("user_form")->field(["department","newLevel"])->where("username",$username)->select();
+        $sqlstr1=Db::name("user_form")->field(["department","newLevel"])->where("username",$username)->select();
 
         $my_department=$sqlstr1[0]["department"];
         $newLevel=$sqlstr1[0]["newLevel"];
@@ -1141,7 +1204,7 @@ class Fl extends Controller{
         $id=$this->request->param("id"); 
         $option=$this->request->param("option"); 
 
-        $sqlstr0=\think\Db::query("select department,jkfs,status,shr,allTime from flsqd where id='$id'");
+        $sqlstr0=Db::query("select department,jkfs,status,shr,allTime from flsqd where id='$id'");
 
         $department=$sqlstr0[0]["department"];
         $jkfs=$sqlstr0[0]["jkfs"];
@@ -1160,24 +1223,24 @@ class Fl extends Controller{
             $shr_now=array_pop($shr_arr);
 
             if($shr_now==$username){
-                $sqlstr3=\think\Db::query("select number from flprogress where name='$status_now' ");
+                $sqlstr3=Db::query("select number from flprogress where name='$status_now' ");
                 $number=$sqlstr3[0]["number"];
         
                 $number_forward=$number+1;
         
-                $sqlstr4=\think\Db::query("select name,sp from flprogress where number='$number_forward' ");
+                $sqlstr4=Db::query("select name,sp from flprogress where number='$number_forward' ");
                 $status_forward=$sqlstr4[0]["name"];
                 $sp_forward=$sqlstr4[0]["sp"];
 
         
                 if(($jkfs=="全现金" and $status_forward == "商业运营审批单据") or (($jkfs=="全授信" or $jkfs=="标费补贴") and $status_forward == "财务审批单据")){
         
-                    $sqlstr5=\think\Db::query("select number from flprogress where name='$status_forward' ");
+                    $sqlstr5=Db::query("select number from flprogress where name='$status_forward' ");
                     $number=$sqlstr5[0]["number"];
 
                     $number=$number+1;
         
-                    $sqlstr6=\think\Db::query("select name,sp from flprogress where number='$number' ");
+                    $sqlstr6=Db::query("select name,sp from flprogress where number='$number' ");
 
                     $status_forward=$sqlstr6[0]["name"];
                     $sp_forward=$sqlstr6[0]["sp"];
@@ -1189,23 +1252,23 @@ class Fl extends Controller{
                 $shTime_new=$shTime.",".$time;
         
                 if($status_forward=="已归档单据"){
-                    $sqlstr_fl=\think\Db::query("update flsqd set status='$status_new',shr='$sp_new',allTime='$shTime_new',date2='$time',file='$username' where id='$id'");
+                    $sqlstr_fl=Db::query("update flsqd set status='$status_new',shr='$sp_new',allTime='$shTime_new',date2='$time',file='$username' where id='$id'");
                 }else{
-                    $sqlstr_fl=\think\Db::query("update flsqd set status='$status_new',shr='$sp_new',allTime='$shTime_new',file='$username' where id='$id'");
+                    $sqlstr_fl=Db::query("update flsqd set status='$status_new',shr='$sp_new',allTime='$shTime_new',file='$username' where id='$id'");
                 }
 
                 //财务，商业运营加入key
                 if($my_department=="财务部" or ($my_department=="商业运营部" and $status_forward !="已归档单据")){
         
                     //获取辅料申请单最大ID
-                    $sqlstr=\think\Db::query("select max(id) from fl_key");
+                    $sqlstr=Db::query("select max(id) from fl_key");
                     $maxID=$sqlstr[0]["max(id)"];
                     
                     if($maxID==""){
                         $maxID=0;
                     }
         
-                    $sqlstr_k=\think\Db::query("insert into fl_key values('$maxID'+1,'$id',1,'$time')");
+                    $sqlstr_k=Db::query("insert into fl_key values('$maxID'+1,'$id',1,'$time')");
                 }
 
                 return redirect('/index.php/Index/fl/w_fl.html');
@@ -1223,17 +1286,17 @@ class Fl extends Controller{
             $note=$_GET["note"];
 
             //找出当前流程序号（同意状态）
-            $sqlstr1=\think\Db::name("flprogress")->field("number")->where("sp",$username)->where("no",1)->select();
+            $sqlstr1=Db::name("flprogress")->field("number")->where("sp",$username)->where("no",1)->select();
             $number=$sqlstr1[0]["number"];
 
-            $sqlstr4=\think\Db::name("flsqd")->field(["status","shr","allTime"])->where("id",$id)->select();
+            $sqlstr4=Db::name("flsqd")->field(["status","shr","allTime"])->where("id",$id)->select();
             
             $qqstatus=$sqlstr4[0]["status"];
             $qqshr=$sqlstr4[0]["shr"];
             $allTime=$sqlstr4[0]["allTime"];
 
             //找出下个流程信息
-            $sqlstr2=\think\Db::name("flprogress")->field(["name","sp"])->where("number",$number+1)->where("no",1)->select();
+            $sqlstr2=Db::name("flprogress")->field(["name","sp"])->where("number",$number+1)->where("no",1)->select();
 
             $name=$sqlstr2[0]["name"];
             $sp=$sqlstr2[0]["sp"];
@@ -1244,7 +1307,7 @@ class Fl extends Controller{
             $allTime=$allTime.",".$time;
 
             //将下个流程信息放入
-            $sqlstr3=\think\Db::table("flsqd")->where("id",$id)->update(['status'=>$name,'shr'=>$sp,'allTime'=>$allTime,'wlfs'=>$wlfs,'wlno'=>$wlno,'wlprice'=>$wlprice,'note'=>$note]);
+            $sqlstr3=Db::table("flsqd")->where("id",$id)->update(['status'=>$name,'shr'=>$sp,'allTime'=>$allTime,'wlfs'=>$wlfs,'wlno'=>$wlno,'wlprice'=>$wlprice,'note'=>$note]);
 
             return redirect('/index.php/Index/fl/w_fl.html');
 
@@ -1252,25 +1315,25 @@ class Fl extends Controller{
             //业务员重新编辑
 
             //重新编辑需要返还授信金额
-            $sqlstr=\think\Db::query("select count(*) from use_sx where fl_no = (select no from flsqd where id=$id)");
+            $sqlstr=Db::query("select count(*) from use_sx where fl_no = (select no from flsqd where id=$id)");
             $count=$sqlstr[0]["count(*)"];
 
             if($count > 0){
-                $sqlstr2=\think\Db::query("select nowUseMoney,sqid from use_sx where  fl_no = (select no from flsqd where id=$id)");   
+                $sqlstr2=Db::query("select nowUseMoney,sqid from use_sx where  fl_no = (select no from flsqd where id=$id)");   
 
                 $nowUseMoney=$sqlstr2[0]["nowUseMoney"];
                 $sqid=$sqlstr2[0]["sqid"];
 
-                $sqlstr3=\think\Db::query("update use_sx set newMoney= $nowUseMoney + newMoney where sqid='$sqid'");
+                $sqlstr3=Db::query("update use_sx set newMoney= $nowUseMoney + newMoney where sqid='$sqid'");
 
-                $sqlstr4=\think\Db::query("delete from use_sx where fl_no = (select no from flsqd where id=$id)");   
+                $sqlstr4=Db::query("delete from use_sx where fl_no = (select no from flsqd where id=$id)");   
             }
 
             return redirect('/index.php/Index/fl/flsq.html?id='.$id);
 
         }elseif($option==7){
             //KA删除单据
-            $sqlstr=\think\Db::name("flsqd")->where("id",$id)->delete();
+            $sqlstr=Db::name("flsqd")->where("id",$id)->delete();
 
             return redirect('/index.php/Index/fl/w_fl.html');
         
@@ -1282,13 +1345,13 @@ class Fl extends Controller{
             $wlprice=$_GET["wlprice"];
             $note=$_GET["note"];
 
-            $sqlstr3=\think\Db::table("flsqd")->where("id",$id)->update(['wlfs'=>$wlfs,'wlno'=>$wlno,'wlprice'=>$wlprice,'note'=>$note]);
+            $sqlstr3=Db::table("flsqd")->where("id",$id)->update(['wlfs'=>$wlfs,'wlno'=>$wlno,'wlprice'=>$wlprice,'note'=>$note]);
 
             return redirect('/index.php/Index/fl/w_fl.html');
 
         }else{
             //拒绝，待业务员审核
-            $sqlstr=\think\Db::name("flsqd")->field(["status","shr","allTime"])->where("id",$id)->select();
+            $sqlstr=Db::name("flsqd")->field(["status","shr","allTime"])->where("id",$id)->select();
 
             $qqstatus=$sqlstr[0]["status"];
             $qqshr=$sqlstr[0]["shr"];
@@ -1302,14 +1365,14 @@ class Fl extends Controller{
             $time=date('Y-m-d H:i:s', time());
             $allTime=$allTime.",".$time;
 
-            $sqlstr2=\think\Db::table("flsqd")->where("id",$id)->update(['status'=>$name,'shr'=>$sp,'allTime'=>$allTime]);
+            $sqlstr2=Db::table("flsqd")->where("id",$id)->update(['status'=>$name,'shr'=>$sp,'allTime'=>$allTime]);
 
             //财务，商业运营拒绝删除key
-            $sqlstr3=\think\Db::name("fl_key")->field("count(*)")->where("fl_no",$id)->select();
+            $sqlstr3=Db::name("fl_key")->field("count(*)")->where("fl_no",$id)->select();
             $count_key=$sqlstr3[0]["count(*)"];
             
             if($count_key>0){
-                $sqlstr4=\think\Db::table("fl_key")->where("fl_no",$id)->delete();
+                $sqlstr4=Db::table("fl_key")->where("fl_no",$id)->delete();
             }
 
             return redirect('/index.php/Index/fl/fl_line.html?id='.$id);

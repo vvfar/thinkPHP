@@ -5,9 +5,9 @@ td{text-align: center;}
 .search_bar_p1{font-size:14px;float:left;margin-top:5px;}
 .search_bar_s1{float: left;width:100px;margin-left:20px;}
 .search_bar_s2{float: left;width:135px;margin-left:10px;}
-.search_bar_t{float: left;margin-left:10px;width:180px;}
+.search_bar_t{float: left;margin-left:15px;width:180px;}
 .search_bar_p2{float: left;position:relative;top:6px;margin-left:5px;}
-.company_name{width:170px;float: left;margin-left: 10px;}
+.company_name{width:280px;float: left;margin-left: 15px;}
 .search_bar_btn{float: left;margin-left:10px;}
 .fy_span{margin-top:45px;margin-left:20px;}
 .fy_span h4 span{float:left;margin-right:5px;padding:5px}

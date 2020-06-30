@@ -17,9 +17,9 @@ $(document).ready(function(){
         time1=$("#time1").val()
         input_time=$("#input_time").val()
         input_time2=$("#input_time2").val()
-        clientName=$("#clientName").val()
+        keywords=$("#keywords").val()
 
-        window.location.href="flList.php?status=" + status + "&time=" + time1 + "&input_time=" + input_time + "&input_time2=" + input_time2 + "&clientName=" +clientName
+        window.location.href="w_fl.html?status=" + status + "&time=" + time1 + "&input_time=" + input_time + "&input_time2=" + input_time2 + "&keywords=" +keywords
 
     })
 
