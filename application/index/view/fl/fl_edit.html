@@ -1,0 +1,31 @@
+{extend name="base"/}
+{block name="link"}    
+    <link href="/css/fl/query_amount.css" rel="stylesheet"/>
+    <script src="/js/fl/query_amount.js"></script>
+    
+{/block}
+
+{block name="container"}
+    <form action="fl_edit" method="POST">
+        <p style="font-size: 18px;">修改辅料</p>
+        
+        <input type="hidden" value="{$fl_line.id}" class="form-control" name="id">
+
+        <div style="margin-top:10px;">
+            <p>辅料名称：</p>
+            <input type="text" value="{$fl_line.fl_name}" placeholder="请输入辅料名称" class="form-control" name="fl_name" style="width: 300px;margin-top:10px;" readOnly>
+        </div>
+
+        <div style="margin-top:10px;">
+            <p>辅料价格：</p>
+            <input type="text" value="{$fl_line.fl_price}" placeholder="请输入辅料价格" class="form-control" name="fl_price" style="width: 300px;margin-top:10px;">
+        </div>
+
+        <div style="margin-top:10px;">
+            <p>辅料数量：</p>
+            <input type="text" value="{$fl_line.fl_amount}" placeholder="请输入辅料数量" class="form-control" name="fl_amount" style="width: 300px;margin-top:10px;">
+        </div>
+                        
+        <button type="submit" class="btn btn-success" style="margin-top:10px;">提交</button>                     
+    </form>  
+{/block}

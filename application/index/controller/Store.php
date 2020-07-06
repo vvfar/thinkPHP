@@ -732,7 +732,7 @@ class Store extends Controller{
                 'users' => $users
             ];
 
-            return $this->fetch();
+            return $this->fetch('',$data);
 
         }else{
             return $this->redirect('/index.php/Index/Login/login');
@@ -867,4 +867,335 @@ class Store extends Controller{
             return $this->redirect('/index.php/Index/Login/login');
         }
     }
+
+    public function downloadStoreMB(){
+        
+        $conn=mysqli_connect("localhost","root","root","yzl_database") or die("连接数据库服务器失败！".mysqli_error());
+        mysqli_query($conn,"set names utf8");
+
+        session_start();
+        $username=$_SESSION['username'];
+
+        $sqlstr1="select storeID,client,storeName,pingtai,category,department,staff from store where status='正常'";
+        $result=mysqli_query($conn,$sqlstr1);
+
+        $data=array();
+
+        while($myrow=mysqli_fetch_row($result)){
+            $data[]=str_replace("\t",'',$myrow);
+            //$data[]=$myrow;
+            //echo var_dump($data);
+        }
+
+        foreach($data as $key=>$value){
+            foreach($value as $keys=>$values){
+
+            }
+        }
+
+        $header=array('店铺编号','公司名称','店铺名称','平台','类目','部门','负责人','销售额','销售单量','日期');
+                
+        function createtable($list,$filename,$header=array(),$index = array()){ 
+            header("Content-type:application/vnd.ms-excel"); 
+            header("Content-Disposition:filename=".$filename.".xls"); 
+            $teble_header = implode("\t",$header); 
+            $strexport = $teble_header."\r"; 
+            foreach ($list as $row){ 
+                foreach($index as $val){ 
+                    $strexport.=$row[$val]."\t";  
+                    } 
+                    $strexport.="\r"; 
+                    
+                    } 
+                $strexport=iconv('UTF-8',"GB2312//IGNORE",$strexport); 
+                exit($strexport);  
+        }
+
+        $list2=range(0,6);
+
+        createtable($data,'每日销售数据',$header,$list2);
+    }
+
+    public function downloadStoreData($option){
+        $conn=mysqli_connect("localhost","root","root","yzl_database") or die("连接数据库服务器失败！".mysqli_error());
+        mysqli_query($conn,"set names utf8");
+
+        session_start();
+        $username=$_SESSION['username'];
+
+        date_default_timezone_set("Asia/Shanghai");
+        $date=date('Y-m-d', time());  //签署日期
+
+        $startTime=$this->request->param("dateTime2");
+        $endTime=$this->request->param("dateTime3");
+
+        $sqlstr1="select department,newLevel from user_form where username='$username'";
+
+        $result=mysqli_query($conn,$sqlstr1);
+
+        while($myrow=mysqli_fetch_row($result)){
+            $department=$myrow[0];
+            $newLevel=$myrow[1];
+        }
+
+        if($option == 1){
+            $sqlstr2="select a.storeID,a.client,a.storeName,a.staff,b.salesMoney,b.salesNum,a.status,b.date from store_data_sales b,store a  where date >= '$startTime' and  date <= '$endTime' and a.storeID=b.storeID ";
+        }else{
+            $sqlstr2="select a.storeID,a.client,a.storeName,a.staff,b.backMoney,a.status,c.backMoney,b.date from store_data_hk b,store a join (select storeID,sum(backMoney) as backMoney from store_data_hk where date >= '2020-01-01' group by storeID) c on a.storeID=c.storeID where a.storeID=b.storeID ";
+        }
+
+        if($newLevel !="ADMIN" and $department != "商业运营部"){
+            if($newLevel == "KA"){
+                $sqlstr2=$sqlstr2." and a.staff like '%$username%'"; 
+            }else{
+                $sqlstr2=$sqlstr2." and '$department' like concat('%',a.department,'%') ";
+            }
+        }
+
+        $result=mysqli_query($conn,$sqlstr2);
+
+        $data=array();
+
+        while($myrow=mysqli_fetch_row($result)){
+            $data[]=str_replace("\t",'',$myrow);
+            //$data[]=$myrow;
+            //echo var_dump($data);
+        }
+        
+        foreach($data as $key=>$value){
+            foreach($value as $keys=>$values){
+
+            }
+        }
+
+        if($option == 1){
+            $header=array('店铺编号','公司名称','店铺名称','负责人','销售额','销售单量','店铺状态','日期');
+        }else{
+            $header=array('店铺编号','公司名称','店铺名称','负责人','回款金额','店铺状态','累计回款额','日期');
+        }
+        
+        function createtable($list,$filename,$header=array(),$index = array()){ 
+            header("Content-type:application/vnd.ms-excel"); 
+            header("Content-Disposition:filename=".$filename.".xls"); 
+            $teble_header = implode("\t",$header); 
+            $strexport = $teble_header."\r"; 
+            foreach ($list as $row){ 
+                foreach($index as $val){ 
+                    $strexport.=$row[$val]."\t";  
+                    } 
+                    $strexport.="\r"; 
+                    
+                    } 
+                $strexport=iconv('UTF-8',"GB2312//IGNORE",$strexport); 
+                exit($strexport);  
+        }
+
+        if($option == 1){
+            $list2=range(0,7);
+            createtable($data,'销售数据汇总',$header,$list2);
+        }else{
+            $list2=range(0,7);
+            createtable($data,'现金回款数据汇总',$header,$list2);
+        }
+    }
+
+    public function upload_store_data(){
+        
+        error_reporting(0);
+
+        $conn=mysqli_connect("localhost","root","root","yzl_database") or die("连接数据库服务器失败！".mysqli_error());
+        mysqli_query($conn,"set names utf8");
+
+        require_once getcwd().'/PHPExcel/PHPExcel.php';
+        require_once getcwd().'/PHPExcel/PHPExcel/IOFactory.php';
+
+        session_start();
+        $username=$_SESSION["username"];
+
+        if(!empty($_FILES['excel']['name'])){
+            $fileName=$_FILES['excel']['name'];
+            $dotArray=explode('.',$fileName);
+            $type=end($dotArray);
+
+            if($type!="xls" && $type!="xlsx"){
+
+                return $this->error('不是Excel文件，请重新上传！','/index.php/Index/store/store_data1.html','','1');
+            }else{
+                $fileinfo=$_FILES['excel'];
+
+                $a=$fileinfo['size'];
+
+                if($fileinfo['size']<120971520 && $fileinfo['size']>0){
+
+                    //iconv防止出现上传中文名乱码
+                    $path=iconv('utf-8','gb2312',getcwd()."/file/daysData/".$_FILES["excel"]["name"]);
+
+                    if(file_exists($path)){
+                        return $this->error('文件已存在！','/index.php/Index/store/store_data1.html','','1');
+                    }else{
+                        move_uploaded_file($fileinfo['tmp_name'],$path);
+                    }
+
+                    if(!file_exists($path)){
+                        return $this->error('上传文件丢失！','/index.php/Index/store/store_data1.html','','1');
+                    }else{
+                        //文件的扩展名
+                        $ext = strtolower(pathinfo($path, PATHINFO_EXTENSION));
+                        if ($ext == 'xlsx') {
+                            $objReader = \PHPExcel_IOFactory::createReader('Excel2007');
+                            $objPHPExcel = $objReader->load($path, 'utf-8');
+                        } elseif ($ext == 'xls') {
+                            $objReader = \PHPExcel_IOFactory::createReader('Excel5');
+                            $objPHPExcel = $objReader->load($path, 'utf-8');
+                        }
+
+                        $sheet = $objPHPExcel->getSheet(0);
+                        $highestRow = $sheet->getHighestRow(); // 取得总行数
+                        $highestColumn = $sheet->getHighestColumn(); // 取得总列数
+
+                        $ar=array();
+                        $i=0;
+                        $importRows=0;
+
+                        $sqlstr1="select max(id) from store_data_sales";
+
+                        $result=mysqli_query($conn,$sqlstr1);
+
+                        while($myrow=mysqli_fetch_row($result)){
+                            $maxID=$myrow[0];
+                        }
+                
+                        if($maxID==""){
+                            $maxID=0;
+                        }
+
+                        //读表
+                        for($j=2;$j<=$highestRow;$j++){
+                            $maxID++;
+
+                            $importRows++;
+
+                            $storeID=(string)$objPHPExcel->getActiveSheet()->getCell("A$j")->getValue();
+                            $salesMoney=(string)$objPHPExcel->getActiveSheet()->getCell("H$j")->getValue();
+                            $salesNum=(string)$objPHPExcel->getActiveSheet()->getCell("I$j")->getValue();
+                            $date=(string)$objPHPExcel->getActiveSheet()->getCell("J$j")->getValue();
+                            $staff=(string)$objPHPExcel->getActiveSheet()->getCell("G$j")->getValue();
+                            
+                            $t1 = $date;
+                            $n1 = intval(($t1 - 25569) * 3600 * 24);
+                            $date=gmdate('Y-m-d',$n1);
+                            
+                            $sqlstr2="select count(*) from store_data_sales where storeID='$storeID' and date='$date'";
+
+                            $result=mysqli_query($conn,$sqlstr2);
+
+                            while($myrow=mysqli_fetch_row($result)){
+                                $dup_data=$myrow[0];
+                            }
+
+                            if($dup_data >0){
+                                $sqlstr3="update store_data_sales set salesMoney='$salesMoney',salesNum='$salesNum',date='$date',corp='$username' where storeID='$storeID' and date='$date'";
+                            }else{
+                                $sqlstr3="insert into store_data_sales values('$maxID','$storeID','$salesMoney','$salesNum','$date','$staff','$username')";
+                            }
+
+                            $result=mysqli_query($conn,$sqlstr3);
+
+                        }
+
+                        //删除文件
+                        unlink($path);
+
+                        return $this->success('数据提交成功！','/index.php/Index/store/store_data1.html','','1');
+                    }
+                }else{
+                    return $this->error('文件过大！','/index.php/Index/store/store_data1.html','','1');
+                }
+            }
+
+            //mysqli_free_result($result);
+            mysqli_close($conn);
+        }else{
+            return $this->error('文件上传失败！','/index.php/Index/store/store_data1.html','','1');
+        }
+    }
+
+    public function download_sx_data(){
+        error_reporting(E_ALL || ~E_NOTICE);
+        session_start();
+
+        $conn=mysqli_connect("localhost","root","root","yzl_database") or die("连接数据库服务器失败！".mysqli_error());
+        mysqli_query($conn,"set names utf8");
+    
+        date_default_timezone_set("Asia/Shanghai");
+        $date=date('Y-m-d', time());  //签署日期
+    
+        $option=$_GET["option"];
+    
+        $username=$_SESSION['username'];
+    
+        $sqlstr1="select department,newLevel from user_form where username='$username'";
+    
+        $result=mysqli_query($conn,$sqlstr1);
+    
+        while($myrow=mysqli_fetch_row($result)){
+            $department=$myrow[0];
+            $newLevel=$myrow[1];
+        }
+    
+    
+        $sqlstr2="select * from sxhk_form where status='已审核' ";
+        
+    
+        if($newLevel !="ADMIN" and $department != "商业运营部" and $department != "财务部"){
+            if($newLevel == "KA"){
+                $sqlstr2=$sqlstr2." and ywy='$username'"; 
+            }else{
+                $sqlstr2=$sqlstr2." and '$department' like concat('%',a.department,'%') ";
+            }
+        }
+    
+        $result=mysqli_query($conn,$sqlstr2);
+    
+        $data=array();
+    
+        while($myrow=mysqli_fetch_row($result)){
+            $data[]=str_replace("\t",'',$myrow);
+            //$data[]=$myrow;
+            //echo var_dump($data);
+        }
+    
+        
+        foreach($data as $key=>$value){
+            foreach($value as $keys=>$values){
+    
+            }
+        }
+    
+        $header=array('授权编号','公司名称','事业部','负责人','授信回款金额','日期');
+        
+        
+        function createtable($list,$filename,$header=array(),$index = array()){ 
+            header("Content-type:application/vnd.ms-excel"); 
+            header("Content-Disposition:filename=".$filename.".xls"); 
+            $teble_header = implode("\t",$header); 
+            $strexport = $teble_header."\r"; 
+            foreach ($list as $row){ 
+                foreach($index as $val){ 
+                    $strexport.=$row[$val]."\t";  
+                    } 
+                    $strexport.="\r"; 
+                    
+                    } 
+                $strexport=iconv('UTF-8',"GB2312//IGNORE",$strexport); 
+                exit($strexport);  
+        }
+    
+            $list2=range(1,6);
+            createtable($data,'授信回款数据汇总',$header,$list2);
+        
+        mysqli_free_result($result);
+        mysqli_close($conn);
+    }
+
 }

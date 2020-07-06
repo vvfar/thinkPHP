@@ -13,6 +13,8 @@ class Fl extends Controller
 
             $username=$_SESSION["username"];
 
+            $information=trim($this->request->param("information"));
+
             //分页代码
             if(!isset($_GET["page"]) || !is_numeric($_GET["page"])){
                 $page=1;
@@ -22,7 +24,13 @@ class Fl extends Controller
 
             $pagesize=15;
 
-            $sqlstr1=DB::query("select count(*) as total from fl where not fl_name like '%(赠)%'");
+            $sqlstr="select count(*) as total from fl where not fl_name like '%(赠)%' ";
+
+            if($information != ""){
+                $sqlstr= $sqlstr."and fl_name like '%$information%'";
+            }
+
+            $sqlstr1=DB::query($sqlstr);
             
             $total=$sqlstr1[0]["total"];
 
@@ -32,19 +40,29 @@ class Fl extends Controller
                 $pagecount=ceil($total/$pagesize);
             }
 
-            $fls=DB::query("select * from fl where not fl_name like '%(赠)%' order by fl_name asc limit ".($page-1)*$pagesize.",$pagesize");
-            
-            $this->assign("title","用户管理");
-            $this->assign("username",$username);
-            $this->assign("fls",$fls);
-            $this->assign('total',$total);
-            $this->assign('pagecount',$pagecount);
-            $this->assign('page',$page);
-            $this->assign('pagesize',15);
+            $sqlstr="select * from fl where not fl_name like '%(赠)%' ";
 
-            return $this->fetch();
-            
+            if($information != ""){
+                $sqlstr= $sqlstr."and fl_name like '%$information%'";
+            }
 
+            $sqlstr= $sqlstr." order by fl_name asc limit ".($page-1)*$pagesize.",$pagesize";
+
+            $fls=DB::query($sqlstr);
+            
+            $data=[
+                "title" => "用户管理",
+                "username" => $username,
+                "fls" => $fls,
+                'total' => $total,
+                'pagecount' => $pagecount,
+                'page' => $page,
+                'pagesize' => 15,
+                'information' => $information,
+            ];
+
+            return $this->fetch('',$data);
+            
         }else{
             return $this->redirect('/index.php/Index/Login/login');
         }

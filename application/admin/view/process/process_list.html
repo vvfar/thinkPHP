@@ -7,11 +7,12 @@
         <title>{$title}</title>
         <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" media="screen" />
         <link href="\lib\bootstrap-3.3.7-dist\css\bootstrap.css" rel="stylesheet"/>
+        <link href="\lib\bootstrap-3.3.7-dist\css\bootstrap-datetimepicker.min.css" rel="stylesheet" media="screen"/>
         <link href="\css/leftbar.css" rel="stylesheet"/>
         <link href="\css/header.css" rel="stylesheet"/>
         <script src="\lib\bootstrap-3.3.7-dist\js\jquery-3.3.1.min.js"></script>
         <script src="\lib\bootstrap-3.3.7-dist\js\bootstrap.min.js"></script>
-        <script src="\js\manager_header.js"></script>
+        <script src="\lib\bootstrap-3.3.7-dist\js\bootstrap-datetimepicker.js"></script>
     </head>
     <body>
         {include file="../application/index/view/common/header.html" /}
@@ -27,22 +28,94 @@
 
             <table class="table table-responsive table-bordered table-hover" style="clear:both;position:relative;top: 20px;width: 1020px;margin-left: 40px;">
                 <tr>
+                    <th>序号</th>
                     <th>标题</th>
+                    <th>事业部</th>
+                    <th>结款方式</th>
+                    <th>变更节点</th>
+                    <th>状态</th>
                     <th>操作</th>
                 </tr>
                 {foreach name="process_alls" item="process_all" key="index"}
                     <tr>
-                        <td><a href="/index.php/Admin/process/process_fl.html?id={$process_all.id}&department={$process_all.department}">{$process_all.name}</a></td>
-                        <td><a href="formHandle/adminHandle/delFLProcessTotal.php?id={$process_all.id}">删除</a></td>
+                        <td>{$pagesize*($page-1) + $index+1}</td>
+                        <td><a href="process_fl.html?id={$process_all.id}&department={$process_all.department}">{$process_all.name}</a></td>
+                        <td>{$process_all.department}</td>
+                        <td>{$process_all.jkfs}</td>
+                        <td>{$process_all.change_date}</td>
+                        <td>{$process_all.status}</td>
+                        <td>
+                            <a href="process_list_edit?id={$process_all.id}">修改</a> |
+                            <a href="process_list_del?id={$process_all.id}">删除</a>
+                        </td>
                     </tr>
                 {/foreach}
 
             </table>
             
+            <div style="margin-left: 30px;">
+                <ul class="pager" style="float:left;width:150px;">
+                    <li><a href="<?php echo $_SERVER['PHP_SELF']?>?page=<?php
+                        if($page>1)
+                            echo $page-1;
+                        else
+                            echo 1;  
+                    ?>">上一页</a></li>
+                    <li><a href="<?php echo $_SERVER['PHP_SELF']?>?page=<?php
+                        if($page<$pagecount)
+                            echo $page+1;
+                        else
+                            echo $pagecount;  
+                    ?>">下一页</a></li>
+                </ul>
+
+                <div style="float:left;margin-left:560px;width:321px;">
+                    <ul class="pagination" style="float:right">
+                        <li><a href="<?php echo $_SERVER['PHP_SELF']?>?page=1?>">&laquo;</a></li>
+                        <?php
+                            if($pagecount<=5){
+                                for($i=1;$i<=$pagecount;$i++){
+                                    if($i==$page){
+                                        ?>
+                                            <li  class="active"><a href="<?php echo $_SERVER['PHP_SELF']?>?page=<?=$i?>"><?=$i?></a></li>
+                                        <?php
+                                    }else{
+                                        ?>
+                                            <li><a href="<?php echo $_SERVER['PHP_SELF']?>?page=<?=$i?>"><?=$i?></a></li>
+                                        <?php
+                                    }
+                                }
+                            }else{
+                                for($i=1;$i<=$pagecount;$i++){
+                                    if($i==$page){
+                                        ?>
+                                            <li  class="active"><a href="<?php echo $_SERVER['PHP_SELF']?>?page=<?=$i?>"><?=$i?></a></li>
+                                        <?php
+                                    }elseif(($i>=$page-2 and $i<=$page+2 and $page>3) and $page !=$pagecount){
+                                        ?>
+                                            <li><a href="<?php echo $_SERVER['PHP_SELF']?>?page=<?=$i?>"><?=$i?></a></li>
+                                        <?php
+                                    }elseif($i<=5){
+                                        if($page<=3){
+                                        ?>
+                                            <li><a href="<?php echo $_SERVER['PHP_SELF']?>?page=<?=$i?>"><?=$i?></a></li>
+                                        <?php
+                                        }
+                                    }
+                                }
+                            }
+                            
+                        ?>
+                        
+                        <li><a href="<?php echo $_SERVER['PHP_SELF']?>?page=<?php echo $pagecount;?> ">&raquo;</a></li>
+                    </ul>
+                </div>    
+            </div>
+
         </div>
         <!-- Excel导入模态框 -->
-        <form method="POST" action="formHandle/adminHandle/addFLProcessTotal.php" enctype="multipart/form-data">
-            <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <form method="POST" action="process_list_addHandle" enctype="multipart/form-data">
+            <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="position: absolute;top:10%">
                 <div class="modal-dialog">
                     <div class="modal-content">
                         <div class="modal-header">
@@ -51,10 +124,26 @@
                             </h4>
                         </div>
                         
-                        <div class="modal-body" style="height: 180px;">
+                        <div class="modal-body" style="height: 300px;">
                             <input type="text" name="no" value="1" class="form-control" style="width:250px;display:none"/>
-                            <p style="font-weight: bold;">标题：</p><input type="text" class="form-control" name="name" placeholder="请输入标题" style="width:250px;"/>
-                            <p style="font-weight: bold;margin-top:10px;">部门：</p><input type="text" name="department" class="form-control" placeholder="请输入部门" style="width:250px;"/>
+                            <p style="font-weight: bold;">标题：</p><input type="text" class="form-control" name="name" placeholder="请输入标题" style="width:250px;margin-top:5px;"/>
+                            <p style="font-weight: bold;margin-top:10px;">部门：</p>
+                            <select class="form-control" name="department" style="width:250px;margin-top:5px;">
+                                <option>所有事业部</option>
+                            </select>
+                            <p style="font-weight: bold;margin-top:10px;">结款方式：</p>
+                            <select class="form-control" name="jkfs" style="width:250px;margin-top:5px;">
+                                <option></option>
+                                {foreach $jkfss as $jkfs}
+                                    <option>{$jkfs.name}</option>
+                                {/foreach}
+                            </select>
+                            <p style="font-weight: bold;margin-top:10px;">变更节点：
+                            <div class="search_bar_t input-group date form_datetime" data-date="" data-date-format="dd MM yyyy" data-link-field="dtp_input2" data-link-format="yyyy-mm-dd" style="width: 250px;margin-top:5px">
+                                <input class="form-control" id="" size="16" type="text" name="change_date" value="" readonly>
+                                <span class="input-group-addon"><span class="glyphicon glyphicon-remove"></span></span>
+                                <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
+                            </div>
                         </div>
                         
                         <div class="modal-footer">
@@ -69,7 +158,17 @@
 </html>
 
 <script>
-
+    $(".form_datetime").datetimepicker({
+        format: 'yyyy-mm-dd hh:ii:00',
+        minuteStep:1,
+        autoclose: true,
+        todayBtn: true,
+        startView: 'month',  
+        minView: 'hour', 
+        forceParse: false,
+        language:'cn',
+        pickerPosition: "bottom-left"
+    });
 </script>
 
 <style>

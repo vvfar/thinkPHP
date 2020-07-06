@@ -1,0 +1,34 @@
+.container2{margin-top:40px}
+h3{float: left;margin-bottom: 20px;}
+.nav_h{border-bottom: 2px solid red}
+.table-hover{background-color: aqua}
+.my_nav{clear: both}
+.my_nav ul{list-style: none;padding: 0;margin-left: 0}
+.my_nav ul li{font-size: 14px;float: left;width:150px;height: 60px;text-align: center;line-height: 60px;vertical-align: middle;border-bottom: 1px  solid #cccccc}
+.my_nav ul li:hover{border-bottom: 2px solid red;cursor: pointer}
+#nickname_link:hover{text-decoration: underline}
+#phone_link:hover{text-decoration: underline}
+#email_link:hover{text-decoration: underline}
+#pwd{border-bottom: 2px solid red}
+.my_container{clear: both;position:relative;top:30px;width:1020px;height:400px;font-size: 14px;border:1px solid #cccccc;padding:20px;border-radius: 5px}
+#page1{display: none}
+.title{font-weight: bold;margin-bottom:15px}
+.p1{float:left;margin-top:5px}
+#nickname_link{cursor:pointer;color:#337ab7;float: left;margin-left:15px;font-size:14px;margin-top:5px}
+.form_nickname{display:none}
+.input1{width:200px;float:left}
+.btn1{float:left;margin-left:15px;margin-top:2px}
+.other{clear: both}
+.p4{margin-top:30px}
+.p5{margin-top:5px}
+.p6{float:left;margin-top:5px}
+#phone_link{cursor:pointer;float: left;margin-left:15px;font-size:14px;margin-top:5px;color:#337ab7}
+.form_phone{display:none}
+#email_link{cursor:pointer;float: left;margin-left:15px;font-size:14px;color:#337ab7}
+.form_email{display:none}
+.p7{margin-top:10px}
+#newPwd1,#newPwd2{width:250px;margin-top:5px}
+.p8{font-size: 12px;color:red;margin-top:10px}
+.reset{margin-left:5px}
+#hidden_submit{display:none}
+#page3{display:none;font-size:14px;}

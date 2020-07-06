@@ -20,7 +20,7 @@ class News extends Controller
                 $page=intval($_GET["page"]);
             }
 
-            $pagesize=10;
+            $pagesize=15;
 
             $sqlstr1=DB::query("select count(*) as total from news");
             

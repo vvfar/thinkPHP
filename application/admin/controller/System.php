@@ -13,32 +13,48 @@ class System extends Controller
 
             $username=$_SESSION["username"];
 
-            $fileName="log.txt";
-                    
-            if(file_exists('log.txt')){
-                
-                $f_open=fopen($fileName,"r");
-
-                while($str=fgets($f_open,255)){
-
-                    $chr=explode(",",$str);
-                }
-
-                fclose($f_open);
+            //分页代码
+            if(!isset($_GET["page"]) || !is_numeric($_GET["page"])){
+                $page=1;
             }else{
-                $chr="";
+                $page=intval($_GET["page"]);
             }
 
+            $pagesize=15;
 
-            $this->assign("title","日志管理");
-            $this->assign("username",$username);
-            $this->assign("chr",$chr);
+            $sqlstr1=DB::query("select count(*) as total from log");
+            
+            $total=$sqlstr1[0]["total"];
 
-            return $this->fetch();
+            if($total%$pagesize==0){
+                $pagecount=intval($total/$pagesize);
+            }else{
+                $pagecount=ceil($total/$pagesize);
+            }
+
+            $logs=DB::query("select * from log  limit ".($page-1)*$pagesize.",$pagesize");
+
+            $data=[
+                'title' => "日志管理",
+                'username' => $username,
+                'logs' => $logs,
+                'total' => $total,
+                'pagecount' => $pagecount,
+                'page' => $page,
+                'pagesize' => 15
+            ];
+
+            return $this->fetch('',$data);
 
         }else{
             return $this->redirect('/index.php/Index/Login/login');
         }
+    }
+
+    public function del_log(){
+        $result=Db::table("log")->where("id",">",0)->delete();
+        
+        return $this->success("删除成功！","/index.php/Admin/System/system_log.html","","1");
     }
 
     public function system_backup(){

@@ -19,22 +19,19 @@
         <div style="margin-left: 180px;">
             {include file="../application/admin/view/common/manager_header.html" /}
 
-            <div class="nav nav-pills" style="float:left;margin-left:40px;margin-top:100px;">
-                <li role="presentation" class="active"><a href="#">辅料流程</a></li>
+            <div style="float:left;margin-left:40px;margin-top:100px;width:1020px">
+                <p style="float:left;font-size:14px;position:relative;top:7px">
+                    <span><strong>流程名称：</strong>{$fl_progress_des.name}</span>
+                    <span style="margin-left: 20px;"><strong>结款方式：</strong>{$fl_progress_des.jkfs}</span>
+                    <span style="margin-left: 20px;"><strong>部门：</strong>{$department}</span>
+                    <span style="margin-left: 20px;"><strong>变更节点：</strong>{$fl_progress_des.change_date}</span>
+                    <span style="margin-left: 20px;"><strong>状态：</strong>{$fl_progress_des.status}</span>
+                </p>
+                <button class="btn btn-success btn-sm" style="float:right;"  data-toggle="modal" data-target="#myModal">添加节点</button>
             </div>
-
-            <div>
-                <button class="btn btn-success" style="float:left;margin-left:855px;margin-top:100px;"  data-toggle="modal" data-target="#myModal">添加节点</button>
-            </div>
-            
-            
             
             <div style="clear:both">
-
-                <p style="position:relative;top:35px;margin-left:45px;">部门：{$department}</p>
-                
-                
-                <canvas id="myCanvas" width="1020px" height="200" style="clear:both;margin-left:40px;margin-top:0px;border:1px solid #cccccc;">
+                <canvas id="myCanvas" width="1020px" height="150" style="clear:both;margin-left:40px;margin-top:20px;border:1px solid #cccccc;">
                     您的浏览器不支持 HTML5 canvas 标签。
                 </canvas>
             </div>
@@ -54,7 +51,6 @@
                         <td><a href="process_fl_edit.html?id={$flprogress.id}">修改</a> | <a href="process_fl_del?id={$flprogress.id}&number={$flprogress.number}&flprogress_id={$flprogress.flprogress_id}&department={$flprogress.department}">删除</a></td>
                     </tr>
                 {/foreach}
-                
             </table>
         </div>
 

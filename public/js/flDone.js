@@ -1,14 +1,12 @@
 $(document).ready(function(){
 
-
     $("#download_fl").click(function(){
-        status=$("#status").val()
         time1=$("#time1").val()
         input_time=$("#input_time").val()
         input_time2=$("#input_time2").val()
-        clientName=$("#clientName").val()
+        keywords=$("#keywords").val()
 
-        window.location.href="../../controller/fl/download_fl.php?option=1&status=" + status + "&time=" + time1 + "&input_time=" + input_time + "&input_time2=" + input_time2 + "&clientName=" +clientName
+        window.location.href="download_fl?option=1&status=1&time=" + time1 + "&input_time=" + input_time + "&input_time2=" + input_time2 + "&keywords=" +keywords
         
     })
 

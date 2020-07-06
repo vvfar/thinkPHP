@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width,initial-scale=1">
+        <title>{$title}</title>
+        <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" media="screen" />
+        <link href="\lib\bootstrap-3.3.7-dist\css\bootstrap.css" rel="stylesheet"/>
+        <link href="\lib\bootstrap-3.3.7-dist\css\bootstrap-datetimepicker.min.css" rel="stylesheet" media="screen"/>
+        <link href="\css/leftbar.css" rel="stylesheet"/>
+        <link href="\css/header.css" rel="stylesheet"/>
+        <script src="\lib\bootstrap-3.3.7-dist\js\jquery-3.3.1.min.js"></script>
+        <script src="\lib\bootstrap-3.3.7-dist\js\bootstrap.min.js"></script>
+        <script src="\lib\bootstrap-3.3.7-dist\js\bootstrap-datetimepicker.js"></script>
+    </head>
+    <body>
+        {include file="../application/index/view/common/header.html" /}
+        {include file="../application/index/view/common/leftBar.html" /}
+
+        <div style="margin-left: 180px;">
+            {include file="../application/admin/view/common/manager_header.html" /}
+
+            <div style="float:left;margin-left:40px;margin-top:110px;">
+                <p style="font-size: 16px;">编辑流程</p>
+            </div>
+            
+            <div style="clear: both;margin-left:40px;position: relative;top:10px;">
+                <form method="POST" action="process_list_edit?id={$process_list_line.id}" enctype="multipart/form-data">
+                    <input type="text" name="no" value="1" class="form-control" style="width:250px;display:none"/>
+                    <p style="font-weight: bold;">标题：</p><input type="text" class="form-control" name="name" placeholder="请输入标题" style="width:250px;margin-top:5px;" value="{$process_list_line.name}"/>
+                    <p style="font-weight: bold;margin-top:10px;">部门：</p>
+                    <select class="form-control" name="department" style="width:250px;margin-top:5px;">
+                        <option>所有事业部</option>
+                    </select>
+                    <p style="font-weight: bold;margin-top:10px;">结款方式：</p>
+                    <select class="form-control" name="jkfs" style="width:250px;margin-top:5px;">
+                        {foreach $jkfss as $jkfs}
+                            {if $process_list_line.jkfs == $jkfs.name}
+                                <option selected>{$jkfs.name}</option>
+                            {else\}
+                                <option>{$jkfs.name}</option>
+                            {/if}
+                        {/foreach}
+                    </select>
+                    <p style="font-weight: bold;margin-top:10px;">变更节点：</p>
+                    <div class="search_bar_t input-group date form_datetime" data-date="" data-date-format="dd MM yyyy" data-link-field="dtp_input2" data-link-format="yyyy-mm-dd" style="width: 250px;margin-top:5px">
+                        <input class="form-control" id="" size="16" type="text" name="change_date" value="{$process_list_line.change_date}" readonly>
+                        <span class="input-group-addon"><span class="glyphicon glyphicon-remove"></span></span>
+                        <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
+                    </div>
+                    <p style="font-weight: bold;margin-top:10px;">状态：</p>
+                    <select class="form-control" style="width:250px;margin-top:5px;" name="status">
+                        {if $process_list_line.status == "未生效"}
+                            <option>生效中</option>
+                            <option selected>未生效</option>
+                        {else\}
+                            <option selected>生效中</option>
+                            <option>未生效</option>
+                        {/if}
+                    </select>    
+                    <div style="position: relative;top: 20px;">
+                        <button type="submit" class="btn btn-success btn-sm">提交</button>    
+                    </div>
+                    
+                </form>
+            </div>
+        </div>
+    </body>
+</html>
+
+<script>
+    $(".form_datetime").datetimepicker({
+        format: 'yyyy-mm-dd hh:ii:00',
+        minuteStep:1,
+        autoclose: true,
+        todayBtn: true,
+        startView: 'month',  
+        minView: 'hour', 
+        forceParse: false,
+        language:'cn',
+        pickerPosition: "bottom-left"
+    });
+</script>

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width,initial-scale=1">
+        <title>{$title}</title>
+        <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" media="screen" />
+        <link href="\lib\bootstrap-3.3.7-dist\css\bootstrap.css" rel="stylesheet"/>
+        <script src="\lib\bootstrap-3.3.7-dist\js\jquery-3.3.1.min.js"></script>
+        <script src="\lib\bootstrap-3.3.7-dist\js\bootstrap.min.js"></script>
+        {block name="link"}链接{/block}
+    </head>
+    <body>
+        {block name="header"}
+            {include file="../application/index/view/common/header.html" /}
+        {/block}
+        
+        {block name="leftBar"}
+            {include file="../application/index/view/common/leftBar.html" /}
+        {/block}
+        
+        <div class="container" style="margin-left: 200px;margin-top:70px;">
+            {block name="container"}内容主体{/block}
+        </div>
+    </body>
+</html>

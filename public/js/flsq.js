@@ -4,6 +4,16 @@ $(document).ready(function(){
     var add=false
     var add_del=0;
 
+    $("#jkfs").change(function(){
+
+        if($(this).val()=="标费补贴"){
+            $(".file").css("display","")
+        }else{
+            $(".file").css("display","none")
+        }
+    })
+
+
     $(".flno").children().change(function(){
         fl=$(this).val()
 
@@ -385,6 +395,9 @@ $(document).ready(function(){
                         alert("使用金额不能大于剩余授信可用额度！")
                     }
                 }
+
+            }else if($("select[name='jkfs']").val() =="标费补贴" && $("input[name='upfile']").val() =="" ){
+                alert("标费补贴必须上传签字附件！")
             }else{
                 if($("#newMoney").html() != ""){
                     newMoney=parseInt($("#newMoney").html());

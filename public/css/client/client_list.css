@@ -1,0 +1,19 @@
+.sel{width:110px;}
+.search_bar p,.sel{float: left;margin-right: 10px;}
+.search_bar p{position: relative;top:5px;}
+.input_search_info{float: left;width:250px;}
+.btn_search_info{position: relative;top:2px;margin-left:20px;float: left;margin-left: 10px;}
+.btn_search_info button{margin-right:5px;}
+.content{clear:both;}
+.tb1{width:1030px;margin-top: 50px;}
+.tb1 th{background-color:rgb(67, 64, 255);text-align: center;color:#ffffff}
+.tb1 td{text-align: center;}
+td:first-child{width: 100px;white-space: nowrap;overflow: hidden;text-overflow:ellipsis;}
+td .p1{width: 80px;white-space: nowrap;overflow: hidden;text-overflow:ellipsis;}
+#optionID{display:none}
+#storeName{display:none}
+#department{display:none}
+#staff{display:none}
+.fy_bar{position:relative;top:15px;width:1000px;}
+h4{float:left}
+.clear{clear:both;}

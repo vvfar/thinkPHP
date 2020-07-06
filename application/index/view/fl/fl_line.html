@@ -193,6 +193,13 @@
                     
             <div style="width:1040px;">
 
+                <div style="margin-left: 40px;">
+                    {if $fl_line.file != ""}
+                        <p>查看附件：<a href="/file/fl_file/{$fl_line.file}" target="_blank">{$fl_line.file}</a></p>
+                    {/if}
+                </div>
+                
+
                 {if($fl_line.shr_pop == $username)}
                 
                     {if($department == "商业运营部" and $fl_line.status_pop=="商业运营归档单据" )}
@@ -229,15 +236,16 @@
             </div>
 
             
-            <div style="clear:both;margin-left:40px;" class="sh_time">
-                <p style="margin-top:80px;">单据审核过程：</p>
-                    <?php for($i=0;$i<sizeof($allTimes);$i++){?>
-                        <ul style="clear:both">
-                            <li style="width:200px;float:left;margin-top:2px;">状态：{$statuss[$i]}</li>
-                            <li style="width:200px;float:left;margin-top:2px;">审核人：{$shr_arrs[$i]}</li>
-                            <li style="width:200px;float:left;margin-top:2px;">审核时间：<?=$allTimes[$i]?></li>
-                        </ul>
-                    <?php } ?>
+            <div style="clear:both;margin-left:40px;width:1030px" class="sh_time">
+                <p style="margin-top:30px;">单据审核过程：</p>
+
+                <?php for($i=0;$i<sizeof($allTimes);$i++){?>
+                    <ul style="clear:both">
+                        <li style="width:30%;float:left;margin-top:2px;">状态：{$statuss[$i]}</li>
+                        <li style="width:30%;float:left;margin-top:2px;">审核人：{$shr_arrs[$i]}</li>
+                        <li style="width:30%;float:left;margin-top:2px;">审核时间：{$allTimes[$i]}</li>
+                    </ul>
+                <?php } ?>
             </div>
         </div>
 

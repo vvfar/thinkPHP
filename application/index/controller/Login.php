@@ -17,6 +17,10 @@ class Login extends Controller
     }
 
     public function loginHandle(){
+
+        date_default_timezone_set("Asia/Shanghai");
+        $date=date('Y-m-d h:i:s', time());  
+
         $username=$this->request->post("username");
         $password=$this->request->post("password");
 
@@ -29,6 +33,15 @@ class Login extends Controller
             $_SESSION["username"]=$username;
             $_SESSION["password"]=$pwd;
 
+            $ip=$_SERVER['REMOTE_ADDR'];
+
+            $result=Db::name("log")->insert([
+                "username" => $username,
+                "date" => $date,
+                "ip" => $ip,
+                "option" => '登录'
+            ]);
+
             $this->redirect('/');
         }else{
             $this->error('登录失败！','/index.php/Index/Login/login.html');
@@ -36,7 +49,21 @@ class Login extends Controller
     }
 
     public function logoutHandle(){
+
+        date_default_timezone_set("Asia/Shanghai");
+        $date=date('Y-m-d h:i:s', time());  
+
         session_start();
+        $username=$_SESSION["username"];
+
+        $result=Db::name("log")->insert([
+            "username" => $username,
+            "date" => $date,
+            "ip" => '',
+            "option" => '退出'
+        ]);
+
+        
         session_unset();
         session_destroy();
 

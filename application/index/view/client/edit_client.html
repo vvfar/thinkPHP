@@ -1,62 +1,45 @@
-<!DOCTYPE html>
-<html lang="zh-CN">
-    <head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width,initial-scale=1">
-        <title>{$title}</title>
-        <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" media="screen" />
-        <link href="/css/clientList.css" rel="stylesheet"/>
-        <link href="/lib/bootstrap-3.3.7-dist/css/bootstrap.css" rel="stylesheet"/>
-        <script src="/lib/bootstrap-3.3.7-dist/js/jquery-3.3.1.min.js"></script>
-    </head>
-    <body>
-        {include file="../application/index/view/common/header.html" /}
-        {include file="../application/index/view/common/leftBar.html" /}
+{extend name="base"/}
+{block name="link"}    
+    <link href="/css/client/add_client.css" rel="stylesheet"/>
+{/block}
 
-        <div class="container">
-            <form style="margin-top:10px" method="POST" action="/index.php/Index/client/edit_client?id={$client_line.Id}">
-                <p style="font-size: 18px;">编辑客户</p>
-                <div class="form-group hidden" style="clear: both;">
-                    <p style="width: 120px;font-size: 14px;float: left;margin-top: 22px;">id</p>
-                    <input type="text" class="form-control" name="id" value="{$client_line.Id}" style="width: 250px;float: left;margin-top: 15px;">
-                </div>
-                <div class="form-group" style="clear: both;">
-                    <p style="width: 80px;font-size: 14px;float: left;margin-top: 22px;">主合同编号</p>
-                    <input type="text" class="form-control" name="contractID" value="{$client_line.contractID}" placeholder="请输入主合同编号" style="width: 250px;float: left;margin-top: 15px;">
-                </div>
-                <div class="form-group" style="clear: both;">
-                    <p style="width: 80px;font-size: 14px;float: left;margin-top: 22px;">客户名称</p>
-                    <input type="text" class="form-control" name="client" value="{$client_line.clientName}" placeholder="请输入客户名称" style="width: 250px;float: left;margin-top: 15px;">
-                </div>
-                <div class="form-group" style="clear: both;">
-                    <p style="width: 80px;font-size: 14px;float: left;margin-top: 22px;">店铺名称</p>
-                    <input type="text" class="form-control" name="storeName" value="{$client_line.storeName}" placeholder="请输入店铺名称" style="width: 250px;float: left;margin-top: 15px;">
-                </div>
-                <div class="form-group" style="clear: both;display: none;">
-                    <p style="width: 80px;font-size: 14px;float: left;margin-top: 22px;">事业部</p>
-                    <input type="text" class="form-control" name="department" value="{$client_line.department}" placeholder="请输入事业部" style="width: 250px;float: left;margin-top: 15px;">
-                </div>
-                <div class="form-group" style="clear: both;">
-                    <p style="width: 80px;font-size: 14px;float: left;margin-top: 22px;">业务员</p>
-                    <input type="text" class="form-control" name="staff" value="{$client_line.staff}" placeholder="请输入绑定KA" style="width: 250px;float: left;margin-top: 15px;">
-                </div>
-                <div class="form-group" style="clear: both;">
-                    <p style="width: 80px;font-size: 14px;float: left;margin-top: 22px;">联系电话</p>
-                    <input type="text" class="form-control" name="telephone" value="{$client_line.telephone}" placeholder="请输入联系电话" style="width: 250px;float: left;margin-top: 15px;">
-                </div>
-                <div class="form-group" style="clear: both;">
-                    <p style="width: 80px;font-size: 14px;float: left;margin-top: 22px;">地址</p>
-                    <input type="text" class="form-control" name="address" value="{$client_line.address}" placeholder="请输入地址" style="width: 250px;float: left;margin-top: 15px;">
-                </div>
-                <div class="form-group" style="clear: both;">
-                    <button class="btn btn-sm btn-success" style="margin-top:20px;">提交表单</button>
-                </div>
-            </form>
+{block name="container"}
+    <form method="POST" action="/index.php/Index/client/edit_client?id={$client_line.Id}">
+        <p class="title">编辑客户</p>
+        <div class="form-group clear hidden">
+            <p class="p1">id</p>
+            <input type="text" class="form-control" name="id" value="{$client_line.Id}" style="width: 250px;float: left;margin-top: 15px;">
         </div>
-    </body>
-</html>
-
-<style>
-    .container{margin-left: 200px;margin-top:60px}
-</style>
+        <div class="form-group clear clear">
+            <p class="p1">主合同编号</p>
+            <input type="text" class="form-control" name="contractID" value="{$client_line.contractID}" placeholder="请输入主合同编号" style="width: 250px;float: left;margin-top: 15px;">
+        </div>
+        <div class="form-group clear">
+            <p class="p1">客户名称</p>
+            <input type="text" class="form-control" name="client" value="{$client_line.clientName}" placeholder="请输入客户名称" style="width: 250px;float: left;margin-top: 15px;">
+        </div>
+        <div class="form-group clear">
+            <p class="p1">店铺名称</p>
+            <input type="text" class="form-control" name="storeName" value="{$client_line.storeName}" placeholder="请输入店铺名称" style="width: 250px;float: left;margin-top: 15px;">
+        </div>
+        <div class="form-group clear" style="clear: both;display: none;">
+            <p class="p1">事业部</p>
+            <input type="text" class="form-control" name="department" value="{$client_line.department}" placeholder="请输入事业部" style="width: 250px;float: left;margin-top: 15px;">
+        </div>
+        <div class="form-group clear">
+            <p class="p1">业务员</p>
+            <input type="text" class="form-control" name="staff" value="{$client_line.staff}" placeholder="请输入绑定KA" style="width: 250px;float: left;margin-top: 15px;">
+        </div>
+        <div class="form-group clear">
+            <p class="p1">联系电话</p>
+            <input type="text" class="form-control" name="telephone" value="{$client_line.telephone}" placeholder="请输入联系电话" style="width: 250px;float: left;margin-top: 15px;">
+        </div>
+        <div class="form-group clear">
+            <p class="p1">地址</p>
+            <input type="text" class="form-control" name="address" value="{$client_line.address}" placeholder="请输入地址" style="width: 250px;float: left;margin-top: 15px;">
+        </div>
+        <div class="form-group clear">
+            <button class="btn btn-sm btn-success" style="margin-top:20px;">提交表单</button>
+        </div>
+    </form>
+{/block}

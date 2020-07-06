@@ -28,35 +28,88 @@
 
             <table class="table table-responsive table-bordered table-hover" style="clear:both;position:relative;top: 20px;width: 1025px;margin-left: 40px;">
                 <tr>
+                    <th>序号</th>
                     <th>登录账号</th>
                     <th>登录时间</th>
                     <th>登录ip</th>
                     <th>登录操作</th>
                 </tr>
-                <tr>
-                    <?php
-                        if($chr !=""){
-                            for($i=0;$i<count($chr);$i++){
-                                ?>
-                                    <td><?=$chr[$i]?></td>
-                                <?php
-                            }
-                        }else{
-                            ?>
-                                <td colspan="4">还没日志文件</td>
-                            <?php
-                        } 
-                    ?>
-                </tr>
+                {foreach name="logs" item="log" key="index"}
+                    <tr>
+                        <td>{$pagesize*($page-1) + $index+1}</td>
+                        <td>{$log.username}</td>
+                        <td>{$log.date}</td>
+                        <td>{$log.ip}</td>
+                        <td>{$log.option}</td>
+                    </tr>
+                {/foreach}
             </table>
             
+            <div style="margin-left:30px;margin-top:30px;">
+                <ul class="pager" style="float:left;width:150px;margin-top:0px;">
+                    <li><a href="<?php echo $_SERVER['PHP_SELF']?>?page=<?php
+                        if($page>1)
+                            echo $page-1;
+                        else
+                            echo 1;  
+                    ?>">上一页</a></li>
+                    <li><a href="<?php echo $_SERVER['PHP_SELF']?>?page=<?php
+                        if($page<$pagecount)
+                            echo $page+1;
+                        else
+                            echo $pagecount;  
+                    ?>">下一页</a></li>
+                </ul>
+            
+                <div style="float:left;margin-left:560px;width:321px;">
+                    <ul class="pagination" style="float:right;margin-top:0px;">
+                        <li><a href="<?php echo $_SERVER['PHP_SELF']?>?page=1">&laquo;</a></li>
+                        <?php
+                            if($pagecount<=5){
+                                for($i=1;$i<=$pagecount;$i++){
+                                    if($i==$page){
+                                        ?>
+                                            <li  class="active"><a href="<?php echo $_SERVER['PHP_SELF']?>?page=<?=$i?>"><?=$i?></a></li>
+                                        <?php
+                                    }else{
+                                        ?>
+                                            <li><a href="<?php echo $_SERVER['PHP_SELF']?>?page=<?=$i?>"><?=$i?></a></li>
+                                        <?php
+                                    }
+                                }
+                            }else{
+                                for($i=1;$i<=$pagecount;$i++){
+                                    if($i==$page){
+                                        ?>
+                                            <li  class="active"><a href="<?php echo $_SERVER['PHP_SELF']?>?page=<?=$i?>"><?=$i?></a></li>
+                                        <?php
+                                    }elseif(($i>=$page-2 and $i<=$page+2 and $page>3) and $page !=$pagecount){
+                                        ?>
+                                            <li><a href="<?php echo $_SERVER['PHP_SELF']?>?page=<?=$i?>"><?=$i?></a></li>
+                                        <?php
+                                    }elseif($i<=5){
+                                        if($page<=3){
+                                        ?>
+                                            <li><a href="<?php echo $_SERVER['PHP_SELF']?>?page=<?=$i?>"><?=$i?></a></li>
+                                        <?php
+                                        }
+                                    }
+                                }
+                            }
+                            
+                        ?>
+                        
+                        <li><a href="<?php echo $_SERVER['PHP_SELF']?>?page=<?php echo $pagecount; ?>">&raquo;</a></li>
+                    </ul>
+                </div>
+            </div>
         </div>
     </body>
 </html>
 
 <script>
     $("#del_log").click(function(){
-        window.location.href="formHandle/del_logHandle.php";
+        window.location.href="del_log";
     })
 </script>
 

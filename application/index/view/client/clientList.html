@@ -1,218 +1,157 @@
-<!DOCTYPE html>
-<html lang="zh-CN">
-    <head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width,initial-scale=1">
-        <title>俞兆林_客户列表</title>
-        <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" media="screen" />
-        <link href="/css/clientList.css" rel="stylesheet"/>
-        <link href="/lib/bootstrap-3.3.7-dist/css/bootstrap.css" rel="stylesheet"/>
-        <script src="/lib/bootstrap-3.3.7-dist/js/jquery-3.3.1.min.js"></script>
-    </head>
-    <body>
-        {include file="../application/index/view/common/header.html" /}
-        {include file="../application/index/view/common/leftBar.html" /}
-    
-        <div class="container">
-            <div class="search_bar">
-                <form method="GET" action="/index.php/Index/client/clientList.html">
-                    <p>客户查询</p>
-                    <select class="sel form-control" id="status">
+{extend name="base"/}
+{block name="link"}    
+    <link href="/css/client/client_list.css" rel="stylesheet"/>
+    <script src="/js/client/client_list.js"></script>
+{/block}
 
-                            {switch name=$optionID}
-                                {case value="1"}
-                                    <option selected>公司名称</option>
-                                    <option>店铺名称</option>
-                                    <option>事业部</option>
-                                    <option>绑定KA</option>
-                                {/case}
-                                {case value="2"}
-                                    <option>公司名称</option>
-                                    <option selected>店铺名称</option>
-                                    <option>事业部</option>
-                                    <option>绑定KA</option>
-                                {/case}
-                                {case value="3"}
-                                    <option>公司名称</option>
-                                    <option>店铺名称</option>
-                                    <option selected>事业部</option>
-                                    <option>绑定KA</option>
-                                {/case}
-                                {case value="4"}
-                                    <option>公司名称</option>
-                                    <option>店铺名称</option>
-                                    <option>事业部</option>
-                                    <option selected>绑定KA</option>
-                                {/case}
-                                {default /}
-                                    <option selected>公司名称</option>
-                                    <option>店铺名称</option>
-                                    <option>事业部</option>
-                                    <option>绑定KA</option>
-                                {/case}
-                                
-                            {/switch}
+{block name="container"}
+    <div class="search_bar">
+        <form method="GET" action="/index.php/Index/client/clientList.html">
+            <p>客户查询</p>
+            <select class="sel form-control" id="status">
 
-                    </select>
-                    <div class="input_search_info">
-                        <input type="text" class="form-control" value="1" id="optionID" name="optionID" style="display:none"/>
-                        <input type="text" class="form-control" placeholder="请输入公司名称" name="companyName" id="companyName" value="{$companyName}"/>
-                        <input type="text" class="form-control" placeholder="请输入店铺名称" name="storeName" style="display:none" id="storeName" value="{$storeName}"/>
-                        <input type="text" class="form-control" placeholder="请输入事业部" name="department" style="display:none" id="department" value="{$department}"/>
-                        <input type="text" class="form-control" placeholder="请输入绑定KA" name="staff" style="display:none" id="staff" value="{$staff}"/>
-                    </div>
-                    <div class="btn_search_info">
-                        <button type="submit" class="btn btn-warning btn-sm">查询</button>
-                        <button type="button" class="btn btn-success btn-sm" id="download">下载</button>
-                    </div>
-                </form>
+                    {switch name=$optionID}
+                        {case value="1"}
+                            <option selected>公司名称</option>
+                            <option>店铺名称</option>
+                            <option>事业部</option>
+                            <option>绑定KA</option>
+                        {/case}
+                        {case value="2"}
+                            <option>公司名称</option>
+                            <option selected>店铺名称</option>
+                            <option>事业部</option>
+                            <option>绑定KA</option>
+                        {/case}
+                        {case value="3"}
+                            <option>公司名称</option>
+                            <option>店铺名称</option>
+                            <option selected>事业部</option>
+                            <option>绑定KA</option>
+                        {/case}
+                        {case value="4"}
+                            <option>公司名称</option>
+                            <option>店铺名称</option>
+                            <option>事业部</option>
+                            <option selected>绑定KA</option>
+                        {/case}
+                        {default /}
+                            <option selected>公司名称</option>
+                            <option>店铺名称</option>
+                            <option>事业部</option>
+                            <option>绑定KA</option>
+                        {/case}
+                        
+                    {/switch}
+
+            </select>
+            <div class="input_search_info">
+                <input type="text" class="form-control" value="1" id="optionID" name="optionID"/>
+                <input type="text" class="form-control" placeholder="请输入公司名称" name="companyName" id="companyName" value="{$companyName}"/>
+                <input type="text" class="form-control" placeholder="请输入店铺名称" name="storeName" id="storeName" value="{$storeName}"/>
+                <input type="text" class="form-control" placeholder="请输入事业部" name="department" id="department" value="{$department}"/>
+                <input type="text" class="form-control" placeholder="请输入绑定KA" name="staff" id="staff" value="{$staff}"/>
             </div>
-            <div class="content">
-                <div style="clear:both;">
-                    <div style="position:relative;top:15px;width:1000px;">
-                        <h4 style="float:left">
-                            <span class="label label-info">共<?=$total?>条</span>
-                            <span class="label label-warning">共<?=$pagecount?>页</span>
-                            <span class="label label-success">第<?=$page?>页</span>
-                        </h4>
-                    </div>
-                </div>
-                
-                <table class="table table-responsive table-bordered table-hover tb1">
-                    <tr>
-                        <th>序号</th>
-                        <th>主合同编号</th>
-                        <th>客户名称</th>
-                        <th>店铺名称</th>
-                        <th>事业部</th>
-                        <th>业务员</th>
-                        <th>日期</th>
-                        <th>操作</th>
-                    </tr>
-                    {foreach name="companyInfos" item="companyInfo" key="index"}
-                        <tr>
-                            <td>{$pagesize*($page-1) + $index+1}</td>
-                            <td>{$companyInfo.contractID}</td>
-                            <td><p class="p1">{$companyInfo.clientName}</p></td>
-                            <td><p class="p1">{$companyInfo.storeName}</p></td>
-                            <td><p class="p1">{$companyInfo.department}</p></td>
-                            <td>{$companyInfo.staff}</td>
-                            <td>{$companyInfo.re_date}</td>
-                            <td style="width:130px;"><p class="p2"><a href="client_line.html?id={$companyInfo.Id}" target="_blank">查看</a> | <a href="edit_client?id={$companyInfo.Id}">编辑</a> | <a href="delClient?id={$companyInfo.Id}">删除</a></p></td>
-                        </tr>
-                    {/foreach}
-                </table>
-                
-                <div>
-                    <ul class="pager" style="float:left;width:150px;margin-top:0px;">
-                        <li><a href="<?php echo $_SERVER['PHP_SELF']?>?page=<?php
-                            if($page>1)
-                                echo $page-1;
-                            else
-                                echo 1;  
-                        ?>">上一页</a></li>
-                        <li><a href="<?php echo $_SERVER['PHP_SELF']?>?page=<?php
-                            if($page<$pagecount)
-                                echo $page+1;
-                            else
-                                echo $pagecount;  
-                        ?>">下一页</a></li>
-                    </ul>
-                
-                    <div style="float:left;margin-left:560px;width:321px;">
-                        <ul class="pagination" style="float:right;margin-top:0px;">
-                            <li><a href="<?php echo $_SERVER['PHP_SELF']?>?page=1">&laquo;</a></li>
-                            <?php
-                                if($pagecount<=5){
-                                    for($i=1;$i<=$pagecount;$i++){
-                                        if($i==$page){
-                                            ?>
-                                                <li  class="active"><a href="<?php echo $_SERVER['PHP_SELF']?>?page=<?=$i?>"><?=$i?></a></li>
-                                            <?php
-                                        }else{
-                                            ?>
-                                                <li><a href="<?php echo $_SERVER['PHP_SELF']?>?page=<?=$i?>"><?=$i?></a></li>
-                                            <?php
-                                        }
-                                    }
-                                }else{
-                                    for($i=1;$i<=$pagecount;$i++){
-                                        if($i==$page){
-                                            ?>
-                                                <li  class="active"><a href="<?php echo $_SERVER['PHP_SELF']?>?page=<?=$i?>"><?=$i?></a></li>
-                                            <?php
-                                        }elseif(($i>=$page-2 and $i<=$page+2 and $page>3) and $page !=$pagecount){
-                                            ?>
-                                                <li><a href="<?php echo $_SERVER['PHP_SELF']?>?page=<?=$i?>"><?=$i?></a></li>
-                                            <?php
-                                        }elseif($i<=5){
-                                            if($page<=3){
-                                            ?>
-                                                <li><a href="<?php echo $_SERVER['PHP_SELF']?>?page=<?=$i?>"><?=$i?></a></li>
-                                            <?php
-                                            }
-                                        }
-                                    }
-                                }
-                                
-                            ?>
-                            
-                            <li><a href="<?php echo $_SERVER['PHP_SELF']?>?page=<?php echo $pagecount; ?>">&raquo;</a></li>
-                        </ul>
-                    </div>
-                </div>
+            <div class="btn_search_info">
+                <button type="submit" class="btn btn-warning btn-sm">查询</button>
+                <button type="button" class="btn btn-success btn-sm" id="download">下载</button>
+            </div>
+        </form>
+    </div>
+
+    <div class="content">
+        <div class="clear">
+            <div class="fy_bar">
+                <h4>
+                    <span class="label label-info">共{$total}条</span>
+                    <span class="label label-warning">共{$pagecount}页</span>
+                    <span class="label label-success">第{$page}页</span>
+                </h4>
             </div>
         </div>
-    </body>
-
-    <style>
-        .container{margin-left: 200px;margin-top:60px}
-        .sel{width:110px;}
-        .search_bar p,.sel{float: left;margin-right: 10px;}
-        .search_bar p{position: relative;top:5px;}
-        .input_search_info{float: left;width:250px;}
-        .btn_search_info{position: relative;top:2px;margin-left:20px;float: left;margin-left: 10px;}
-        .btn_search_info button{margin-right:5px;}
-        .content{clear:both;}
-        .tb1{width:1030px;margin-top: 50px;}
-        .tb1 th{background-color:rgb(67, 64, 255);text-align: center;color:#ffffff}
-        .tb1 td{text-align: center;}
-        td:first-child{width: 100px;white-space: nowrap;overflow: hidden;text-overflow:ellipsis;}
-        td .p1{width: 80px;white-space: nowrap;overflow: hidden;text-overflow:ellipsis;}
-    </style>
-
-    <script>
-        $("#status").click(function(){
-            if($("#status").val()=="公司名称"){
-                $("#optionID").attr("value","1");
-                $("#companyName").css("display","inline");
-                $("#storeName").css("display","none");
-                $("#department").css("display","none");
-                $("#staff").css("display","none");
-            }else if($("#status").val()=="店铺名称"){
-                $("#optionID").attr("value","2");
-                $("#companyName").css("display","none");
-                $("#storeName").css("display","inline");
-                $("#department").css("display","none");
-                $("#staff").css("display","none");
-            }else if($("#status").val()=="事业部"){
-                $("#optionID").attr("value","3");
-                $("#companyName").css("display","none");
-                $("#storeName").css("display","none");
-                $("#department").css("display","inline");
-                $("#staff").css("display","none");
-            }else if($("#status").val()=="绑定KA"){
-                $("#optionID").attr("value","4");
-                $("#companyName").css("display","none");
-                $("#storeName").css("display","none");
-                $("#department").css("display","none");
-                $("#staff").css("display","inline");
-            }
-        })
-
-        $("#download").click(function(){
-            window.location.href="/index.php/Index/client/client_download?optionID={$optionID}&companyName={$companyName}&storeName={$storeName}&department={$department}&staff={$staff}"
-        })
-    </script>
-</html>
+        
+        <table class="table table-responsive table-bordered table-hover tb1">
+            <tr>
+                <th>序号</th>
+                <th>主合同编号</th>
+                <th>客户名称</th>
+                <th>店铺名称</th>
+                <th>事业部</th>
+                <th>业务员</th>
+                <th>日期</th>
+                <th>操作</th>
+            </tr>
+            {foreach name="companyInfos" item="companyInfo" key="index"}
+                <tr>
+                    <td>{$pagesize*($page-1) + $index+1}</td>
+                    <td>{$companyInfo.contractID}</td>
+                    <td><p class="p1">{$companyInfo.clientName}</p></td>
+                    <td><p class="p1">{$companyInfo.storeName}</p></td>
+                    <td><p class="p1">{$companyInfo.department}</p></td>
+                    <td>{$companyInfo.staff}</td>
+                    <td>{$companyInfo.re_date}</td>
+                    <td><p class="p2"><a href="client_line.html?id={$companyInfo.Id}" target="_blank">查看</a> | <a href="edit_client?id={$companyInfo.Id}">编辑</a> | <a href="delClient?id={$companyInfo.Id}">删除</a></p></td>
+                </tr>
+            {/foreach}
+        </table>
+        
+        <div>
+            <ul class="pager" style="float:left;width:150px;margin-top:0px;">
+                <li><a href="<?php echo $_SERVER['PHP_SELF']?>?page=<?php
+                    if($page>1)
+                        echo $page-1;
+                    else
+                        echo 1;  
+                ?>">上一页</a></li>
+                <li><a href="<?php echo $_SERVER['PHP_SELF']?>?page=<?php
+                    if($page<$pagecount)
+                        echo $page+1;
+                    else
+                        echo $pagecount;  
+                ?>">下一页</a></li>
+            </ul>
+        
+            <div style="float:left;margin-left:560px;width:321px;">
+                <ul class="pagination" style="float:right;margin-top:0px;">
+                    <li><a href="<?php echo $_SERVER['PHP_SELF']?>?page=1">&laquo;</a></li>
+                    <?php
+                        if($pagecount<=5){
+                            for($i=1;$i<=$pagecount;$i++){
+                                if($i==$page){
+                                    ?>
+                                        <li  class="active"><a href="<?php echo $_SERVER['PHP_SELF']?>?page=<?=$i?>"><?=$i?></a></li>
+                                    <?php
+                                }else{
+                                    ?>
+                                        <li><a href="<?php echo $_SERVER['PHP_SELF']?>?page=<?=$i?>"><?=$i?></a></li>
+                                    <?php
+                                }
+                            }
+                        }else{
+                            for($i=1;$i<=$pagecount;$i++){
+                                if($i==$page){
+                                    ?>
+                                        <li  class="active"><a href="<?php echo $_SERVER['PHP_SELF']?>?page=<?=$i?>"><?=$i?></a></li>
+                                    <?php
+                                }elseif(($i>=$page-2 and $i<=$page+2 and $page>3) and $page !=$pagecount){
+                                    ?>
+                                        <li><a href="<?php echo $_SERVER['PHP_SELF']?>?page=<?=$i?>"><?=$i?></a></li>
+                                    <?php
+                                }elseif($i<=5){
+                                    if($page<=3){
+                                    ?>
+                                        <li><a href="<?php echo $_SERVER['PHP_SELF']?>?page=<?=$i?>"><?=$i?></a></li>
+                                    <?php
+                                    }
+                                }
+                            }
+                        }
+                        
+                    ?>
+                    
+                    <li><a href="<?php echo $_SERVER['PHP_SELF']?>?page=<?php echo $pagecount; ?>">&raquo;</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+{/block}

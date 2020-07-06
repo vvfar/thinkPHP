@@ -14,6 +14,8 @@ class Index extends Controller
             
             $username=$_SESSION["username"];
 
+            $information=trim($this->request->param("information"));
+
             //分页代码
             if(!isset($_GET["page"]) || !is_numeric($_GET["page"])){
                 $page=1;
@@ -23,7 +25,14 @@ class Index extends Controller
 
             $pagesize=15;
 
-            $sqlstr1=Db::query("select count(*) as total from user_form");
+            $sqlstr="select count(*) as total from user_form where 1=1 ";
+
+            if($information != ""){
+                $sqlstr= $sqlstr."and username like '%$information%'";
+            }
+
+
+            $sqlstr1=Db::query($sqlstr);
 
             $total=$sqlstr1[0]["total"];
 
@@ -33,19 +42,30 @@ class Index extends Controller
                 $pagecount=ceil($total/$pagesize);
             }
 
-            $users=Db::query("select id,username,department,level,newLevel from user_form limit ".($page-1)*$pagesize.",$pagesize");
+            $sqlstr="select id,username,department,level,newLevel from user_form where 1=1 ";
 
-            $this->assign("title","用户管理");
-            $this->assign("username",$username);
-            $this->assign("users",$users);
-            $this->assign('total',$total);
-            $this->assign('pagecount',$pagecount);
-            $this->assign('page',$page);
-            $this->assign('pagesize',15);
+        
+            if($information != ""){
+                $sqlstr= $sqlstr."and username like '%$information%'";
+            }
 
-            return $this->fetch();
+            $sqlstr= $sqlstr."limit ".($page-1)*$pagesize.",$pagesize";
+            
+            $users=Db::query($sqlstr);
 
+            $data=[
+                "title" => "用户管理",
+                "username" => $username,
+                "users" => $users,
+                'total' => $total,
+                'pagecount' => $pagecount,
+                'page' => $page,
+                'pagesize' => 15,
+                'information' => $information
+            ];
 
+            return $this->fetch('',$data);
+            
         }else{
             return $this->redirect('/index.php/Index/Login/login');
         }
@@ -58,7 +78,7 @@ class Index extends Controller
 
             $username=$_SESSION["username"];
 
-            $sqlstr1=\think\Db::name("user_form")->field(["department","newLevel"])->where("username",$username)->select();
+            $sqlstr1=Db::name("user_form")->field(["department","newLevel"])->where("username",$username)->select();
 
             $department=$sqlstr1[0]["department"];
             $newLevel=$sqlstr1[0]["newLevel"];

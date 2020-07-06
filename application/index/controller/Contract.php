@@ -52,8 +52,29 @@ class Contract extends Controller{
         session_start();
         $username=$_SESSION["username"];
 
-        $contractID=$this->request->param("contractID");
-        $clientName=$this->request->param("clientName");
+        $keywords=$this->request->param("keywords");
+        $option=0;
+
+        $contract_no_count=Db::name("contract")->field("count(*)")->where("no","like",'%'.$keywords.'%')->find();
+        $contract_company_count=Db::name("contract")->field("count(*)")->where("company","like",'%'.$keywords.'%')->find();
+        $contract_pingtai_count=Db::name("contract")->field("count(*)")->where("pingtai","like",'%'.$keywords.'%')->find();
+        $contract_category_count=Db::name("contract")->field("count(*)")->where("category","like",'%'.$keywords.'%')->find();
+        $contract_department_count=Db::name("contract")->field("count(*)")->where("department","like",'%'.$keywords.'%')->find();
+        $contract_shr_count=Db::name("contract")->field("count(*)")->where("shr","like",'%'.$keywords.'%')->find();
+
+        if($contract_no_count["count(*)"] != 0){
+            $option=1;
+        }elseif($contract_company_count["count(*)"] != 0){
+            $option=2;
+        }elseif($contract_pingtai_count["count(*)"] != 0){
+            $option=3;
+        }elseif($contract_category_count["count(*)"] != 0){
+            $option=4;
+        }elseif($contract_department_count["count(*)"] != 0){
+            $option=5;
+        }elseif($contract_shr_count["count(*)"] != 0){
+            $option=6;
+        }
 
         $sqlstr1=Db::name("user_form")->field(["department","newLevel"])->where("username",$username)->select();
 
@@ -75,12 +96,6 @@ class Contract extends Controller{
             $sqlstr3=$sqlstr3." and '$department' like concat('%',department,'%') ";
         }
 
-        if($clientName !=""){
-            $sqlstr3=$sqlstr3." and company like '%$clientName%'";
-        }elseif($contractID !=""){
-            $sqlstr3=$sqlstr3." and no like '%$contractID%'";
-        }
-
         $sqlstr3=Db::query($sqlstr3);
 
         $total=$sqlstr3[0]["total"];
@@ -100,10 +115,18 @@ class Contract extends Controller{
         }
 
 
-        if($clientName !=""){
-            $sqlstr2=$sqlstr2." and company like '%$clientName%'";
-        }elseif($contractID !=""){
-            $sqlstr2=$sqlstr2." and no like '%$contractID%'";
+        if($option==1){
+            $sqlstr2=$sqlstr2." and no like '%$keywords%' ";
+        }elseif($option==2){
+            $sqlstr2=$sqlstr2." and company like '%$keywords%' ";
+        }elseif($option==3){
+            $sqlstr2=$sqlstr2." and pingtai like '%$keywords%' ";
+        }elseif($option==4){
+            $sqlstr2=$sqlstr2." and category like '%$keywords%' ";
+        }elseif($option==5){
+            $sqlstr2=$sqlstr2." and department like '%$keywords%' ";
+        }elseif($option==6){
+            $sqlstr2=$sqlstr2." and shr like '%$keywords%' ";
         }
 
         $sqlstr2=$sqlstr2." order by id desc limit ".($page-1)*$pagesize.",$pagesize";
@@ -114,13 +137,11 @@ class Contract extends Controller{
             'username' => $username,
             'title' => '待审核合同',
             'contracts' => $contracts,
-            'contractID' => $contractID,
-            'clientName' => $clientName,
+            'keywords' => $keywords,
             'total' => $total,
             'pagecount' => $pagecount,
             'page' => $page,
             'pagesize' => 15,
-            'i' => 1
         ];
 
         return $this->fetch('',$data);
@@ -131,8 +152,29 @@ class Contract extends Controller{
         session_start();
         $username=$_SESSION["username"];
 
-        $contractID=$this->request->param("contractID");
-        $clientName=$this->request->param("clientName");
+        $keywords=$this->request->param("keywords");
+        $option=0;
+
+        $contract_no_count=Db::name("contract")->field("count(*)")->where("no","like",'%'.$keywords.'%')->find();
+        $contract_company_count=Db::name("contract")->field("count(*)")->where("company","like",'%'.$keywords.'%')->find();
+        $contract_pingtai_count=Db::name("contract")->field("count(*)")->where("pingtai","like",'%'.$keywords.'%')->find();
+        $contract_category_count=Db::name("contract")->field("count(*)")->where("category","like",'%'.$keywords.'%')->find();
+        $contract_department_count=Db::name("contract")->field("count(*)")->where("department","like",'%'.$keywords.'%')->find();
+        $contract_shr_count=Db::name("contract")->field("count(*)")->where("shr","like",'%'.$keywords.'%')->find();
+
+        if($contract_no_count["count(*)"] != 0){
+            $option=1;
+        }elseif($contract_company_count["count(*)"] != 0){
+            $option=2;
+        }elseif($contract_pingtai_count["count(*)"] != 0){
+            $option=3;
+        }elseif($contract_category_count["count(*)"] != 0){
+            $option=4;
+        }elseif($contract_department_count["count(*)"] != 0){
+            $option=5;
+        }elseif($contract_shr_count["count(*)"] != 0){
+            $option=6;
+        }
 
         $sqlstr1=Db::name("user_form")->field(["department","newLevel"])->where("username",$username)->select();
 
@@ -154,10 +196,18 @@ class Contract extends Controller{
             $sqlstr3=$sqlstr3." and '$department' like concat('%',department,'%') ";
         }
 
-        if($clientName !=""){
-            $sqlstr3=$sqlstr3." and company like '%$clientName%'";
-        }elseif($contractID !=""){
-            $sqlstr3=$sqlstr3." and no like '%$contractID%'";
+        if($option==1){
+            $sqlstr3=$sqlstr3." and no like '%$keywords%' ";
+        }elseif($option==2){
+            $sqlstr3=$sqlstr3." and company like '%$keywords%' ";
+        }elseif($option==3){
+            $sqlstr3=$sqlstr3." and pingtai like '%$keywords%' ";
+        }elseif($option==4){
+            $sqlstr3=$sqlstr3." and category like '%$keywords%' ";
+        }elseif($option==5){
+            $sqlstr3=$sqlstr3." and department like '%$keywords%' ";
+        }elseif($option==6){
+            $sqlstr3=$sqlstr3." and shr like '%$keywords%' ";
         }
 
         $sqlstr3=Db::query($sqlstr3);
@@ -177,10 +227,18 @@ class Contract extends Controller{
             $sqlstr2=$sqlstr2." and '$department' like concat('%',department,'%') ";
         }
 
-        if($clientName !=""){
-            $sqlstr2=$sqlstr2." and company like '%$clientName%'";
-        }elseif($contractID !=""){
-            $sqlstr2=$sqlstr2." and no like '%$contractID%'";
+        if($option==1){
+            $sqlstr2=$sqlstr2." and no like '%$keywords%' ";
+        }elseif($option==2){
+            $sqlstr2=$sqlstr2." and company like '%$keywords%' ";
+        }elseif($option==3){
+            $sqlstr2=$sqlstr2." and pingtai like '%$keywords%' ";
+        }elseif($option==4){
+            $sqlstr2=$sqlstr2." and category like '%$keywords%' ";
+        }elseif($option==5){
+            $sqlstr2=$sqlstr2." and department like '%$keywords%' ";
+        }elseif($option==6){
+            $sqlstr2=$sqlstr2." and shr like '%$keywords%' ";
         }
 
         $sqlstr2=$sqlstr2."order by id desc limit ".($page-1)*$pagesize.",$pagesize";
@@ -194,13 +252,11 @@ class Contract extends Controller{
             'newLevel' => $newLevel,
             'title' => '已审核合同',
             'contracts' => $contracts,
-            'contractID' => $contractID,
-            'clientName' => $clientName,
+            'keywords' => $keywords,
             'total' => $total,
             'pagecount' => $pagecount,
             'page' => $page,
             'pagesize' => 15,
-            'i' => 1
         ];
 
         return $this->fetch('',$data);
@@ -350,7 +406,7 @@ class Contract extends Controller{
         return $this->fetch('',$data);
     }
 
-    public function contract_download($contractID,$clientName,$status){
+    public function contract_download($status){
 
         $conn=mysqli_connect("localhost","root","root","yzl_database") or die("连接数据库服务器失败！".mysqli_error());
         mysqli_query($conn,"set names utf8");
@@ -363,24 +419,32 @@ class Contract extends Controller{
         $department=$sqlstr1[0]["department"];
         $newLevel=$sqlstr1[0]["newLevel"];
     
-        if($contractID !=""){
-            $sqlstrIn=" and no like '%".$contractID."%'";
-        }elseif($clientName !=""){
-            $sqlstrIn=" and company like '%".$clientName."%'";
-        }else{
-            $sqlstrIn="";
-        }
-    
-        if($status !=""){
-            if($status=="待审核"){
-                $sqlstrIn=$sqlstrIn." and status='待归档'";
-            }else{
-                $sqlstrIn=$sqlstrIn." and status='已归档'";
-            }
+        $keywords=$this->request->param("keywords");
+        $option=0;
+
+        $contract_no_count=Db::name("contract")->field("count(*)")->where("no","like",'%'.$keywords.'%')->find();
+        $contract_company_count=Db::name("contract")->field("count(*)")->where("company","like",'%'.$keywords.'%')->find();
+        $contract_pingtai_count=Db::name("contract")->field("count(*)")->where("pingtai","like",'%'.$keywords.'%')->find();
+        $contract_category_count=Db::name("contract")->field("count(*)")->where("category","like",'%'.$keywords.'%')->find();
+        $contract_department_count=Db::name("contract")->field("count(*)")->where("department","like",'%'.$keywords.'%')->find();
+        $contract_shr_count=Db::name("contract")->field("count(*)")->where("shr","like",'%'.$keywords.'%')->find();
+
+        if($contract_no_count["count(*)"] != 0){
+            $option=1;
+        }elseif($contract_company_count["count(*)"] != 0){
+            $option=2;
+        }elseif($contract_pingtai_count["count(*)"] != 0){
+            $option=3;
+        }elseif($contract_category_count["count(*)"] != 0){
+            $option=4;
+        }elseif($contract_department_count["count(*)"] != 0){
+            $option=5;
+        }elseif($contract_shr_count["count(*)"] != 0){
+            $option=6;
         }
 
     
-        $sqlstr2="select * from contract where 1=1 ".$sqlstrIn;
+        $sqlstr2="select * from contract where 1=1 ";
                     
         if($newLevel !="ADMIN" and $department !="财务部" and $department !="商业运营部"){
             if($newLevel == "KA"){
@@ -389,7 +453,28 @@ class Contract extends Controller{
                 $sqlstr2=$sqlstr2." and '$department' like concat('%',department,'%') ";
             }
         }
-    
+
+        if($option==1){
+            $sqlstr2=$sqlstr2." and no like '%$keywords%' ";
+        }elseif($option==2){
+            $sqlstr2=$sqlstr2." and company like '%$keywords%' ";
+        }elseif($option==3){
+            $sqlstr2=$sqlstr2." and pingtai like '%$keywords%' ";
+        }elseif($option==4){
+            $sqlstr2=$sqlstr2." and category like '%$keywords%' ";
+        }elseif($option==5){
+            $sqlstr2=$sqlstr2." and department like '%$keywords%' ";
+        }elseif($option==6){
+            $sqlstr2=$sqlstr2." and shr like '%$keywords%' ";
+        }
+
+        if($status=="已归档"){
+            $sqlstr2=$sqlstr2." and status = '已归档' ";
+        }else{
+            $sqlstr2=$sqlstr2." and status <> '已归档' ";
+        }
+
+
         $result=mysqli_query($conn,$sqlstr2);
 
         $data=array();
@@ -406,8 +491,6 @@ class Contract extends Controller{
             echo json_encode($data);
         }
         */  
-        
-    
         
         foreach($data as $key=>$value){
             foreach($value as $keys=>$values){

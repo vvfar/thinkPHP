@@ -56,6 +56,7 @@ class Client extends Controller{
         }
         
         $data=[
+            'title' => '客户列表',
             'username' => $username,
             'companyInfos' => $companyInfo,
             'page' => $page,

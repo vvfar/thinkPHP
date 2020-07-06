@@ -202,7 +202,9 @@ class Fl extends Controller{
 
         $pagesize=15;
 
-        $sqlstr3="select count(*) as total from flsqd where shr='$username'";        
+        $sqlstr3="select count(*) as total from flsqd where 1=1 ";        
+
+        $sqlstr3=$sqlstr3." and status='KA级提交单据' ";
 
         if($newLevel !="ADMIN"){
             $sqlstr3=$sqlstr3." and shr like '%$username%'";
@@ -235,7 +237,13 @@ class Fl extends Controller{
 
         $count=0;
 
-        $sqlstr2="select id,no,company,people,date,date2,status,shr from flsqd where shr='$username'";
+        $sqlstr2="select id,no,company,people,date,date2,status,shr from flsqd where 1=1";
+
+        $sqlstr2=$sqlstr2." and status='KA级提交单据' ";
+
+        if($newLevel !="ADMIN"){
+            $sqlstr2=$sqlstr2." and shr like '%$username%'";
+        }
 
         if($input_time !=""){
             $input_time_full=$input_time." 00:00:00";
@@ -703,20 +711,22 @@ class Fl extends Controller{
         session_start();
         $username=$_SESSION["username"];
 
-        $sqlstr1=Db::name("user_form")->field(["department","newLevel"])->where("username",$username)->select();
+        $sqlstr1=Db::name("user_form")->field(["department","newLevel"])->where("username",$username)->find();
 
-        $department=$sqlstr1[0]["department"];
-        $newLevel=$sqlstr1[0]["newLevel"];
+        $department=$sqlstr1["department"];
+        $newLevel=$sqlstr1["newLevel"];
 
-        $fl_lines=Db::name("flsqd")->where("id",$id)->select();
-        $fl_line=$fl_lines[0];
+        $fl_line=Db::name("flsqd")->where("id",$id)->find();
 
+        if(strpos($fl_line["shr"],",") == false){
+            $fl_line["shr"]=$fl_line["shr"].",";
+        }
+        $status_arr=explode(",",$fl_line["status"]);
         $status_arr2=explode(",",$fl_line["status"]);
         $shr_arr2=explode(",",$fl_line["shr"]);
-        $fl_line["shr_pop"]=array_pop($shr_arr2);
         $allTime_arr=explode(",",$fl_line["allTime"]);
-
-        $status_arr=explode(",",$fl_line["status"]);
+        
+        $fl_line["shr_pop"]=array_pop($shr_arr2);
         $fl_line["status_pop"]=array_pop($status_arr);
         $fl_line["status_shift"]=array_shift($status_arr);
 
@@ -753,18 +763,14 @@ class Fl extends Controller{
             $sx_info["newMoney"]=0;
         }
 
-        
-
         $phones=Db::name("user_form")->field("phone")->where("username",$username)->select();
         $phone=$phones[0];
-
 
         $this->assign("username",$username);
         $this->assign("fl_line",$fl_line);
         $this->assign("title","辅料申请单");
         $this->assign("newLevel",$newLevel);
         $this->assign("department",$department);
-
         $this->assign("categorys",$category_arr);
         $this->assign("productNos",$productNo_arr);
         $this->assign("productNames",$productName_arr);
@@ -885,6 +891,7 @@ class Fl extends Controller{
         $hd_flfhjsh=$this->request->param('hd_flfhjsh');
         $hd_fwfflfzj=$this->request->param('hd_fwfflfzj');
         $ywy=$people;
+        $upfile=$this->request->param('upfile');
         $sqid=$this->request->param('sxid');
         $usesqmoney=$this->request->param('sxmoney');
         $option=$this->request->param('option');   //判断状态，数据保存0，数据提交1
@@ -902,7 +909,7 @@ class Fl extends Controller{
         $sl="";
         $flfxj="";
     
-        //表中的最大行数为20
+        //表中的最大行数为30
         $hd_count=$_POST['hd_count'];
     
         if($hd_count>30){
@@ -923,32 +930,72 @@ class Fl extends Controller{
             $flfxj=$flfxj.(float)$this->request->param('dj'.$i)*(float)$this->request->param('sl'.$i).",";
         }
     
-        $maxIDs=Db::name("flsqd")->field("max(id)")->select();
-        $maxID=$maxIDs[0]["max(id)"];
-    
         //获取当前流程审批节点
         $p_no=$this->request->get("no");
-    
-        //获取下个节点名称
-        $names=Db::name("flprogress")->field("name")->where("number",(int)$p_no+1)->select();
-        $name=$names[0]["name"];
-    
 
-        //M级审批单据
-        if($name == "M级审批单据"){
-            
-            $sps=Db::name("user_form")->field("username")->where("department","like","%$department%")->where("newLevel","M")->select();
-            $sp=$sps[0]["username"];
+        if($jkfs == ""){
+            $jkfs="全现金";
+        }
+
+        //查询走的流程
+        $flprocess_id=DB::name("flprogress_all")->field("id")->where("jkfs",$jkfs)->where("status","生效中")->where("change_date",">",$date)->find();
         
-            $sp=$username.",".$sp;
+        if($flprocess_id == []){
+            $this->error('未查询到流程，请联系管理员！','/index.php/Index/fl/flsq.html','',1);
+        }else{
+            $flprocess_id=$flprocess_id["id"];
+
+            //获取当前节点名称
+            if($newLevel=="M"){
+                $p_no=(int)$p_no+1;
+            }else{
+                $p_no=(int)$p_no;
+            }
+
+            $names=Db::name("flprogress")->field("name")->where("flprogress_id",$flprocess_id)->where("number",$p_no)->find();
+            $name_now=$names["name"];
+
+            //获取下个节点名称
+            $p_no=(int)$p_no+1;
+
+            $names=Db::name("flprogress")->field("name")->where("flprogress_id",$flprocess_id)->where("number",$p_no)->find();
+            $name_next=$names["name"];
+
             
-            $name="KA级提交单据,".$name;
-        
+            //获取下个节点审核人
+            if($newLevel=="M"){
+                $shr=Db::name("flprogress")->field("sp")->where("flprogress_id",$flprocess_id)->where("number",$p_no)->find();
+                $shr=$shr["sp"];
+            }else{
+                $shr=Db::name("user_form")->field("username")->where("department","like","%$department%")->where("newLevel","M")->find();
+                $shr=$shr["username"];
+            }
+
+            if($option==1){
+                //option=1提交单据
+                $name=$name_now.",".$name_next;
+                $shr=$username.",".$shr;
+            }else{
+                //option=0保存单据
+                $name=$name_now;
+                $shr=$username;
+            }
+
+            //附件上传
             $fileName="";
-        
+
+            if(!empty($_FILES['upfile']['name'])){
+                $fileinfo=$_FILES['upfile'];
+                if($fileinfo['size']<2097152 && $fileinfo['size']>0){
+                    $path=getcwd()."/file/fl_file/".$_FILES["upfile"]["name"];
+                    move_uploaded_file($fileinfo['tmp_name'],$path);
+                    
+                    $fileName=$_FILES['upfile']['name'];
+                }
+            }
+
             //防止辅料单重号
             if($id==""){
-
                 $count_nos=Db::name("flsqd")->field("count(*)")->where("no",$no)->select();
                 $count_no=$count_nos[0]["count(*)"];
     
@@ -962,92 +1009,135 @@ class Fl extends Controller{
                     $no= str_replace($no_old,$no_new,$no_sql);
                 }
             }
-    
-            //option=1提交单据
-            if($option==1){
-                //未被保存过的单据
-                if($id =="" and $no != ""){
 
-                    $no_update=Db::query("update fl_no set no='$no' where department='$department'");
-            
-                    $sqlstr1=Db::query("insert into flsqd values('$maxID'+1,'$no','$company','$people','$department','$date','$address',".
-                        "'$connection','$phone','$driving','$ishs','$category','$productNo','$productName',".
-                        "'$amount','$price','$fls','$fwfxj','$flsName','$dj','$sl','$flfxj','$sd','$jkfs',".
-                        "'$wlfs','$wlno','$wlprice','$note','$hd_sqslhj','$hd_fwfhj','$hd_flsl','$hd_flfhjsh',".
-                        "'$hd_fwfflfzj','$hd_count'+1,'$ywy','$name','','','$sp','','$date','$fileName')");
-                //已被保存或提交后拒绝的单据
+            //未被保存过的单据
+            if($id =="" and $no != ""){
+                $result=Db::table("flsqd")->insert([
+                    'no' => $no,
+                    'company' => $company,
+                    'people' => $people,
+                    'department' => $department,
+                    'date' => $date,
+                    'address' => $address,
+                    'connection' => $connection,
+                    'phone' => $phone,
+                    'driving' => $driving,
+                    'ishs' => $ishs,
+                    'category' => $category,
+                    'productNo' => $productNo,
+                    'productName' => $productName,
+                    'amount' => $amount,
+                    'price' => $price,
+                    'fls' => $fls,
+                    'fwfxj' => $fwfxj,
+                    'flsName' => $flsName,
+                    'dj' => $dj,
+                    'sl' => $sl,
+                    'flfxj' => $flfxj,
+                    'sd' => $sd,
+                    'jkfs' => $jkfs,
+                    'wlfs' => $wlfs,
+                    'wlno' => $wlno,
+                    'wlprice' => $wlprice,
+                    'note' => $note,
+                    'hd_sqslhj' => $hd_sqslhj,
+                    'hd_fwfhj' => $hd_fwfhj,
+                    'hd_flsl' => $hd_flsl,
+                    'hd_flfhjsh' => $hd_flfhjsh,
+                    'hd_fwfflfzj' => $hd_fwfflfzj,
+                    'hd_count' => $hd_count+1,
+                    'ywy' => $ywy,
+                    'status' => $name,
+                    'shr' => $shr,
+                    'date' => $date,
+                    'file' => $fileName,
+                    'allTime' => $date
+                ]);
+
+                $id=Db::name('flsqd')->getLastInsID();
+
+                if($result == 1){
+                    $result2=DB::table("fl_no")->where("department",$department)->update(['no' => $no]);
                 }else{
-                    $sqlstr1=Db::query("update flsqd set no='$no',company='$company',people='$people',department='$department',date='$date',address='$address',".
-                    "connection='$connection',phone='$phone',driving='$driving',ishs='$ishs',category='$category',productName='$productName',productNo='$productNo',".
-                    "amount='$amount',price='$price',fls='$fls',fwfxj='$fwfxj',flsName='$flsName',dj='$dj',sl='$sl',flfxj='$flfxj',sd='$sd',jkfs='$jkfs',".
-                    "wlfs='$wlfs',wlno='$wlno',wlprice='$wlprice',note='$note',hd_sqslhj='$hd_sqslhj',hd_fwfhj='$hd_fwfhj',hd_flsl='$hd_flsl',hd_flfhjsh='$hd_flfhjsh',".
-                    "hd_fwfflfzj='$hd_fwfflfzj',hd_count='$hd_count'+1,ywy='$ywy',status='$name',shr='$sp',csr='',allTime='$date',file='$fileName' where id='$id'");
-                }    
+                    $this->error('新增单据失败！','/index.php/Index/fl/flsq.html','',1);
+                }        
+                    
+            //已被保存或提交后拒绝的单据
             }else{
-                //点击一键保存的执行流程
-                if($id =="" and $no != ""){
-                    $no_update=Db::query("update fl_no set no='$no' where department='$department'");
-            
-                    $sqlstr1=Db::query("insert into flsqd values('$maxID'+1,'$no','$company','$people','$department','$date','$address',".
-                        "'$connection','$phone','$driving','$ishs','$category','$productNo','$productName',".
-                        "'$amount','$price','$fls','$fwfxj','$flsName','$dj','$sl','$flfxj','$sd','$jkfs',".
-                        "'$wlfs','$wlno','$wlprice','$note','$hd_sqslhj','$hd_fwfhj','$hd_flsl','$hd_flfhjsh',".
-                        "'$hd_fwfflfzj','$hd_count'+1,'$ywy','KA级提交单据','','','$username','','','$fileName')");
-                }else{
-    
-                    $sqlstr1=Db::query("update flsqd set no='$no',company='$company',people='$people',department='$department',date='$date',address='$address',".
-                    "connection='$connection',phone='$phone',driving='$driving',ishs='$ishs',category='$category',productName='$productName',productNo='$productNo',".
-                    "amount='$amount',price='$price',fls='$fls',fwfxj='$fwfxj',flsName='$flsName',dj='$dj',sl='$sl',flfxj='$flfxj',sd='$sd',jkfs='$jkfs',".
-                    "wlfs='$wlfs',wlno='$wlno',wlprice='$wlprice',note='$note',hd_sqslhj='$hd_sqslhj',hd_fwfhj='$hd_fwfhj',hd_flsl='$hd_flsl',hd_flfhjsh='$hd_flfhjsh',".
-                    "hd_fwfflfzj='$hd_fwfflfzj',hd_count='$hd_count'+1,ywy='$ywy',status='KA级提交单据',shr='$username',csr='',allTime='',file='$fileName' where id='$id'");
-                }
+                $result=Db::table("flsqd")->where("id",$id)->update([
+                    'no' => $no,
+                    'company' => $company,
+                    'people' => $people,
+                    'department' => $department,
+                    'date' => $date,
+                    'address' => $address,
+                    'connection' => $connection,
+                    'phone' => $phone,
+                    'driving' => $driving,
+                    'ishs' => $ishs,
+                    'category' => $category,
+                    'productNo' => $productNo,
+                    'productName' => $productName,
+                    'amount' => $amount,
+                    'price' => $price,
+                    'fls' => $fls,
+                    'fwfxj' => $fwfxj,
+                    'flsName' => $flsName,
+                    'dj' => $dj,
+                    'sl' => $sl,
+                    'flfxj' => $flfxj,
+                    'sd' => $sd,
+                    'jkfs' => $jkfs,
+                    'wlfs' => $wlfs,
+                    'wlno' => $wlno,
+                    'wlprice' => $wlprice,
+                    'note' => $note,
+                    'hd_sqslhj' => $hd_sqslhj,
+                    'hd_fwfhj' => $hd_fwfhj,
+                    'hd_flsl' => $hd_flsl,
+                    'hd_flfhjsh' => $hd_flfhjsh,
+                    'hd_fwfflfzj' => $hd_fwfflfzj,
+                    'hd_count' => $hd_count+1,
+                    'ywy' => $ywy,
+                    'status' => $name,
+                    'shr' => $shr,
+                    'date' => $date,
+                    'file' => $fileName,
+                    'allTime' => $date
+                ]);
             }
-        
+            
             //提交后扣减授信金额
             if($sqid !="" and $usesqmoney !=""){
-
-                $maxID2s=Db::name("use_sx")->field("max(id)")->select();
-                $maxID2=$maxID2s[0]["max(id)"];
     
-                if($maxID==""){
-                    $maxID2=0;
-                }
-    
-                $sqlstr3=Db::query("select distinct sqmoney,newMoney from use_sx where sqid='$sqid'");
+                $result3=Db::name("use_sx")->field(['sqmoney','newMoney'])->where("sqid",$sqid)->find();
                     
-                $sqmoney=$sqlstr3[0]["sqmoney"];
-                $newMoney=$sqlstr3[0]["newMoney"];
+                $sqmoney=$result3["sqmoney"];
+                $newMoney=$result3["newMoney"];
     
                 $useMoney=(int)$sqmoney-(int)$newMoney;
-                            
                 $remainMoney=(int)$sqmoney-(int)$useMoney-(int)$usesqmoney;
                 
-                $sqlstr4=Db::query("insert into use_sx values('$maxID2'+1,'$sqid','$sqmoney','$useMoney','$usesqmoney','$remainMoney','$no','$department','$date','使用授信','$remainMoney')");
-                $sqlstr5=Db::query("update use_sx set newMoney='$remainMoney' where sqid='$sqid'");
-    
-            }
-        }
-    
-        //提交后跳转页面
+                $result4=Db::table("use_sx")->insert([
+                    'sqid' => $sqid,
+                    'sqmoney' => $sqmoney,
+                    'useMoney' => $useMoney,
+                    'usesqmoney' => $usesqmoney,
+                    'remainMoney' => $remainMoney,
+                    'no' => $no,
+                    'department' => $department,
+                    'date' => $date,
+                    'note' => '使用授信',
+                    'newMoney' => $remainMoney
+                ]);
 
-        if($option ==1){
-            if($id ==""){
-                //提交后跳转maxID+1
-                return redirect('/index.php/Index/fl/fl_line.html?id='.($maxID+1));
-            }else{
-                //提交后跳转当前ID
-                return redirect('/index.php/Index/fl/fl_line.html?id='.$id);
+                $result5=Db::table("use_sx")->where('sqid',$sqid)->update([
+                    'newMoney' => $remainMoney
+                ]);
             }
-        }else{
-            if($id ==""){
-                //提交后跳转maxID+1
-                return redirect('/index.php/Index/fl/save_fl.html?id='.($maxID+1));
-            }else{
-                //提交后跳转当前ID
-                return redirect('/index.php/Index/fl/save_fl.html?id='.$id);
-            }
-        }
 
+            return $this->success('提交成功！','/index.php/Index/fl/fl_line.html?id='.$id,'','1');
+        }
     }
 
     public function fl_yzm(){
@@ -1204,16 +1294,17 @@ class Fl extends Controller{
         $id=$this->request->param("id"); 
         $option=$this->request->param("option"); 
 
-        $sqlstr0=Db::query("select department,jkfs,status,shr,allTime from flsqd where id='$id'");
+        $result=Db::name("flsqd")->field(['department','jkfs','status','shr','allTime','date'])->where("id",$id)->find();
 
-        $department=$sqlstr0[0]["department"];
-        $jkfs=$sqlstr0[0]["jkfs"];
-        $status=$sqlstr0[0]["status"];
-        $shr=$sqlstr0[0]["shr"];
+        $department=$result["department"];
+        $jkfs=$result["jkfs"];
+        $status=$result["status"];
+        $shr=$result["shr"];
+        $date=$result["date"];
         $shTime="";
         
-
-        if($option==1){
+        //1：同意 3：义乌同意 8：义乌修改
+        if($option == 1 || $option == 3 || $option == 8){
             //同意流程
             
             $status_arr=explode(",",$status);
@@ -1222,94 +1313,80 @@ class Fl extends Controller{
             $status_now=array_pop($status_arr);
             $shr_now=array_pop($shr_arr);
 
+            //防止表单重复提交后影响流程
             if($shr_now==$username){
-                $sqlstr3=Db::query("select number from flprogress where name='$status_now' ");
-                $number=$sqlstr3[0]["number"];
-        
-                $number_forward=$number+1;
-        
-                $sqlstr4=Db::query("select name,sp from flprogress where number='$number_forward' ");
-                $status_forward=$sqlstr4[0]["name"];
-                $sp_forward=$sqlstr4[0]["sp"];
 
-        
-                if(($jkfs=="全现金" and $status_forward == "商业运营审批单据") or (($jkfs=="全授信" or $jkfs=="标费补贴") and $status_forward == "财务审批单据")){
-        
-                    $sqlstr5=Db::query("select number from flprogress where name='$status_forward' ");
-                    $number=$sqlstr5[0]["number"];
+                $flprocess_id=Db::name("flprogress_all")->field("id")->where("jkfs",$jkfs)->where("status","生效中")->where("change_date",">",$date)->find();
 
-                    $number=$number+1;
-        
-                    $sqlstr6=Db::query("select name,sp from flprogress where number='$number' ");
-
-                    $status_forward=$sqlstr6[0]["name"];
-                    $sp_forward=$sqlstr6[0]["sp"];
-      
-                }
-        
-                $status_new=$status.",".$status_forward;
-                $sp_new=$shr.",".$sp_forward;
-                $shTime_new=$shTime.",".$time;
-        
-                if($status_forward=="已归档单据"){
-                    $sqlstr_fl=Db::query("update flsqd set status='$status_new',shr='$sp_new',allTime='$shTime_new',date2='$time',file='$username' where id='$id'");
+                if($flprocess_id == []){
+                    $this->error('未查询到流程，请联系管理员！','/index.php/Index/fl/flsq.html','',1);
                 }else{
-                    $sqlstr_fl=Db::query("update flsqd set status='$status_new',shr='$sp_new',allTime='$shTime_new',file='$username' where id='$id'");
-                }
+                    $flprocess_id=$flprocess_id["id"];
 
-                //财务，商业运营加入key
-                if($my_department=="财务部" or ($my_department=="商业运营部" and $status_forward !="已归档单据")){
-        
-                    //获取辅料申请单最大ID
-                    $sqlstr=Db::query("select max(id) from fl_key");
-                    $maxID=$sqlstr[0]["max(id)"];
+                    $numbers=Db::name("flprogress")->field(['number','count(*)'])->where("flprogress_id",$flprocess_id)->where("name",$status_now)->find();
+                    $number=$numbers["number"];
+                    $flprocess_length=$numbers["count(*)"];
+
+                    //下个流程
+                    $number_forward=$number+1;
+
+                    $status_forwards=Db::name("flprogress")->field(['name','sp'])->where("flprogress_id",$flprocess_id)->where("number",$number_forward)->find();
                     
-                    if($maxID==""){
-                        $maxID=0;
+                    $status_forward=$status_forwards["name"];
+                    $sp_forward=$status_forwards["sp"];
+
+                    $status_new=$status.",".$status_forward;
+                    $sp_new=$shr.",".$sp_forward;
+                    $shTime_new=$shTime.",".$time;
+
+                    //更新流程
+                    if($option != 8){
+                        $result6=Db::table("flsqd")->where("id",$id)->update([
+                            'status' => $status_new,
+                            'shr' => $sp_new,
+                            'allTime' => $shTime_new,
+                        ]);
                     }
-        
-                    $sqlstr_k=Db::query("insert into fl_key values('$maxID'+1,'$id',1,'$time')");
+                    
+                    //流程是否到底
+                    if($flprocess_length==$number_forward){
+                        $result7=Db::table("flsqd")->where("id",$id)->update([
+                            'date2' => $time
+                        ]);
+                    }
+
+                    //财务，商业运营加入key
+                    if($my_department=="财务部"){
+                        $sqlstr_k=Db::table("fl_key")->insert([
+                            'fl_no'=> $id,
+                            'hasKey' => 1,
+                            'time' => $time
+                        ]);
+                    }
+
+                    //义乌审批单据加入物流信息
+                    if($option == 3){
+                        
+                        $wlfs=$this->request->param("wlfs");
+                        $wlno=$this->request->param("wlno");
+                        $wlprice=$this->request->param("wlprice");
+                        $note=$this->request->param("note");
+
+                        $result8=Db::table("flsqd")->where("id",$id)->update([
+                            'wlfs'=>$wlfs,
+                            'wlno'=>$wlno,
+                            'wlprice'=>$wlprice,
+                            'note'=>$note
+                        ]);
+                    }
+
+                    return $this->success('提交成功！','/index.php/Index/fl/w_fl.html','','1');
                 }
 
-                return redirect('/index.php/Index/fl/w_fl.html');
             }else{
                 //不能重复提交表单
                 return redirect('/index.php/Index/fl/fl_line.html?id='.$id);
             }
-        
-        }elseif($option==3){
-            //义务审批单据走此逻辑
-
-            $wlfs=$_GET["wlfs"];
-            $wlno=$_GET["wlno"];
-            $wlprice=$_GET["wlprice"];
-            $note=$_GET["note"];
-
-            //找出当前流程序号（同意状态）
-            $sqlstr1=Db::name("flprogress")->field("number")->where("sp",$username)->where("no",1)->select();
-            $number=$sqlstr1[0]["number"];
-
-            $sqlstr4=Db::name("flsqd")->field(["status","shr","allTime"])->where("id",$id)->select();
-            
-            $qqstatus=$sqlstr4[0]["status"];
-            $qqshr=$sqlstr4[0]["shr"];
-            $allTime=$sqlstr4[0]["allTime"];
-
-            //找出下个流程信息
-            $sqlstr2=Db::name("flprogress")->field(["name","sp"])->where("number",$number+1)->where("no",1)->select();
-
-            $name=$sqlstr2[0]["name"];
-            $sp=$sqlstr2[0]["sp"];
-            
-            $sp=$qqshr.",".$sp;
-            $name=$qqstatus.",".$name;
-
-            $allTime=$allTime.",".$time;
-
-            //将下个流程信息放入
-            $sqlstr3=Db::table("flsqd")->where("id",$id)->update(['status'=>$name,'shr'=>$sp,'allTime'=>$allTime,'wlfs'=>$wlfs,'wlno'=>$wlno,'wlprice'=>$wlprice,'note'=>$note]);
-
-            return redirect('/index.php/Index/fl/w_fl.html');
 
         }elseif($option==6){
             //业务员重新编辑
@@ -1335,47 +1412,422 @@ class Fl extends Controller{
             //KA删除单据
             $sqlstr=Db::name("flsqd")->where("id",$id)->delete();
 
-            return redirect('/index.php/Index/fl/w_fl.html');
+            return $this->success('删除成功！','/index.php/Index/fl/w_fl.html','','1');
         
-        }elseif($option==8){
-
-            //义乌修改单据
-            $wlfs=$_GET["wlfs"];
-            $wlno=$_GET["wlno"];
-            $wlprice=$_GET["wlprice"];
-            $note=$_GET["note"];
-
-            $sqlstr3=Db::table("flsqd")->where("id",$id)->update(['wlfs'=>$wlfs,'wlno'=>$wlno,'wlprice'=>$wlprice,'note'=>$note]);
-
-            return redirect('/index.php/Index/fl/w_fl.html');
-
         }else{
             //拒绝，待业务员审核
-            $sqlstr=Db::name("flsqd")->field(["status","shr","allTime"])->where("id",$id)->select();
+            $flprocess_id=Db::name("flprogress_all")->field("id")->where("jkfs",$jkfs)->where("status","生效中")->where("change_date",">",$date)->find();
 
-            $qqstatus=$sqlstr[0]["status"];
-            $qqshr=$sqlstr[0]["shr"];
-            $allTime=$sqlstr[0]["allTime"];
+            if($flprocess_id == []){
+                $this->error('未查询到流程，请联系管理员！','/index.php/Index/fl/flsq.html','',1);
+            }else{
+                $flprocess_id=$flprocess_id["id"];
             
-            $arr_shr=explode(",",$qqshr);
-            $shr=array_shift($arr_shr);
+                $sqlstr=Db::name("flsqd")->field(["status","shr","allTime"])->where("id",$id)->find();
 
-            $sp=$qqshr.",".$shr;
-            $name=$qqstatus.",待KA审核单据";
-            $time=date('Y-m-d H:i:s', time());
-            $allTime=$allTime.",".$time;
+                $qq_status=$sqlstr["status"];
+                $qq_shr=$sqlstr["shr"];
+                $qq_allTime=$sqlstr["allTime"];
+                
+                $arr_shr=explode(",",$qq_shr);
+                $shr=$arr_shr[0];
 
-            $sqlstr2=Db::table("flsqd")->where("id",$id)->update(['status'=>$name,'shr'=>$sp,'allTime'=>$allTime]);
+                $arr_status=explode(",",$qq_status);
+                $status=$arr_status[0];
+    
+                $time=date('Y-m-d H:i:s', time());
 
-            //财务，商业运营拒绝删除key
-            $sqlstr3=Db::name("fl_key")->field("count(*)")->where("fl_no",$id)->select();
-            $count_key=$sqlstr3[0]["count(*)"];
+                $sp=$qq_shr.",".$shr;
+                $status=$qq_status.",".$status;
+                $allTime=$qq_allTime.",".$time;
+    
+                $result9=Db::table("flsqd")->where("id",$id)->update([
+                    'status'=>$status,
+                    'shr'=>$sp,
+                    'allTime'=>$allTime
+                ]);
+    
+                //财务，商业运营拒绝删除key
+                $result10=Db::name("fl_key")->field("count(*)")->where("fl_no",$id)->select();
+                $count_key=$result10[0]["count(*)"];
+                
+                if($count_key>0){
+                    $sqlstr4=Db::table("fl_key")->where("fl_no",$id)->delete();
+                }
+    
+                return $this->error('拒绝辅料成功！','/index.php/Index/fl/fl_line.html?id='.$id,'','1');
+            }
+        }
+    }
+
+    public function download_fl($option,$status,$time,$input_time,$input_time2,$keywords){
+        
+        error_reporting(E_ALL || ~E_NOTICE);
+
+        session_start();
+        $username=$_SESSION["username"]; 
+    
+        $conn=mysqli_connect("localhost","root","root","yzl_database") or die("连接数据库服务器失败！".mysqli_error());
+        mysqli_query($conn,"set names utf8");
+
+        $sqlstr1=Db::name("user_form")->field(["department","newLevel"])->where("username",$username)->select();
+
+        $my_department=$sqlstr1[0]["department"];
+        $newLevel=$sqlstr1[0]["newLevel"];
+    
+        if($option == 1){
+            //新系统辅料单下载
             
-            if($count_key>0){
-                $sqlstr4=Db::table("fl_key")->where("fl_no",$id)->delete();
+            //逻辑判断，关键字属于哪一类
+            $keywords=$this->request->param("keywords");
+            $option=0;
+
+            $fl_no_count=Db::name("flsqd")->field("count(*)")->where("no","like",'%'.$keywords.'%')->find();
+            $fl_company_count=Db::name("flsqd")->field("count(*)")->where("company","like",'%'.$keywords.'%')->find();
+            $fl_department_count=Db::name("flsqd")->field("count(*)")->where("department","like",'%'.$keywords.'%')->find();
+            $fl_people_count=Db::name("flsqd")->field("count(*)")->where("people","like",'%'.$keywords.'%')->find();
+            
+            if($fl_no_count["count(*)"] != 0){
+                $option=1;
+            }elseif($fl_company_count["count(*)"] != 0){
+                $option=2;
+            }elseif($fl_department_count["count(*)"] != 0){
+                $option=3;
+            }elseif($fl_people_count["count(*)"] != 0){
+                $option=4;
             }
 
-            return redirect('/index.php/Index/fl/fl_line.html?id='.$id);
+
+            $sqlstr2="select * from flsqd where 1=1 ";
+    
+            if($newLevel != "ADMIN" and $department !="财务部" and $department !="商业运营部"){
+                $sqlstr2=$sqlstr2." and shr like '%$username%'";
+            }
+        
+            if($clientName !=""){
+                $sqlstr2=$sqlstr2." and company like '%$clientName%'";
+            }
+        
+            if($status == 1){
+                $sqlstr2=$sqlstr2." and status like '%已归档%' ";
+            }elseif($status == 0){
+                $sqlstr2=$sqlstr2." and not status like '%已归档%' ";
+            }
+        
+            if($input_time != ""){
+                $input_time_full=$input_time." 00:00:00";
+        
+                if($time=="流程开始时间"){
+                    $sqlstr2=$sqlstr2." and date >='$input_time_full' ";
+                }elseif($time=="流程结束时间"){
+                    $sqlstr2=$sqlstr2." and date2 >='$input_time_full' ";
+                }
+            }
+    
+        
+            if($input_time2 != ""){
+                $input_time2_full=$input_time2." 23:59:59";
+        
+                if($time=="流程开始时间"){
+                    $sqlstr2=$sqlstr2." and date <='$input_time2_full' ";
+                }elseif($time=="流程结束时间"){
+                    $sqlstr2=$sqlstr2." and date2 <='$input_time2_full' ";
+                }
+            }
+
+            if($option==1){
+                $sqlstr2=$sqlstr2." and no like '%$keywords%' ";
+            }elseif($option==2){
+                $sqlstr2=$sqlstr2." and company like '%$keywords%' ";
+            }elseif($option==3){
+                $sqlstr2=$sqlstr2." and department like '%$keywords%' ";
+            }elseif($option==4){
+                $sqlstr2=$sqlstr2." and people like '%$keywords%' ";
+            }
+
+        }else{
+            //旧系统辅料单下载
+    
+            $sqlstr2="select * from oldflsqd where 1=1 ";
+        
+            if($clientName !=""){
+                $sqlstr2=$sqlstr2." and company like '%$clientName%'";
+            }
+        
+            if($status=="已完成"){
+                $sqlstr2=$sqlstr2." and status like '%归档%' ";
+            }
+        
+            if($input_time != ""){
+                $input_time_full=$input_time." 00:00:00";
+        
+                if($time=="流程开始时间"){
+                    $sqlstr2=$sqlstr2." and date >='$input_time_full' ";
+                }
+            }
+        
+            if($input_time2 != ""){
+                $input_time2_full=$input_time2." 23:59:59";
+        
+                if($time=="流程开始时间"){
+                    $sqlstr2=$sqlstr2." and date <='$input_time2_full' ";
+                }
+            }
         }
+    
+        $result=mysqli_query($conn,$sqlstr2);
+    
+        $data=array();
+    
+        while($myrow=mysqli_fetch_row($result)){
+            $data[]=str_replace("\t",'',$myrow);
+            //$data[]=$myrow;
+            //echo var_dump($data);
+        }
+    
+        
+        foreach($data as $key=>$value){
+            foreach($value as $keys=>$values){
+    
+                if($keys>=11 and $keys<=21){
+    
+                    //$str_hksj=explode(",",$data[$key][$keys]);
+                    $str_hksj=explode(",",str_replace("\t",'',trim($data[$key][$keys])));
+    
+                    //echo sizeof($str_hksj);
+    
+                    for($i=0;$i<sizeof($str_hksj);$i++){
+                        $j=26+$keys+$i*11;
+                        $data[$key][$j]=$str_hksj[$i];                    
+                    }            
+                }
+            }
+        }
+    
+        $header=array('申请单编号','申请单位','申请人','申请部门','申请日期','收货地址','联系人','联系电话','运输方式','是否含税包装价格');
+    
+        array_push($header,'品类all','货号all','品名all','申请数量all','包装价格all','费率/单价all','服务费小计all','辅料名称all','单价all','辅料数量all','辅料小计all');
+        
+        array_push($header,'税点','结款方式','物流方式','物流单号','物流费用','备注','申请数量合计','服务费合计','辅料数量','辅料费小计含税','服务费辅料费总计',
+        '条数','业务员','流程状态','结束日期');
+    
+        for($i=1;$i<=20;$i++){
+            array_push($header,'品类'.$i,'货号'.$i,'品名'.$i,'申请数量'.$i,'包装价格'.$i,'费率/单价'.$i,'服务费小计'.$i,'辅料名称'.$i,'单价'.$i,'辅料数量'.$i,'辅料小计'.$i);
+        }
+            
+        
+        
+        function createtable($list,$filename,$header=array(),$index = array()){ 
+            header("Content-type:application/vnd.ms-excel"); 
+            header("Content-Disposition:filename=".$filename.".xls"); 
+            $teble_header = implode("\t",$header); 
+            $strexport = $teble_header."\r"; 
+            foreach ($list as $row){ 
+                foreach($index as $val){ 
+                    $strexport.=$row[$val]."\t";  
+                    } 
+                    $strexport.="\r"; 
+                    
+                    } 
+                $strexport=iconv('UTF-8',"GB2312//IGNORE",$strexport); 
+                exit($strexport);  
+        }
+    
+        $list2=range(1,267);
+    
+        createtable($data,'flsqd',$header,$list2);
+        mysqli_free_result($result);
+        mysqli_close($conn);
+    }
+
+    public function query_amount(){
+        
+        $information=trim($this->request->param("information"));
+
+        session_start();
+        $username=$_SESSION["username"]; 
+        
+        $sqlstr1=Db::name("user_form")->field(["department","newLevel"])->where("username",$username)->find();
+
+        $department=$sqlstr1["department"];
+        $newLevel=$sqlstr1["newLevel"];
+
+        //分页代码
+        if(!isset($_GET["page"]) || !is_numeric($_GET["page"])){
+            $page=1;
+        }else{
+            $page=intval($_GET["page"]);
+        }
+
+        $pagesize=15;
+
+        $sqlstr="select count(*) as total from fl where not fl_name like '%(赠)%' ";
+
+        if($information != ""){
+            $sqlstr= $sqlstr."and fl_name like '%$information%'";
+        }
+
+        $sqlstr1=DB::query($sqlstr);
+
+        $total=$sqlstr1[0]["total"];
+
+        if($total%$pagesize==0){
+            $pagecount=intval($total/$pagesize);
+        }else{
+            $pagecount=ceil($total/$pagesize);
+        }
+
+        $sqlstr="select * from fl where not fl_name like '%(赠)%' ";
+
+        if($information != ""){
+            $sqlstr= $sqlstr."and fl_name like '%$information%'";
+        }
+
+        $sqlstr= $sqlstr." order by fl_name asc limit ".($page-1)*$pagesize.",$pagesize";
+
+        $fls=DB::query($sqlstr);
+
+        $data=[
+            "title" => "查询辅料数",
+            "username" => $username,
+            "fls" => $fls,
+            'total' => $total,
+            'pagecount' => $pagecount,
+            'page' => $page,
+            'pagesize' => 15,
+            'information' => $information,
+            'newLevel'=> $newLevel
+        ];
+
+        return $this->fetch('',$data);
+    
+    }
+
+    public function fl_add(){
+
+        session_start();
+        $username=$_SESSION["username"]; 
+    
+        $fl_name=trim($this->request->param('fl_name'));
+        $fl_price=$this->request->param('fl_price');
+        $fl_amount=$this->request->param('fl_amount');
+
+        $fl_dups=DB::name("fl")->field("count(*)")->where("fl_name",$fl_name)->find();
+        $fl_dup=$fl_dups["count(*)"];
+
+        if($fl_dup==0){
+            $result1=Db::table("fl")->insert([
+                'fl_name' => $fl_name,
+                'fl_price' => $fl_price,
+                'fl_amount' => $fl_amount
+            ]);
+                
+            $fl_name=$fl_name."(赠)";
+            
+            $result2=Db::table("fl")->insert([
+                'fl_name' => $fl_name,
+                'fl_price' => $fl_price,
+                'fl_amount' => $fl_amount
+            ]);
+        }
+
+        return $this->redirect('/index.php/Index/fl/query_amount.html');
+    }
+
+    public function fl_edit($id){
+
+        $method=$this->request->method();
+
+        session_start();
+        $username=$_SESSION["username"];
+
+        if($method=="POST"){
+            $id=$this->request->param("id");
+            $fl_name=$this->request->param('fl_name');
+            $fl_price=$this->request->param('fl_price');
+            $fl_amount=$this->request->param('fl_amount');
+    
+            $result=Db::table("fl")->where("id",$id)->update([
+                'fl_name' => $fl_name,
+                'fl_price' =>$fl_price,
+                'fl_amount' => $fl_amount
+            ]);
+        
+            return $this->redirect('/index.php/Index/Fl/query_amount.html');
+        }else{
+            $fl_line=DB::name("fl")->where("id",$id)->find();
+
+            $data=[
+                "title" => "编辑辅料",
+                "username" => $username,
+                "fl_line" => $fl_line
+            ];
+
+            return $this->fetch('',$data);
+        }
+        
+    }
+
+    public function fl_del($id){
+        $sqlstr1=DB::name("fl")->field("fl_name")->where("id",$id)->find();
+
+        $fl_name=$sqlstr1["fl_name"]."(赠)";
+
+        $sqlstr2=DB::name("fl")->where("fl_name",$fl_name)->delete();
+        $sqlstr3=DB::name("fl")->where("id",$id)->delete();
+
+        return $this->redirect('/index.php/Index/fl/query_amount.html');
+    }
+
+    public function download_fl_info(){
+        error_reporting(E_ALL || ~E_NOTICE);
+
+        session_start();
+        $username=$_SESSION["username"]; 
+    
+        $conn=mysqli_connect("localhost","root","root","yzl_database") or die("连接数据库服务器失败！".mysqli_error());
+        mysqli_query($conn,"set names utf8");
+    
+        $sqlstr2="select * from fl";
+    
+        $result=mysqli_query($conn,$sqlstr2);
+    
+        $data=array();
+    
+        while($myrow=mysqli_fetch_row($result)){
+            $data[]=str_replace("\t",'',$myrow);
+            //$data[]=$myrow;
+            //echo var_dump($data);
+        }
+        
+        foreach($data as $key=>$value){
+            foreach($value as $keys=>$values){
+    
+            }
+        }
+    
+        $header=array('辅料名称','辅料价格','辅料数量');
+        
+        function createtable($list,$filename,$header=array(),$index = array()){ 
+            header("Content-type:application/vnd.ms-excel"); 
+            header("Content-Disposition:filename=".$filename.".xls"); 
+            $teble_header = implode("\t",$header); 
+            $strexport = $teble_header."\r"; 
+            foreach ($list as $row){ 
+                foreach($index as $val){ 
+                    $strexport.=$row[$val]."\t";  
+                    } 
+                    $strexport.="\r"; 
+                    
+                    } 
+                $strexport=iconv('UTF-8',"GB2312//IGNORE",$strexport); 
+                exit($strexport);  
+        }
+    
+        $list2=range(1,3);
+    
+        createtable($data,'辅料信息',$header,$list2);
+        mysqli_free_result($result);
+        mysqli_close($conn);
     }
 }

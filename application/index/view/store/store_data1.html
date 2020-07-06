@@ -31,7 +31,7 @@
                         <button class="btn btn-sm btn-info" style="float:right;margin-left:10px;" id="download">下载模板</button>
                         <button class="btn btn-sm btn-warning" style="float:right;margin-left:10px;"  id="upload" data-toggle="modal" data-target="#myModal">上传数据</button>  
                     {/if}
-                    <button class="btn btn-sm btn-danger" style="float:right;margin-left:10px;"  id="downloadAll">下载数据</button>  
+                    <button class="btn btn-sm btn-danger" style="float:right;margin-left:10px;"  id="downloadAll" data-toggle="modal" data-target="#myModal2">下载数据</button>  
                 </div>
             </div>
 
@@ -45,7 +45,7 @@
 
                     <div style="float:right;">
                         <p style="float: left;position:relative;top:7px;">选择日期</p>
-                        <div style="width: 180px;font-size: 14px;float: left;margin-left:20px" class="input-group date form_datetime" data-date="" data-date-format="dd MM yyyy" data-link-field="dtp_input2" data-link-format="yyyy-mm-dd">
+                        <div style="width: 180px;font-size: 14px;float: left;margin-left:20px" class="input-group date form_datetime date1" data-date="" data-date-format="dd MM yyyy" data-link-field="dtp_input2" data-link-format="yyyy-mm-dd">
                             <input class="form-control" id="dateTime" name="dateTime" size="16" type="text" value="<?=$date?>" readonly>
                             <span class="input-group-addon"><span class="glyphicon glyphicon-remove"></span></span>
                             <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
@@ -148,8 +148,8 @@
             </div>
         </div>
 
-        <!-- Excel导入模态框 -->
-        <form method="POST" action="../../controller/store/uploadStoreData.php" enctype="multipart/form-data">
+        <!-- 上传数据 -->
+        <form method="POST" action="upload_store_data" enctype="multipart/form-data">
             <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
                 <div class="modal-dialog">
                     <div class="modal-content">
@@ -174,6 +174,47 @@
                 </div>
             </div>
         </form>
+
+        <!-- 下载数据 -->
+        <form method="POST" action="/index.php/Index/store/downloadStoreData?option=1" enctype="multipart/form-data">
+            <div class="modal fade" id="myModal2" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 class="modal-title" id="myModalLabel">
+                            下载店铺数据
+                            </h4>
+                        </div>
+                        
+                        <div class="modal-body" style="height: 200px;">
+                            <div class="form-group" style="clear: both;">
+                                <span style="margin-top:5px;float:left">选择时间段</span>
+                                <div style="width: 180px;font-size: 14px;float: left;margin-left:20px" class="input-group date form_datetime" data-date="" data-date-format="dd MM yyyy" data-link-field="dtp_input2" data-link-format="yyyy-mm-dd">
+                                    <input class="form-control" name="dateTime2" size="16" type="text" value="" readonly>
+                                    <span class="input-group-addon"><span class="glyphicon glyphicon-remove"></span></span>
+                                    <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
+                                </div>
+                                <p style="float:left;margin-left: 10px;margin-top:5px;">到</p>
+                                <div style="width: 180px;font-size: 14px;float: left;margin-left:10px" class="input-group date form_datetime" data-date="" data-date-format="dd MM yyyy" data-link-field="dtp_input2" data-link-format="yyyy-mm-dd">
+                                    <input class="form-control" name="dateTime3" size="16" type="text" value="" readonly>
+                                    <span class="input-group-addon"><span class="glyphicon glyphicon-remove"></span></span>
+                                    <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
+                                </div>
+                                <div style="clear:both;position: relative;top:20px;">
+                                    <p>*由于数据量较大，只能下载一个月之内的数据</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-success">下载</button>
+                            <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                        </div> 
+                    </div>
+                </div>
+            </div>
+        </form>
+
     </body>
 </html>
 
@@ -196,19 +237,14 @@
         pickerPosition: "bottom-left"
     });
 
-    $(".date").change(function(){
+    $(".date1").change(function(){
         date=$("#dateTime").val();
 
         window.location.href="store_data1.html?date="+date;
     })
 
     $("#download").click(function(){
-        window.location.href="../../controller/store/downloadStoreMB.php"
+        window.location.href="/index.php/Index/store/downloadStoreMB"
     })
-
-    $("#downloadAll").click(function(){
-        window.location.href="../../controller/store/downloadStoreData.php?option=1"
-    })
-
     
 </script>

@@ -13,16 +13,131 @@ class Process extends Controller
 
             $username=$_SESSION["username"];
             
-            $process_alls=DB::name("flprogress_all")->where("no",1)->select();
+            //分页代码
+            if(!isset($_GET["page"]) || !is_numeric($_GET["page"])){
+                $page=1;
+            }else{
+                $page=intval($_GET["page"]);
+            }
 
-            $this->assign("title","流程管理");
-            $this->assign("username",$username);
-            $this->assign("process_alls",$process_alls);
+            $pagesize=15;
 
-            return $this->fetch();
+            $sqlstr1=DB::name("flprogress_all")->field("count(*)")->where("no",1)->select();
+            $total=$sqlstr1[0]["count(*)"];
+
+            if($total%$pagesize==0){
+                $pagecount=intval($total/$pagesize);
+            }else{
+                $pagecount=ceil($total/$pagesize);
+            }
+
+            $process_alls=DB::name("flprogress_all")->limit(($page-1)*$pagesize,$page*$pagesize)->select();
+
+            $jkfss=DB::name("fl_jkfs")->field("name")->select();
+
+            $data=[
+                'title' => '流程管理',
+                'username' => $username,
+                'process_alls' => $process_alls,
+                'jkfss' =>  $jkfss,
+                'total' => $total,
+                'pagecount' => $pagecount,
+                'pagesize' => 15,
+                'page' => $page
+            ];
+
+            return $this->fetch('',$data);
         
         }else{
             return $this->redirect('/index.php/Index/Login/login');
+        }
+    }
+
+    public function process_list_addHandle(){
+        
+        $name=$this->request->param("name");
+        $department=$this->request->param("department");
+        $jkfs=$this->request->param("jkfs");
+        $change_date=$this->request->param("change_date");
+
+        $result=DB::table("flprogress_all")->insert([
+            "name" => $name,
+            "department" =>  $department,
+            "no" => 1,
+            "jkfs" => $jkfs,
+            "change_date" => $change_date,
+            "status" => "未生效"
+        ]);
+
+        $flprogressId = Db::name('flprogress_all')->getLastInsID();
+
+        $result=DB::table("flprogress")->insert([
+            "flprogress_id" => $flprogressId,
+        ]);
+        
+        if($result==1){
+            return $this->success('添加成功！','/index.php/Admin/process/process_fl.html?id='.$flprogressId.'&department='.$department.'','',1);
+        }else{
+            return $this->error('添加失败！','/index.php/Admin/process/process_list.html','',1);
+        }
+    }
+
+    public function process_list_edit($id){
+
+        session_start();
+
+        if(isset($_SESSION["username"])){
+
+            $username=$_SESSION["username"];
+            $method=$this->request->method();
+
+            if($method=="POST"){
+                $name=$this->request->param("name");
+                $department=$this->request->param("department");
+                $jkfs=$this->request->param("jkfs");
+                $change_date=$this->request->param("change_date");
+                $status=$this->request->param("status");
+
+                $result=DB::table("flprogress_all")->where("id",$id)->update([
+                    'name' => $name,
+                    'department' => $department,
+                    'jkfs' => $jkfs,
+                    'change_date' => $change_date,
+                    'status' => $status
+                ]);
+
+                if($result==1){
+                    return $this->success('修改成功！','/index.php/Admin/process/process_list.html','',1);
+                }else{
+                    return $this->error('修改失败！','/index.php/Admin/process/process_list_edit?id='.$id,'',1);
+                }
+
+            }else{
+                $process_list_line=DB::name("flprogress_all")->where("id",$id)->find();
+                $jkfss=DB::name("fl_jkfs")->field("name")->select();
+
+                $data=[
+                    'title' => '流程编辑',
+                    'username' => $username,
+                    'process_list_line' => $process_list_line,
+                    'jkfss' => $jkfss
+                ];
+
+                return $this->fetch('',$data);
+            }
+
+        }else{
+            return $this->redirect('/index.php/Index/Login/login');
+        }
+    }
+
+    public function process_list_del($id){
+        $result=DB::table("flprogress_all")->where("id",$id)->delete();
+
+        if($result==1){
+            return $this->success('删除成功！','/index.php/Admin/process/process_list.html','',1);
+        }else{
+            return $this->error('删除失败！','/index.php/Admin/process/process_list.html','',1);
         }
     }
 
@@ -33,32 +148,31 @@ class Process extends Controller
 
             $username=$_SESSION["username"];
 
-            $sqlstr1=DB::query("select distinct department,flprogress_id from flprogress where flprogress_id=$id");
+            $fl_progress_des=DB::name("flprogress_all")->where("id",$id)->find();
 
-            $department=$sqlstr1[0]["department"];
-            $flprogress_id=$id;
-
-            $flprogress_all=DB::query("select * from flprogress where flprogress_id=$id order by number");
-
+            $flprogress_all=DB::name("flprogress")->where("flprogress_id",$id)->order(["number" => 'asc'])->select();
 
             //流程框
             $process_data="";
 
-            $sqlstr1=DB::query("select name from flprogress where flprogress_id=$id order by number");
+            $sqlstr1=DB::name("flprogress")->field("name")->where("flprogress_id",$id)->order(["number" => 'asc'])->select();
     
             for($i=0;$i<sizeof($sqlstr1);$i++){
                 $process_data=$process_data."'".$sqlstr1[$i]["name"]."'".","; 
             }
-              
+            
             $process_data=substr($process_data,0,-1);
 
-            $this->assign("title","辅料流程");
-            $this->assign("username",$username);
-            $this->assign("department",$department);
-            $this->assign("flprogress_all",$flprogress_all);
-            $this->assign("process_data",$process_data);
+            $data=[
+                "title" => "辅料流程",
+                "username" => $username,
+                "department" => $department,
+                "flprogress_all" => $flprogress_all,
+                "fl_progress_des" => $fl_progress_des,
+                "process_data" => $process_data
+            ];
 
-            return $this->fetch();
+            return $this->fetch('',$data);
 
         }else{
             return $this->redirect('/index.php/Index/Login/login');
