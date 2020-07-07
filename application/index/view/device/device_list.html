@@ -1,148 +1,114 @@
-<!DOCTYPE html>
-<html lang="zh-CN">
-    <head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width,initial-scale=1">
-        <title>{$title}</title>
-        <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" media="screen" />
-        <link href="\lib\bootstrap-3.3.7-dist\css\bootstrap.css" rel="stylesheet"/>
-        <link href="\lib\bootstrap-3.3.7-dist\css\bootstrap-datetimepicker.min.css" rel="stylesheet" media="screen"/>
-        <link href="\css\leftbar.css" rel="stylesheet"/>
-        <link href="\css\header.css" rel="stylesheet"/>
-        <script src="\lib\bootstrap-3.3.7-dist\js\jquery-3.3.1.min.js"></script>
-        <script src="\lib\bootstrap-3.3.7-dist\js\bootstrap.min.js"></script>
-        <script src="\lib\bootstrap-3.3.7-dist\js\bootstrap-datetimepicker.js"></script>
-    </head>
-    <body>
-        {include file="../application/index/view/common/header.html" /}
-        {include file="../application/index/view/common/leftBar.html" /}
-
-        <div style="margin-left: 180px;margin-top:50px;">
-            <div style="clear: both;border-radius: 6px;">
-                <div class="nav nav-pills" style="float:left;margin-top:10px;margin-left:20px;">
-                    <li role="presentation" class="active"><a href="#">设备列表</a></li>
-                    <li role="presentation"><a href="/index.php/Index/device/add_device.html">新增设备</a></li>
-                </div>
-            </div>
-
-            <div style="clear:both;">
-                <div style="width:1070px;">
-                    <h4 style="float:left">
-                        <span class="label label-info" style="margin-left:20px;position:relative;top:15px;">共<?=$total?>条</span>
-                        <span class="label label-warning" style="margin-left:5px;position:relative;top:15px;">共<?=$pagecount?>页</span>
-                        <span class="label label-success" style="margin-left:5px;position:relative;top:15px;">第<?=$page?>页</span>
-                    </h4>
-                    <button class="btn btn-sm btn-success" style="float:right;position:relative;top:0px;" id="download">下载</button>
-                </div>
-            </div>
-            
-            <div style="clear:both">
-                <table class="table table-responsive table-bordered table-hover" style="width:1050px;margin-top:45px;margin-left:20px;">
-                    <tr>
-                        <th>序号</th>
-                        <th>型号</th>
-                        <th>使用人</th>
-                        <th>事业部</th>
-                        <th>品牌</th>
-                        <th>系统</th>
-                        <th>内存</th>
-                        <th>硬盘</th>
-                        <th>类型</th>
-                        <th>类别</th>
-                    </tr>
-                
-                    {foreach name="devices" item="device" key="index"}
-                        <tr>
-                            <td>{$pagesize*($page-1) + $index+1}</td>
-                            <td><a href="/index.php/Index/device/add_device.html?id={$device.id}">{$device.barcode}</a></td>
-                            <td>{$device.user}</td>
-                            <td>{$device.department}</td>
-                            <td>{$device.brand}</td>
-                            <td>{$device.system2}</td>
-                            <td>{$device.ram}</td>
-                            <td>{$device.hardpan}</td>
-                            <td>{$device.leixing}</td>
-                            <td>{$device.leibie}</td>
-                        </tr>
-                    {/foreach}
-                </table>
-            </div>
-
-            <div style="margin-left: 20px;">
-                <ul class="pager" style="float:left;width:150px;margin-top:0px;">
-                    <li><a href="<?php echo $_SERVER['PHP_SELF']?>?page=<?php
-                        if($page>1)
-                            echo $page-1;
-                        else
-                            echo 1;  
-                    ?>">上一页</a></li>
-                    <li><a href="<?php echo $_SERVER['PHP_SELF']?>?page=<?php
-                        if($page<$pagecount)
-                            echo $page+1;
-                        else
-                            echo $pagecount;  
-                    ?>">下一页</a></li>
-                </ul>
-
-                <div style="float:left;margin-left:580px;width:321px;">
-                    <ul class="pagination" style="float:right;margin-top:0px;">
-                        <li><a href="<?php echo $_SERVER['PHP_SELF']?>?page=1">&laquo;</a></li>
-                        <?php
-                            if($pagecount<=5){
-                                for($i=1;$i<=$pagecount;$i++){
-                                    if($i==$page){
-                                        ?>
-                                            <li  class="active"><a href="<?php echo $_SERVER['PHP_SELF']?>?page=<?=$i?>"><?=$i?></a></li>
-                                        <?php
-                                    }else{
-                                        ?>
-                                            <li><a href="<?php echo $_SERVER['PHP_SELF']?>?page=<?=$i?>"><?=$i?></a></li>
-                                        <?php
-                                    }
-                                }
-                            }else{
-                                for($i=1;$i<=$pagecount;$i++){
-                                    if($i==$page){
-                                        ?>
-                                            <li  class="active"><a href="<?php echo $_SERVER['PHP_SELF']?>?page=<?=$i?>"><?=$i?></a></li>
-                                        <?php
-                                    }elseif(($i>=$page-2 and $i<=$page+2 and $page>3) and $page !=$pagecount){
-                                        ?>
-                                            <li><a href="<?php echo $_SERVER['PHP_SELF']?>?page=<?=$i?>"><?=$i?></a></li>
-                                        <?php
-                                    }elseif($i<=5){
-                                        if($page<=3){
-                                        ?>
-                                            <li><a href="<?php echo $_SERVER['PHP_SELF']?>?page=<?=$i?>"><?=$i?></a></li>
-                                        <?php
-                                        }
-                                    }
-                                }
-                            }
-                            
-                        ?>
-                        
-                        <li><a href="<?php echo $_SERVER['PHP_SELF']?>?page=<?php echo $pagecount; ?>">&raquo;</a></li>
-                    </ul>
-                </div>
-            
-            </div>
+{extend name="base"/}
+{block name="link"}    
+    <link href="/css/device/device_list.css" rel="stylesheet"/>
+    <script src="/js/device/device_list.js"></script>
+{/block}
+{block name="container"}
+    <div style="clear: both;border-radius: 6px;">
+        <div class="nav nav-pills" style="float:left;">
+            <li role="presentation" class="active"><a href="#">设备列表</a></li>
+            <li role="presentation"><a href="/index.php/Index/device/add_device.html">新增设备</a></li>
         </div>
-    </body>
-</html>
+    </div>
 
-<style>
-    th{background-color:rgb(67, 64, 255);color:#fff}
+    <div style="clear:both;">
+        <div style="width:1030px;">
+            <h4 style="float:left">
+                <span class="label label-info" style="position:relative;top:15px;">共<?=$total?>条</span>
+                <span class="label label-warning" style="margin-left:5px;position:relative;top:15px;">共<?=$pagecount?>页</span>
+                <span class="label label-success" style="margin-left:5px;position:relative;top:15px;">第<?=$page?>页</span>
+            </h4>
+            <button class="btn btn-sm btn-success" style="float:right;position:relative;top:0px;" id="download">下载</button>
+        </div>
+    </div>
+    
+    <div style="clear:both">
+        <table class="table table-responsive table-bordered table-hover" style="width:1030px;margin-top:45px;">
+            <tr>
+                <th>序号</th>
+                <th>型号</th>
+                <th>使用人</th>
+                <th>事业部</th>
+                <th>品牌</th>
+                <th>系统</th>
+                <th>内存</th>
+                <th>硬盘</th>
+                <th>类型</th>
+                <th>类别</th>
+            </tr>
+        
+            {foreach name="devices" item="device" key="index"}
+                <tr>
+                    <td>{$pagesize*($page-1) + $index+1}</td>
+                    <td><a href="/index.php/Index/device/add_device.html?id={$device.id}">{$device.barcode}</a></td>
+                    <td>{$device.user}</td>
+                    <td>{$device.department}</td>
+                    <td>{$device.brand}</td>
+                    <td>{$device.system2}</td>
+                    <td>{$device.ram}</td>
+                    <td>{$device.hardpan}</td>
+                    <td>{$device.leixing}</td>
+                    <td>{$device.leibie}</td>
+                </tr>
+            {/foreach}
+        </table>
+    </div>
 
-    th,td{
-        text-align: center;
-    }
-</style>
 
-<script>
-    $("#download").click(function(){
-        window.location.href="/index.php/Index/device/download_deviceHandle"
-    })
+    <ul class="pager" style="float:left;width:150px;margin-top:0px;">
+        <li><a href="<?php echo $_SERVER['PHP_SELF']?>?page=<?php
+            if($page>1)
+                echo $page-1;
+            else
+                echo 1;  
+        ?>">上一页</a></li>
+        <li><a href="<?php echo $_SERVER['PHP_SELF']?>?page=<?php
+            if($page<$pagecount)
+                echo $page+1;
+            else
+                echo $pagecount;  
+        ?>">下一页</a></li>
+    </ul>
 
-</script>
+    <div style="float:left;margin-left:560px;width:321px;">
+        <ul class="pagination" style="float:right;margin-top:0px;">
+            <li><a href="<?php echo $_SERVER['PHP_SELF']?>?page=1">&laquo;</a></li>
+            <?php
+                if($pagecount<=5){
+                    for($i=1;$i<=$pagecount;$i++){
+                        if($i==$page){
+                            ?>
+                                <li  class="active"><a href="<?php echo $_SERVER['PHP_SELF']?>?page=<?=$i?>"><?=$i?></a></li>
+                            <?php
+                        }else{
+                            ?>
+                                <li><a href="<?php echo $_SERVER['PHP_SELF']?>?page=<?=$i?>"><?=$i?></a></li>
+                            <?php
+                        }
+                    }
+                }else{
+                    for($i=1;$i<=$pagecount;$i++){
+                        if($i==$page){
+                            ?>
+                                <li  class="active"><a href="<?php echo $_SERVER['PHP_SELF']?>?page=<?=$i?>"><?=$i?></a></li>
+                            <?php
+                        }elseif(($i>=$page-2 and $i<=$page+2 and $page>3) and $page !=$pagecount){
+                            ?>
+                                <li><a href="<?php echo $_SERVER['PHP_SELF']?>?page=<?=$i?>"><?=$i?></a></li>
+                            <?php
+                        }elseif($i<=5){
+                            if($page<=3){
+                            ?>
+                                <li><a href="<?php echo $_SERVER['PHP_SELF']?>?page=<?=$i?>"><?=$i?></a></li>
+                            <?php
+                            }
+                        }
+                    }
+                }
+                
+            ?>
+            
+            <li><a href="<?php echo $_SERVER['PHP_SELF']?>?page=<?php echo $pagecount; ?>">&raquo;</a></li>
+        </ul>
+    </div>
+{/block}

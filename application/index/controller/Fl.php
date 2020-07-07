@@ -377,7 +377,7 @@ class Fl extends Controller{
         $count=0;
 
         //表格数据
-        $sqlstr2="select id,no,company,people,date,date2,status,shr from flsqd where (not status like '%已归档单据%' and not status like '%品牌部归档%') and not status like '%作废%'  and (not status='KA级提交单据' and not shr='$username')";
+        $sqlstr2="select id,no,company,people,date,date2,status,shr,jkfs from flsqd where (not status like '%已归档单据%' and not status like '%品牌部归档%') and not status like '%作废%'  and (not status='KA级提交单据' and not shr='$username')";
 
         if($newLevel !="ADMIN"){
             $sqlstr2=$sqlstr2." and (shr like '%$username%' or ywy like '%$username%')";
@@ -536,7 +536,7 @@ class Fl extends Controller{
         $count=0;
 
         //表格数据
-        $sqlstr2="select id,no,company,people,date,date2,status,shr,allTime from flsqd where (status like '%已归档单据%' or status like '%品牌部归档%' or status like '%作废%') ";
+        $sqlstr2="select id,no,company,people,date,date2,status,shr,allTime,jkfs from flsqd where (status like '%已归档单据%' or status like '%品牌部归档%' or status like '%作废%') ";
 
         if($newLevel !="ADMIN" and $department !="商业运营部" and $department !="义乌部"){
             $sqlstr2=$sqlstr2." and (shr like '%$username%' or ywy like '%$username%')";
@@ -748,10 +748,10 @@ class Fl extends Controller{
         if($sx_infos !=[]){
             $sx_info=$sx_infos[0];
 
-            $sx_filesNames=Db::name("sx_form")->field("file_name")->where("sqid",$sx_info["sqid"])->select();
+            $sx_filesNames=Db::name("sx_form")->field("file_name")->where("sqid",$sx_info["sqid"])->find();
 
             if($sx_filesNames !=[]){
-                $sx_filesName=$sx_filesNames[0];
+                $sx_filesName=$sx_filesNames["file_name"];
             }else{
                 $sx_filesName=[];
             }
@@ -766,6 +766,7 @@ class Fl extends Controller{
         $phones=Db::name("user_form")->field("phone")->where("username",$username)->select();
         $phone=$phones[0];
 
+        
         $this->assign("username",$username);
         $this->assign("fl_line",$fl_line);
         $this->assign("title","辅料申请单");
@@ -1122,10 +1123,10 @@ class Fl extends Controller{
                     'sqid' => $sqid,
                     'sqmoney' => $sqmoney,
                     'useMoney' => $useMoney,
-                    'usesqmoney' => $usesqmoney,
+                    'nowUseMoney' => $usesqmoney,
                     'remainMoney' => $remainMoney,
-                    'no' => $no,
-                    'department' => $department,
+                    'fl_no' => $no,
+                    'useDepartment' => $department,
                     'date' => $date,
                     'note' => '使用授信',
                     'newMoney' => $remainMoney
@@ -1314,7 +1315,7 @@ class Fl extends Controller{
             $shr_now=array_pop($shr_arr);
 
             //防止表单重复提交后影响流程
-            if($shr_now==$username){
+            if($shr_now==$username or $username == "俞俏丽"){
 
                 $flprocess_id=Db::name("flprogress_all")->field("id")->where("jkfs",$jkfs)->where("status","生效中")->where("change_date",">",$date)->find();
 
@@ -1323,9 +1324,11 @@ class Fl extends Controller{
                 }else{
                     $flprocess_id=$flprocess_id["id"];
 
-                    $numbers=Db::name("flprogress")->field(['number','count(*)'])->where("flprogress_id",$flprocess_id)->where("name",$status_now)->find();
+                    $numbers=Db::name("flprogress")->field('number')->where("flprogress_id",$flprocess_id)->where("name",$status_now)->find();
+                    $flprocess_lengths=Db::name("flprogress")->field('count(*)')->where("flprogress_id",$flprocess_id)->find();
+                    
                     $number=$numbers["number"];
-                    $flprocess_length=$numbers["count(*)"];
+                    $flprocess_length=$flprocess_lengths["count(*)"];
 
                     //下个流程
                     $number_forward=$number+1;
@@ -1349,7 +1352,7 @@ class Fl extends Controller{
                     }
                     
                     //流程是否到底
-                    if($flprocess_length==$number_forward){
+                    if((int)$flprocess_length==(int)$number_forward){
                         $result7=Db::table("flsqd")->where("id",$id)->update([
                             'date2' => $time
                         ]);
@@ -1365,7 +1368,7 @@ class Fl extends Controller{
                     }
 
                     //义乌审批单据加入物流信息
-                    if($option == 3){
+                    if($option == 3 || $option == 8){
                         
                         $wlfs=$this->request->param("wlfs");
                         $wlno=$this->request->param("wlno");

@@ -1,180 +1,117 @@
-<!DOCTYPE html>
-<html lang="zh-CN">
-    <head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width,initial-scale=1">
-        <title>{$title}</title>
-        <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" media="screen" />
-        <link href="\lib\bootstrap-3.3.7-dist\css\bootstrap.css" rel="stylesheet"/>
-        <link href="\lib\bootstrap-3.3.7-dist\css\bootstrap-datetimepicker.min.css" rel="stylesheet" media="screen"/>
-        <link href="\css\leftbar.css" rel="stylesheet"/>
-        <link href="\css\header.css" rel="stylesheet"/>
-        <script src="\lib\flotr2\flotr2.min.js"></script>
-        <script src="\lib\bootstrap-3.3.7-dist\js\jquery-3.3.1.min.js"></script>
-        <script src="\lib\bootstrap-3.3.7-dist\js\bootstrap.min.js"></script>
-        <script src="\lib\bootstrap-3.3.7-dist\js\bootstrap-datetimepicker.js"></script>
-    </head>
-    <body>
-        {include file="../application/index/view/common/header.html" /}
-        {include file="../application/index/view/common/leftBar.html" /}
-
-        <div style="margin-left: 180px;margin-top:50px;">
-            <div class="nav nav-pills" style="float: left;margin-left:30px;">
-                <div style="clear: both;border-radius: 6px;">
-                    <div class="nav nav-pills" style="float:left;margin-top:15px;position:relative;right:5px;">
-                        <li role="presentation" class="active"><a href="#">合同</a></li>
-                        <li role="presentation" style="display:none"><a href="contract_AddList.php">补充合同</a></li>
-                        <li role="presentation" style="display:none"><a href="sqList.php">授权</a></li>
-                    </div>
-                </div>
-            </div>
-            
-            <div style="clear:both;margin-left:30px;position:relative;top:15px;">
-                <p style="font-size:14px;float:left;margin-top:5px;">合同查询</p>
-
-                <input type="text" class="form-control" id="keywords" placeholder="请输入编号/公司/平台/类目/部门/业务员" style="width:300px;float: left;margin-left: 10px;" value="{$keywords}">
-
-                <button class="btn btn-warning btn-sm" id="query_contract" style="float: left;margin-left:10px;">查询</button>
-                <button class="btn btn-success btn-sm" id="download_contract" style="float: left;margin-left:10px;">下载</button>
-            </div>
-            
-            <div style="clear:both;">
-                <h4 style="margin-top:30px">
-                    <span class="label label-info" style="margin-left:30px;position:relative;top:30px;">共<?=$total?>条</span>
-                    <span class="label label-warning" style="margin-left:5px;position:relative;top:30px;">共<?=$pagecount?>页</span>
-                    <span class="label label-success" style="margin-left:5px;position:relative;top:30px;">第<?=$page?>页</span>
-                </h4>
-            
-                <table class="table table-responsive table-bordered table-hover" style="width:1030px;margin-top:50px;margin-left:30px;margin-bottom:0px;">
-                    <tr>
-                        <th>序号</th>
-                        <th>合同编号</th>
-                        <th>公司名称</th>
-                        <th>授权平台</th>
-                        <th>授权类目</th>
-                        <th>事业部</th>
-                        <th>流程状态</th>
-                        <th>登记日期</th>
-                    </tr>
-                
-                    {foreach name="contracts" item="contract" key="index"}
-                        <tr>
-                            <td>{$pagesize*($page-1) + $index+1}</td>
-                            <td><a href="/index.php/Index/Contract/contract_line.html?id={$contract.id}">{$contract.no}</a></td>
-                            <td class="category"><p style="margin:0">{$contract.company}</p></td>
-                            <td class="category"><p style="margin:0">{$contract.pingtai}</p></td>
-                            <td class="category"><p style="margin:0">{$contract.category}</p></td>
-                            <td class="department"><p style="margin:0">{$contract.department}</p></td>
-                            <td>{$contract.status}</td>
-                            <td>{$contract.re_date}</td>
-                        </tr>
-                    {/foreach}
-                </table>
-
-                <div style="margin-left: 30px;">
-                    <ul class="pager" style="float:left;width:150px;">
-                        <li><a href="<?php echo $_SERVER['PHP_SELF']?>?page=<?php
-                            if($page>1)
-                                echo $page-1;
-                            else
-                                echo 1;  
-                        ?>&keywords=<?=$keywords?>&status=已审核">上一页</a></li>
-                        <li><a href="<?php echo $_SERVER['PHP_SELF']?>?page=<?php
-                            if($page<$pagecount)
-                                echo $page+1;
-                            else
-                                echo $pagecount;  
-                        ?>&keywords=<?=$keywords?>&status=已审核">下一页</a></li>
-                    </ul>
-
-                    <div style="float:left;margin-left:560px;width:321px;">
-                        <ul class="pagination" style="float:right">
-                            <li><a href="<?php echo $_SERVER['PHP_SELF']?>?page=1">&laquo;</a></li>
-                            <?php
-                                if($pagecount<=5){
-                                    for($i=1;$i<=$pagecount;$i++){
-                                        if($i==$page){
-                                            ?>
-                                                <li  class="active"><a href="<?php echo $_SERVER['PHP_SELF']?>?page=<?=$i?>&keywords=<?=$keywords?>&status=已审核"><?=$i?></a></li>
-                                            <?php
-                                        }else{
-                                            ?>
-                                                <li><a href="<?php echo $_SERVER['PHP_SELF']?>?page=<?=$i?>&keywords=<?=$keywords?>&status=已审核"><?=$i?></a></li>
-                                            <?php
-                                        }
-                                    }
-                                }else{
-                                    for($i=1;$i<=$pagecount;$i++){
-                                        if($i==$page){
-                                            ?>
-                                                <li  class="active"><a href="<?php echo $_SERVER['PHP_SELF']?>?page=<?=$i?>&keywords=<?=$keywords?>&status=已审核"><?=$i?></a></li>
-                                            <?php
-                                        }elseif(($i>=$page-2 and $i<=$page+2 and $page>3) and $page !=$pagecount){
-                                            ?>
-                                                <li><a href="<?php echo $_SERVER['PHP_SELF']?>?page=<?=$i?>&keywords=<?=$keywords?>&status=已审核"><?=$i?></a></li>
-                                            <?php
-                                        }elseif($i<=5){
-                                            if($page<=3){
-                                            ?>
-                                                <li><a href="<?php echo $_SERVER['PHP_SELF']?>?page=<?=$i?>&keywords=<?=$keywords?>&status=已审核"><?=$i?></a></li>
-                                            <?php
-                                            }
-                                        }
-                                    }
-                                }
-                                
-                            ?>
-                            
-                            <li><a href="<?php echo $_SERVER['PHP_SELF']?>?page=<?php echo $pagecount; ?>&keywords=<?=$keywords?>&status=已审核">&raquo;</a></li>
-                        </ul>
-                    </div>    
-                </div>
+{extend name="base"/}
+{block name="link"}    
+    <link href="/css/contract/d_contract.css" rel="stylesheet"/>
+    <script src="/js/contract/d_contract.js"></script>
+{/block}
+{block name="container"}  
+    <div class="nav nav-pills">
+        <div style="clear: both;border-radius: 6px;">
+            <div class="nav nav-pills">
+                <li role="presentation" class="active"><a href="#">合同</a></li>
+                <li role="presentation" style="display:none"><a href="contract_AddList.php">补充合同</a></li>
+                <li role="presentation" style="display:none"><a href="sqList.php">授权</a></li>
             </div>
         </div>
-    </body>
-</html>
+    </div>
+    
+    <div style="clear:both;position:relative;top:15px;">
+        <p style="font-size:14px;float:left;margin-top:5px;">合同查询</p>
 
-<style>
-    th{
-        background-color:rgb(67, 64, 255);
-        text-align: center;
-        color:#ffffff
-    }
+        <input type="text" class="form-control" id="keywords" placeholder="请输入编号/公司/平台/类目/部门/业务员" style="width:300px;float: left;margin-left: 10px;" value="{$keywords}">
 
-    td{
-        text-align: center;
-    } 
+        <button class="btn btn-warning btn-sm" id="query_contract" style="float: left;margin-left:10px;">查询</button>
+        <button class="btn btn-success btn-sm" id="download_contract" style="float: left;margin-left:10px;">下载</button>
+    </div>
+    
+    <div style="clear:both;">
+        <h4 style="margin-top:30px">
+            <span class="label label-info" style="position:relative;top:30px;">共{$total}条</span>
+            <span class="label label-warning" style="margin-left:5px;position:relative;top:30px;">共{$pagecount}页</span>
+            <span class="label label-success" style="margin-left:5px;position:relative;top:30px;">第{$page}页</span>
+        </h4>
+    
+        <table class="table table-responsive table-bordered table-hover" style="width:1030px;margin-top:50px;margin-bottom:0px;">
+            <tr>
+                <th>序号</th>
+                <th>合同编号</th>
+                <th>公司名称</th>
+                <th>授权平台</th>
+                <th>授权类目</th>
+                <th>事业部</th>
+                <th>流程状态</th>
+                <th>登记日期</th>
+            </tr>
+        
+            {foreach name="contracts" item="contract" key="index"}
+                <tr>
+                    <td>{$pagesize*($page-1) + $index+1}</td>
+                    <td><a href="/index.php/Index/Contract/contract_line.html?id={$contract.id}">{$contract.no}</a></td>
+                    <td class="category"><p style="margin:0">{$contract.company}</p></td>
+                    <td class="category"><p style="margin:0">{$contract.pingtai}</p></td>
+                    <td class="category"><p style="margin:0">{$contract.category}</p></td>
+                    <td class="department"><p style="margin:0">{$contract.department}</p></td>
+                    <td>{$contract.status}</td>
+                    <td>{$contract.re_date}</td>
+                </tr>
+            {/foreach}
+        </table>
 
-    .pager li a:hover{
-        background-color:#337ab7;
-        color:#fff;
-    }
 
-    .category p{
-        width: 130px;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow:ellipsis;
-    }
+        <ul class="pager" style="float:left;width:150px;">
+            <li><a href="<?php echo $_SERVER['PHP_SELF']?>?page=<?php
+                if($page>1)
+                    echo $page-1;
+                else
+                    echo 1;  
+            ?>&keywords=<?=$keywords?>&status=已审核">上一页</a></li>
+            <li><a href="<?php echo $_SERVER['PHP_SELF']?>?page=<?php
+                if($page<$pagecount)
+                    echo $page+1;
+                else
+                    echo $pagecount;  
+            ?>&keywords=<?=$keywords?>&status=已审核">下一页</a></li>
+        </ul>
 
-    .department p{
-        width: 80px;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow:ellipsis;
-    }
-
-</style>
-
-<script>
-    $("#query_contract").click(function(){
-        keywords=$("#keywords").val();
-        window.location.href="/index.php/Index/contract/d_contract.html?keywords=" +keywords + "&status=已归档";
-    })
-
-    $("#download_contract").click(function(){
-        keywords=$("#keywords").val();
-        window.location.href="/index.php/Index/contract/contract_download?keywords=" +keywords + "&status=已归档";
-    })
-</script>
+        <div style="float:left;margin-left:560px;width:321px;">
+            <ul class="pagination" style="float:right">
+                <li><a href="<?php echo $_SERVER['PHP_SELF']?>?page=1">&laquo;</a></li>
+                <?php
+                    if($pagecount<=5){
+                        for($i=1;$i<=$pagecount;$i++){
+                            if($i==$page){
+                                ?>
+                                    <li  class="active"><a href="<?php echo $_SERVER['PHP_SELF']?>?page=<?=$i?>&keywords=<?=$keywords?>&status=已审核"><?=$i?></a></li>
+                                <?php
+                            }else{
+                                ?>
+                                    <li><a href="<?php echo $_SERVER['PHP_SELF']?>?page=<?=$i?>&keywords=<?=$keywords?>&status=已审核"><?=$i?></a></li>
+                                <?php
+                            }
+                        }
+                    }else{
+                        for($i=1;$i<=$pagecount;$i++){
+                            if($i==$page){
+                                ?>
+                                    <li  class="active"><a href="<?php echo $_SERVER['PHP_SELF']?>?page=<?=$i?>&keywords=<?=$keywords?>&status=已审核"><?=$i?></a></li>
+                                <?php
+                            }elseif(($i>=$page-2 and $i<=$page+2 and $page>3) and $page !=$pagecount){
+                                ?>
+                                    <li><a href="<?php echo $_SERVER['PHP_SELF']?>?page=<?=$i?>&keywords=<?=$keywords?>&status=已审核"><?=$i?></a></li>
+                                <?php
+                            }elseif($i<=5){
+                                if($page<=3){
+                                ?>
+                                    <li><a href="<?php echo $_SERVER['PHP_SELF']?>?page=<?=$i?>&keywords=<?=$keywords?>&status=已审核"><?=$i?></a></li>
+                                <?php
+                                }
+                            }
+                        }
+                    }
+                    
+                ?>
+                
+                <li><a href="<?php echo $_SERVER['PHP_SELF']?>?page=<?php echo $pagecount; ?>&keywords=<?=$keywords?>&status=已审核">&raquo;</a></li>
+            </ul>
+        </div>    
+    </div>
+{/block}

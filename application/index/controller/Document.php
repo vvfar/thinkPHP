@@ -101,7 +101,7 @@ class Document extends Controller
             $files=Db::name("files")->select();
 
             $data=[
-                'title','文件列表',
+                'title' => '文件列表',
                 'username' => $username,
                 'files' => $files,
                 'total',$total,

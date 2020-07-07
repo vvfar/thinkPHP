@@ -273,7 +273,7 @@ $(document).ready(function(){
         $(".leftbar11Z").toggle();
         $(".leftbar13Z").toggle();
         
-    }else if(leftBar_path == "clientList.html" || leftBar_path == "addClient.html" || leftBar_path == "client_line.html"){
+    }else if(leftBar_path == "clientList.html" || leftBar_path == "addClient.html" || leftBar_path == "client_line.html"  || leftBar_path == "edit_client.html"){
         $(".leftbarAll li").css("background-color","#160509");
         $(".leftbar13").css("background-color","darkslateblue");
         $(".leftbar13 a").css("color","#ffffff");

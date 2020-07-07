@@ -75,7 +75,7 @@
                         <tr>
                             <td>{$pagesize*($page-1) + $index+1}</td>
 
-                            {if($fl.key==0 and ($fl.status == "义乌打包发货" or $fl.status == "商业运营归档单据" or $fl.status == "已归档单据"))}
+                            {if($fl.key==0 and ($fl.status == "义乌打包发货" or $fl.status == "商业运营归档单据" or $fl.status == "已归档单据") and ($fl.jkfs !="全授信" and $fl.jkfs !="标费补贴"))}
                                 {if($newLevel == "ADMIN")}
                                     <td><a href="/index.php/Index/fl/fl_line.html?id={$fl.id}" style="color:red" target="_blank">{$fl.no}</a></td>
                                 {else\}

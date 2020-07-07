@@ -1,32 +1,16 @@
-<!DOCTYPE html>
-<html lang="zh-CN">
-    <head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width,initial-scale=1">
-        <title>俞兆林_新闻公告</title>
-        <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" media="screen" />
-        <link href="\lib\bootstrap-3.3.7-dist\css\bootstrap.css" rel="stylesheet"/>
-        <link href="\css\leftbar.css" rel="stylesheet"/>
-        <link href="\css\header.css" rel="stylesheet"/>
-        <script src="\lib\bootstrap-3.3.7-dist\js\jquery-3.3.1.min.js"></script>
-    </head>
-    <body>
-        {include file="../application/index/view/common/header.html" /}
-        {include file="../application/index/view/common/leftBar.html" /}
+{extend name="base"/}
+{block name="link"}    
+    
+{/block}
+{block name="container"}
+    <div style="width:1030px">
+        <h3 style="float: left;">{$news_line.title}</h3>               
+    </div>
 
-        <div style="margin-left: 180px;margin-top:50px;">
-            <div style="margin-top: 70px;margin-left:30px;width:1030px">
-                <h3 style="float: left;">{$news_line.title}</h3>               
-            </div>
-
-            <div style="clear: both;margin-left:30px;width:1040px">
-                <div style="padding: 10px;">
-                    <hr>
-
-                    <p>{$news_line.content}</p>
-                </div>
-            </div>
+    <div style="clear: both;width:1040px">
+        <div style="padding: 10px;">
+            <hr>
+            <p>{$news_line.content}</p>
         </div>
-    </body>
-</html>
+    </div>
+{/block}

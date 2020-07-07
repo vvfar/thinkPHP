@@ -282,7 +282,7 @@ $(document).ready(function(){
 
         sxid=$(this).val();
 
-        xmlhttp.open("GET","../../controller/fl/searchSXMoney.php?sxid=" + sxid,true);
+        xmlhttp.open("GET","search_sx_money?sxid=" + sxid,true);
 
         xmlhttp.onreadystatechange=function(){
 

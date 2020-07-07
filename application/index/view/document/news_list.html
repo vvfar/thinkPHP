@@ -1,107 +1,82 @@
-<!DOCTYPE html>
-<html lang="zh-CN">
-    <head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width,initial-scale=1">
-        <title>{$title}</title>
-        <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" media="screen" />
-        <link href="\lib\bootstrap-3.3.7-dist\css\bootstrap.css" rel="stylesheet"/>
-        <link href="\css\leftbar.css" rel="stylesheet"/>
-        <link href="\css\header.css" rel="stylesheet"/>
-        <script src="\lib\bootstrap-3.3.7-dist\js\jquery-3.3.1.min.js"></script>
-    </head>
-    <body>
-        {include file="../application/index/view/common/header.html" /}
-        {include file="../application/index/view/common/leftBar.html" /}
+{extend name="base"/}
+{block name="link"}    
+    <link href="/css/document/document_list.css" rel="stylesheet"/>
+{/block}
+{block name="container"}
+    <p style="margin-bottom: 20px;font-size:16px">公司公告</p>
 
-        <div style="margin-left: 180px;margin-top:50px;">
-            <div style="position: relative;top: 30px;margin-left: 40px;">
-                <p style="margin-bottom: 20px;font-size:16px">公司公告</p>
+    <table class="table table-responsive table-hover table-bordered "  style="width: 1020px;">
+        <tr style="background-color:#f7f7f7">
+            <th style="width: 150px;">序号</th>
+            <th style="width: 400px;">标题</th>
+            <th style="width: 150px;">发布者</th>
+            <th style="width: 150px;">日期</th>
+        </tr>
+        {foreach name="news" item="new" key="index"}
+            <tr>
+                <td>{$pagesize*($page-1) + $index+1}</td>
+                <td><a href="/index.php/Index/document/news_line.html?id={$new.id}">{$new.title}</a></td>
+                <td>{$new.person}</td>
+                <td>{$new.time}</td>
+            </tr>
+        {/foreach}
+    </table>
 
-                <table class="table table-responsive table-hover table-bordered "  style="width: 1020px;">
-                    <tr style="background-color:#f7f7f7">
-                        <th style="width: 150px;">序号</th>
-                        <th style="width: 400px;">标题</th>
-                        <th style="width: 150px;">发布者</th>
-                        <th style="width: 150px;">日期</th>
-                    </tr>
-                    {foreach name="news" item="new" key="index"}
-                        <tr>
-                            <td>{$pagesize*($page-1) + $index+1}</td>
-                            <td><a href="/index.php/Index/document/news_line.html?id={$new.id}">{$new.title}</a></td>
-                            <td>{$new.person}</td>
-                            <td>{$new.time}</td>
-                        </tr>
-                    {/foreach}
-                </table>
+    <div>
+        <ul class="pager" style="float:left;width:150px;margin:0">
+            <li><a href="<?php echo $_SERVER['PHP_SELF']?>?page=<?php
+                if($page>1)
+                    echo $page-1;
+                else
+                    echo 1;  
+            ?>">上一页</a></li>
+            <li><a href="<?php echo $_SERVER['PHP_SELF']?>?page=<?php
+                if($page<$pagecount)
+                    echo $page+1;
+                else
+                    echo $pagecount;  
+            ?>">下一页</a></li>
+        </ul>
 
-                <div>
-                    <ul class="pager" style="float:left;width:150px;margin:0">
-                        <li><a href="<?php echo $_SERVER['PHP_SELF']?>?page=<?php
-                            if($page>1)
-                                echo $page-1;
-                            else
-                                echo 1;  
-                        ?>">上一页</a></li>
-                        <li><a href="<?php echo $_SERVER['PHP_SELF']?>?page=<?php
-                            if($page<$pagecount)
-                                echo $page+1;
-                            else
-                                echo $pagecount;  
-                        ?>">下一页</a></li>
-                    </ul>
-
-                    <div style="float:left;margin-left:550px;width:321px;">
-                        <ul class="pagination" style="float:right;margin:0">
-                            <li><a href="<?php echo $_SERVER['PHP_SELF']?>?page=1">&laquo;</a></li>
-                            <?php
-                                if($pagecount<=5){
-                                    for($i=1;$i<=$pagecount;$i++){
-                                        if($i==$page){
-                                            ?>
-                                                <li  class="active"><a href="<?php echo $_SERVER['PHP_SELF']?>?page=<?=$i?>"><?=$i?></a></li>
-                                            <?php
-                                        }else{
-                                            ?>
-                                                <li><a href="<?php echo $_SERVER['PHP_SELF']?>?page=<?=$i?>"><?=$i?></a></li>
-                                            <?php
-                                        }
-                                    }
-                                }else{
-                                    for($i=1;$i<=$pagecount;$i++){
-                                        if($i==$page){
-                                            ?>
-                                                <li  class="active"><a href="<?php echo $_SERVER['PHP_SELF']?>?page=<?=$i?>"><?=$i?></a></li>
-                                            <?php
-                                        }elseif(($i>=$page-2 and $i<=$page+2 and $page>3) and $page !=$pagecount){
-                                            ?>
-                                                <li><a href="<?php echo $_SERVER['PHP_SELF']?>?page=<?=$i?>"><?=$i?></a></li>
-                                            <?php
-                                        }elseif($i<=5){
-                                            if($page<=3){
-                                            ?>
-                                                <li><a href="<?php echo $_SERVER['PHP_SELF']?>?page=<?=$i?>"><?=$i?></a></li>
-                                            <?php
-                                            }
-                                        }
-                                    }
+        <div style="float:left;margin-left:550px;width:321px;">
+            <ul class="pagination" style="float:right;margin:0">
+                <li><a href="<?php echo $_SERVER['PHP_SELF']?>?page=1">&laquo;</a></li>
+                <?php
+                    if($pagecount<=5){
+                        for($i=1;$i<=$pagecount;$i++){
+                            if($i==$page){
+                                ?>
+                                    <li  class="active"><a href="<?php echo $_SERVER['PHP_SELF']?>?page=<?=$i?>"><?=$i?></a></li>
+                                <?php
+                            }else{
+                                ?>
+                                    <li><a href="<?php echo $_SERVER['PHP_SELF']?>?page=<?=$i?>"><?=$i?></a></li>
+                                <?php
+                            }
+                        }
+                    }else{
+                        for($i=1;$i<=$pagecount;$i++){
+                            if($i==$page){
+                                ?>
+                                    <li  class="active"><a href="<?php echo $_SERVER['PHP_SELF']?>?page=<?=$i?>"><?=$i?></a></li>
+                                <?php
+                            }elseif(($i>=$page-2 and $i<=$page+2 and $page>3) and $page !=$pagecount){
+                                ?>
+                                    <li><a href="<?php echo $_SERVER['PHP_SELF']?>?page=<?=$i?>"><?=$i?></a></li>
+                                <?php
+                            }elseif($i<=5){
+                                if($page<=3){
+                                ?>
+                                    <li><a href="<?php echo $_SERVER['PHP_SELF']?>?page=<?=$i?>"><?=$i?></a></li>
+                                <?php
                                 }
-                                
-                            ?>
-                            
-                            <li><a href="<?php echo $_SERVER['PHP_SELF']?>?page=<?php echo $pagecount; ?>">&raquo;</a></li>
-                        </ul>
-                    </div>    
-                </div>
-            </div>
-        </div>
-    </body>
-</html>
-
-<style>
-    .pager li a:hover{
-       background-color:#337ab7;
-       color:#fff;
-   }
-</style>
+                            }
+                        }
+                    }
+                ?>
+                
+                <li><a href="<?php echo $_SERVER['PHP_SELF']?>?page=<?php echo $pagecount; ?>">&raquo;</a></li>
+            </ul>
+        </div>    
+    </div>
+{/block}

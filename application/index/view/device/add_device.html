@@ -1,192 +1,161 @@
-<!DOCTYPE html>
-<html lang="zh-CN">
-    <head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width,initial-scale=1">
-        <title>{$title}</title>
-        <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" media="screen" />
-        <link href="\lib\bootstrap-3.3.7-dist\css\bootstrap.css" rel="stylesheet"/>
-        <link href="\lib\bootstrap-3.3.7-dist\css\bootstrap-datetimepicker.min.css" rel="stylesheet" media="screen"/>
-        <link href="\css\leftbar.css" rel="stylesheet"/>
-        <link href="\css\header.css" rel="stylesheet"/>
-        <script src="\lib\bootstrap-3.3.7-dist\js\jquery-3.3.1.min.js"></script>
-        <script src="\lib\bootstrap-3.3.7-dist\js\bootstrap.min.js"></script>
-        <script src="\lib\bootstrap-3.3.7-dist\js\bootstrap-datetimepicker.js"></script>
-    </head>
-    <body>
-        {include file="../application/index/view/common/header.html" /}
-        {include file="../application/index/view/common/leftBar.html" /}
+{extend name="base"/}
+{block name="link"}    
+    <link href="/css/device/add_device.css" rel="stylesheet"/>
+{/block}
+{block name="container"}
+    <div class="nav nav-pills">
+        <li role="presentation"><a href="/index.php/Index/device/device_list.html">设备列表</a></li>
+        <li role="presentation" class="active"><a href="#">新增设备</a></li>
+    </div>
 
-        <div style="margin-left: 180px;margin-top:50px;">
-            <div class="nav nav-pills" style="float:left;margin-top:10px;margin-left:20px;">
-                <li role="presentation"><a href="/index.php/Index/device/device_list.html">设备列表</a></li>
-                <li role="presentation" class="active"><a href="#">新增设备</a></li>
-            </div>
-
-            <div style="clear: both;margin-left:40px;position:relative;top:10px;">
-                <form method="POST" action="/index.php/Index/device/add_deviceHandle">
-                    <div class="form-group hidden" style="clear: both;">
-                        <p style="width: 120px;font-size: 14px;float: left;margin-top: 22px;">id</p>
-                        <input type="text" class="form-control" name="id" value="{$device_line.id}" style="width: 250px;float: left;margin-top: 15px;">
-                    </div>
-                    <div class="form-group" style="clear: both;">
-                        <p style="width: 120px;font-size: 14px;float: left;margin-top: 22px;">类别</p>
-                        <input type="text" class="form-control" name="leibie" value="{$device_line.leibie}" placeholder="请输入类别" style="width: 250px;float: left;margin-top: 15px;">
-                    </div>
-                    <div class="form-group" style="clear: both;">
-                        <p style="width: 120px;font-size: 14px;float: left;margin-top: 22px;">使用人</p>
-                        <input type="text" class="form-control" name="user" value="{$device_line.user}" placeholder="请输入事业部" style="width: 250px;float: left;margin-top: 15px;">
-                    </div>
-                    <div class="form-group" style="clear: both;">
-                        <p style="width: 120px;font-size: 14px;float: left;margin-top: 22px;">事业部</p>
-                        <input type="text" class="form-control" name="department" value="{$device_line.department}" placeholder="请输入事业部" style="width: 250px;float: left;margin-top: 15px;">
-                    </div>
-                    <div class="form-group" style="clear: both;">
-                        <p style="width: 120px;font-size: 14px;float: left;margin-top: 22px;">归属事业部</p>
-                        <input type="text" class="form-control" name="orginalDepartment" value="{$device_line.orginalDepartment}" placeholder="请输入归属事业部" style="width: 250px;float: left;margin-top: 15px;">
-                    </div>
-                    <div class="form-group" style="clear: both;">
-                        <p style="width: 120px;font-size: 14px;float: left;margin-top: 22px;">MAC地址(以太)</p>
-                        <input type="text" class="form-control" name="ytMac" value="{$device_line.ytMac}" placeholder="请输入MAC地址(以太)" style="width: 250px;float: left;margin-top: 15px;">
-                    </div>
-                    <div class="form-group" style="clear: both;">
-                        <p style="width: 120px;font-size: 14px;float: left;margin-top: 22px;">MAC地址(无线)</p>
-                        <input type="text" class="form-control" name="wxMac" value="{$device_line.wxMac}" placeholder="请输入MAC地址(无线)" style="width: 250px;float: left;margin-top: 15px;">
-                    </div>
-                    <div class="form-group" style="clear: both;">
-                        <p style="width: 120px;font-size: 14px;float: left;margin-top: 22px;">类型</p>
-                        <input type="text" class="form-control" name="leixing" value="{$device_line.leixing}" placeholder="请输入类型" style="width: 250px;float: left;margin-top: 15px;">
-                    </div>
-                    <div class="form-group" style="clear: both;">
-                        <p style="width: 120px;font-size: 14px;float: left;margin-top: 22px;">品牌</p>
-                        <input type="text" class="form-control" name="brand" value="{$device_line.brand}" placeholder="请输入品牌" style="width: 250px;float: left;margin-top: 15px;">
-                    </div>
-                    <div class="form-group" style="clear: both;">
-                        <p style="width: 120px;font-size: 14px;float: left;margin-top: 22px;">型号</p>
-                        <input type="text" class="form-control" name="xinghao" value="{$device_line.xinghao}" placeholder="请输入型号" style="width: 250px;float: left;margin-top: 15px;">
-                    </div>
-                    <div class="form-group" style="clear: both;">
-                        <p style="width: 120px;font-size: 14px;float: left;margin-top: 22px;">采购年份</p>
-                        <input type="text" class="form-control" name="year" value="{$device_line.year}" placeholder="请输入采购年份" style="width: 250px;float: left;margin-top: 15px;">
-                    </div>
-                    <div class="form-group" style="clear: both;">
-                        <p style="width: 120px;font-size: 14px;float: left;margin-top: 22px;">操作系统</p>
-                        <input type="text" class="form-control" name="system" value="{$device_line.system2}" placeholder="请输入操作系统" style="width: 250px;float: left;margin-top: 15px;">
-                    </div>
-                    <div class="form-group" style="clear: both;">
-                        <p style="width: 120px;font-size: 14px;float: left;margin-top: 22px;">CPU</p>
-                        <input type="text" class="form-control" name="cpu" value="{$device_line.cpu}" placeholder="请输入CPU" style="width: 250px;float: left;margin-top: 15px;">
-                    </div>
-                    <div class="form-group" style="clear: both;">
-                        <p style="width: 120px;font-size: 14px;float: left;margin-top: 22px;">内存</p>
-                        <input type="text" class="form-control" name="ram" value="{$device_line.ram}" placeholder="请输入内存" style="width: 250px;float: left;margin-top: 15px;">
-                    </div>
-                    <div class="form-group" style="clear: both;">
-                        <p style="width: 120px;font-size: 14px;float: left;margin-top: 22px;">硬盘大小</p>
-                        <input type="text" class="form-control" name="hardpan" value="{$device_line.hardpan}" placeholder="请输入硬盘/转速" style="width: 250px;float: left;margin-top: 15px;">
-                    </div>
-                    <div class="form-group" style="clear: both;">
-                        <p style="width: 120px;font-size: 14px;float: left;margin-top: 22px;">序列号</p>
-                        <input type="text" class="form-control" name="barcode" value="{$device_line.barcode}" placeholder="请输入序列号" style="width: 250px;float: left;margin-top: 15px;">
-                    </div>
-                    <div class="form-group" style="clear: both;">
-                        <p style="width: 120px;font-size: 14px;float: left;margin-top: 22px;">位置</p>
-                        <input type="text" class="form-control" name="position" value="{$device_line.position}" placeholder="请输入电脑位置" style="width: 250px;float: left;margin-top: 15px;">
-                    </div>
-                    <div class="form-group" style="clear: both;">
-                        <p style="width: 120px;font-size: 14px;float: left;margin-top: 22px;">鼠标</p>
-                        <select class="form-control" name="mouse" style="width:250px;position: relative;top: 15px;">
-                            {if $device_line.mouse=="/"}
-                                <option selected="selected">/</option>
-                                <option>有</option>
-                                <option>无</option>
-
-                            {elseif $device_line.mouse=="有" /}
-
-                                <option>/</option>
-                                <option selected="selected">有1</option>
-                                <option>无2</option>
-                            {elseif $device_line.mouse=="无"/}
-                                <option>/</option>
-                                <option>有1</option>
-                                <option selected="selected">无2</option>
-                            {else\}
-                                    <option>/</option>
-                                    <option>有</option>
-                                    <option>无</option>
-                            {/if}
-                        </select>
-                    </div>
-                    <div class="form-group" style="clear: both;">
-                        <p style="width: 120px;font-size: 14px;float: left;margin-top: 22px;">电源</p>
-                        <select class="form-control" name="power" style="width:250px;position: relative;top: 15px;">
-                            {if $device_line.power=="/"}
-                                <option selected="selected">/</option>
-                                <option>有</option>
-                                <option>无</option>
-
-                            {elseif $device_line.power=="有"}
-
-                                <option>/</option>
-                                <option selected="selected">有</option>
-                                <option>无</option>
-                            {elseif $device_line.power=="无"}
-                                <option>/</option>
-                                <option>有</option>
-                                <option selected="selected">无</option>
-                            {else\}
-                                    <option>/</option>
-                                    <option>有</option>
-                                    <option>无</option>
-                            {/if}
-                        </select>
-                    </div>
-                    <div class="form-group" style="clear: both;">
-                        <p style="width: 120px;font-size: 14px;float: left;margin-top: 22px;">电脑包</p>
-                        <select class="form-control" name="bag" style="width:250px;position: relative;top: 15px;">
-                            {if $device_line.bag=="/"}
-                                <option selected="selected">/</option>
-                                <option>有</option>
-                                <option>无</option>
-
-                            {elseif $device_line.bag=="有"}
-
-                                <option>/</option>
-                                <option selected="selected">有</option>
-                                <option>无</option>
-                            {elseif $device_line.bag=="无"}
-                                <option>/</option>
-                                <option>有</option>
-                                <option selected="selected">无</option>
-                            {else\}
-                                    <option>/</option>
-                                    <option>有</option>
-                                    <option>无</option>
-                            {/if}
-                        </select>
-                    </div>
-                    <div class="form-group" style="clear: both;">
-                        <p style="width: 120px;font-size: 14px;float: left;margin-top: 22px;">备注</p>
-                        <input type="text" class="form-control" name="note" value="{$device_line.note}" placeholder="备注" style="width: 250px;float: left;margin-top: 15px;">
-                    </div>
-
-                    <div style="clear: both;">
-                        <button type="submit" class="btn btn-success btn-sm" style="margin-top:10px;margin-bottom:20px">提交表单</button>
-                    </div>
-                </form>
-            </div>
+    <form method="POST" action="/index.php/Index/device/add_deviceHandle" style="margin-left: 10px;">
+        <div class="form-group hidden" style="clear: both;">
+            <p style="width: 120px;font-size: 14px;float: left;margin-top: 22px;">id</p>
+            <input type="text" class="form-control" name="id" value="{$device_line.id}" style="width: 250px;float: left;margin-top: 15px;">
         </div>
-    </body>
-</html>
+        <div class="form-group" style="clear: both;">
+            <p style="width: 120px;font-size: 14px;float: left;margin-top: 7px;">类别</p>
+            <input type="text" class="form-control" name="leibie" value="{$device_line.leibie}" placeholder="请输入类别" style="width: 250px;float: left;">
+        </div>
+        <div class="form-group" style="clear: both;">
+            <p style="width: 120px;font-size: 14px;float: left;margin-top: 22px;">使用人</p>
+            <input type="text" class="form-control" name="user" value="{$device_line.user}" placeholder="请输入事业部" style="width: 250px;float: left;margin-top: 15px;">
+        </div>
+        <div class="form-group" style="clear: both;">
+            <p style="width: 120px;font-size: 14px;float: left;margin-top: 22px;">事业部</p>
+            <input type="text" class="form-control" name="department" value="{$device_line.department}" placeholder="请输入事业部" style="width: 250px;float: left;margin-top: 15px;">
+        </div>
+        <div class="form-group" style="clear: both;">
+            <p style="width: 120px;font-size: 14px;float: left;margin-top: 22px;">归属事业部</p>
+            <input type="text" class="form-control" name="orginalDepartment" value="{$device_line.orginalDepartment}" placeholder="请输入归属事业部" style="width: 250px;float: left;margin-top: 15px;">
+        </div>
+        <div class="form-group" style="clear: both;">
+            <p style="width: 120px;font-size: 14px;float: left;margin-top: 22px;">MAC地址(以太)</p>
+            <input type="text" class="form-control" name="ytMac" value="{$device_line.ytMac}" placeholder="请输入MAC地址(以太)" style="width: 250px;float: left;margin-top: 15px;">
+        </div>
+        <div class="form-group" style="clear: both;">
+            <p style="width: 120px;font-size: 14px;float: left;margin-top: 22px;">MAC地址(无线)</p>
+            <input type="text" class="form-control" name="wxMac" value="{$device_line.wxMac}" placeholder="请输入MAC地址(无线)" style="width: 250px;float: left;margin-top: 15px;">
+        </div>
+        <div class="form-group" style="clear: both;">
+            <p style="width: 120px;font-size: 14px;float: left;margin-top: 22px;">类型</p>
+            <input type="text" class="form-control" name="leixing" value="{$device_line.leixing}" placeholder="请输入类型" style="width: 250px;float: left;margin-top: 15px;">
+        </div>
+        <div class="form-group" style="clear: both;">
+            <p style="width: 120px;font-size: 14px;float: left;margin-top: 22px;">品牌</p>
+            <input type="text" class="form-control" name="brand" value="{$device_line.brand}" placeholder="请输入品牌" style="width: 250px;float: left;margin-top: 15px;">
+        </div>
+        <div class="form-group" style="clear: both;">
+            <p style="width: 120px;font-size: 14px;float: left;margin-top: 22px;">型号</p>
+            <input type="text" class="form-control" name="xinghao" value="{$device_line.xinghao}" placeholder="请输入型号" style="width: 250px;float: left;margin-top: 15px;">
+        </div>
+        <div class="form-group" style="clear: both;">
+            <p style="width: 120px;font-size: 14px;float: left;margin-top: 22px;">采购年份</p>
+            <input type="text" class="form-control" name="year" value="{$device_line.year}" placeholder="请输入采购年份" style="width: 250px;float: left;margin-top: 15px;">
+        </div>
+        <div class="form-group" style="clear: both;">
+            <p style="width: 120px;font-size: 14px;float: left;margin-top: 22px;">操作系统</p>
+            <input type="text" class="form-control" name="system" value="{$device_line.system2}" placeholder="请输入操作系统" style="width: 250px;float: left;margin-top: 15px;">
+        </div>
+        <div class="form-group" style="clear: both;">
+            <p style="width: 120px;font-size: 14px;float: left;margin-top: 22px;">CPU</p>
+            <input type="text" class="form-control" name="cpu" value="{$device_line.cpu}" placeholder="请输入CPU" style="width: 250px;float: left;margin-top: 15px;">
+        </div>
+        <div class="form-group" style="clear: both;">
+            <p style="width: 120px;font-size: 14px;float: left;margin-top: 22px;">内存</p>
+            <input type="text" class="form-control" name="ram" value="{$device_line.ram}" placeholder="请输入内存" style="width: 250px;float: left;margin-top: 15px;">
+        </div>
+        <div class="form-group" style="clear: both;">
+            <p style="width: 120px;font-size: 14px;float: left;margin-top: 22px;">硬盘大小</p>
+            <input type="text" class="form-control" name="hardpan" value="{$device_line.hardpan}" placeholder="请输入硬盘/转速" style="width: 250px;float: left;margin-top: 15px;">
+        </div>
+        <div class="form-group" style="clear: both;">
+            <p style="width: 120px;font-size: 14px;float: left;margin-top: 22px;">序列号</p>
+            <input type="text" class="form-control" name="barcode" value="{$device_line.barcode}" placeholder="请输入序列号" style="width: 250px;float: left;margin-top: 15px;">
+        </div>
+        <div class="form-group" style="clear: both;">
+            <p style="width: 120px;font-size: 14px;float: left;margin-top: 22px;">位置</p>
+            <input type="text" class="form-control" name="position" value="{$device_line.position}" placeholder="请输入电脑位置" style="width: 250px;float: left;margin-top: 15px;">
+        </div>
+        <div class="form-group" style="clear: both;">
+            <p style="width: 120px;font-size: 14px;float: left;margin-top: 22px;">鼠标</p>
+            <select class="form-control" name="mouse" style="width:250px;position: relative;top: 15px;">
+                {if $device_line.mouse=="/"}
+                    <option selected="selected">/</option>
+                    <option>有</option>
+                    <option>无</option>
 
-<style>
-    th{
-        background-color:lemonchiffon;
-        text-align: center;
-    }
+                {elseif $device_line.mouse=="有" /}
 
-    td{
-        text-align: center;
-    }
-</style>  
+                    <option>/</option>
+                    <option selected="selected">有1</option>
+                    <option>无2</option>
+                {elseif $device_line.mouse=="无"/}
+                    <option>/</option>
+                    <option>有1</option>
+                    <option selected="selected">无2</option>
+                {else\}
+                        <option>/</option>
+                        <option>有</option>
+                        <option>无</option>
+                {/if}
+            </select>
+        </div>
+        <div class="form-group" style="clear: both;">
+            <p style="width: 120px;font-size: 14px;float: left;margin-top: 22px;">电源</p>
+            <select class="form-control" name="power" style="width:250px;position: relative;top: 15px;">
+                {if $device_line.power=="/"}
+                    <option selected="selected">/</option>
+                    <option>有</option>
+                    <option>无</option>
+
+                {elseif $device_line.power=="有"}
+
+                    <option>/</option>
+                    <option selected="selected">有</option>
+                    <option>无</option>
+                {elseif $device_line.power=="无"}
+                    <option>/</option>
+                    <option>有</option>
+                    <option selected="selected">无</option>
+                {else\}
+                        <option>/</option>
+                        <option>有</option>
+                        <option>无</option>
+                {/if}
+            </select>
+        </div>
+        <div class="form-group" style="clear: both;">
+            <p style="width: 120px;font-size: 14px;float: left;margin-top: 22px;">电脑包</p>
+            <select class="form-control" name="bag" style="width:250px;position: relative;top: 15px;">
+                {if $device_line.bag=="/"}
+                    <option selected="selected">/</option>
+                    <option>有</option>
+                    <option>无</option>
+
+                {elseif $device_line.bag=="有"}
+
+                    <option>/</option>
+                    <option selected="selected">有</option>
+                    <option>无</option>
+                {elseif $device_line.bag=="无"}
+                    <option>/</option>
+                    <option>有</option>
+                    <option selected="selected">无</option>
+                {else\}
+                        <option>/</option>
+                        <option>有</option>
+                        <option>无</option>
+                {/if}
+            </select>
+        </div>
+        <div class="form-group" style="clear: both;">
+            <p style="width: 120px;font-size: 14px;float: left;margin-top: 22px;">备注</p>
+            <input type="text" class="form-control" name="note" value="{$device_line.note}" placeholder="备注" style="width: 250px;float: left;margin-top: 15px;">
+        </div>
+
+        <div style="clear: both;">
+            <button type="submit" class="btn btn-success btn-sm" style="margin-top:10px;margin-bottom:20px">提交表单</button>
+        </div>
+    </form>
+{/block}  
