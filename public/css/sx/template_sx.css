@@ -1,0 +1,69 @@
+.hd{
+    font-size:28px;
+    font-weight:bold;
+    line-height: 28px;
+}
+
+.middle{
+    text-align:center;
+}
+
+.zw{
+    font-family:'微软雅黑';
+    width:1000px;
+    font-size:14px;
+    line-height: 28px;
+}
+
+.fj{
+    font-family:'微软雅黑';
+    width:1130px;
+    font-size:14px;
+    line-height: 28px;
+}
+
+.qkr{
+    margin-left:600px;
+}
+
+@media print {
+    .content{
+        position:relative;
+        right:250px;
+    }
+
+    .nav,.leftBar,.header_bar,.sqd_st,.btn,.sf,.sqd_print,.sh_time,.btn-blue{
+        display:none;
+    }
+
+    .zw{
+        font-family:'楷体';
+        width:1000px;
+        margin-left:60px;
+        font-size:28px;
+        line-height: 40px;
+    }
+
+    .fj{
+        font-family:'楷体';
+        width:1000px;
+        margin-left:60px;
+        font-size:24px;
+        line-height: 40px;
+    }
+
+    .hd{
+        margin-top:30px;
+        font-size:40px;
+        font-weight:bold;
+    }
+
+    .zw_content{
+        height:1100px;
+    }
+
+    .qkr{
+        margin-left:320px;
+    }
+
+}

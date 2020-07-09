@@ -1,179 +1,109 @@
-<!DOCTYPE html>
-<html lang="zh-CN">
-    <head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width,initial-scale=1">
-        <title>{$title}</title>
-        <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" media="screen" />
-        <link href="\lib\bootstrap-3.3.7-dist\css\bootstrap.css" rel="stylesheet"/>
-        <link href="\lib\bootstrap-3.3.7-dist\css\bootstrap-datetimepicker.min.css" rel="stylesheet" media="screen"/>
-        <link href="\css\leftbar.css" rel="stylesheet"/>
-        <link href="\css\header.css" rel="stylesheet"/>
-        <link href="\css\dsh_sx.css" rel="stylesheet"/>
-        <script src="\lib\bootstrap-3.3.7-dist\js\jquery-3.3.1.min.js"></script>
-        <script src="\lib\bootstrap-3.3.7-dist\js\bootstrap.min.js"></script>
-        <script src="\lib\bootstrap-3.3.7-dist\js\bootstrap-datetimepicker.js"></script>
-    </head>
-    <body>
-        {include file="../application/index/view/common/header.html" /}
-        {include file="../application/index/view/common/leftBar.html" /}
+{extend name="base"/}
+{block name="link"}    
+    <link href="\css\sx\dsh_sx.css" rel="stylesheet"/>
+{/block}
 
-        <div class="zhangmu_container" style="margin-top:50px;">
-            <div style="clear: both;border-radius: 6px;">
-                <div class="nav nav-pills" style="float:left;margin-top:20px;margin-left:30px;">
-                    <li role="presentation" class="active"><a href="#">待归档授信</a></li>
-                    <li role="presentation"><a href="/index.php/Index/sx/sx_cw.html">待审核回款</a></li>
-                </div>
-            </div>
-            
-            <div style="clear:both;width:1050px">
-                <h4 style="float:left;margin-top:20px;">
-                    <span class="label label-info" style="margin-left:30px;">共{$total}条</span>
-                    <span class="label label-warning" style="margin-left:5px;">共{$pagecount}页</span>
-                    <span class="label label-success" style="margin-left:5px;">第{$page}页</span>
-                </h4>
-            <div>
-
-            <div style="clear:both;position: relative;top: 17px;margin-left: 30px;">
-                <table class="table table-responsive table-bordered table-hover" style="width: 1020px;">
-                    <tr>
-                        <th>序号</th>
-                        <th style="width: 150px;">授信编号</th>
-                        <th>公司名称</th>
-                        <th>事业部</th>
-                        <th>业务员</th>
-                        <th>授信金额</th>
-                        <th>剩余应还</th>
-                        <th>已使用额度</th>
-                        <th>状态</th>
-                        <th style="width:100px;">登记日期</th>
-                    </tr>
-
-                    {foreach name="sxs" item="sx" key="index"}
-                        <tr>
-                            <td>{$pagesize*($page-1) + $index+1}</td>
-                            <td class="td1"><p style="margin:0 auto"><a href="/index.php/Index/sx/sx_line.html?id={$sx.id}" style="width: 50px;">{$sx.sqid}</a></p></td>
-                            <td class="td2"><p style="margin:0 auto">{$sx.companyName}</p></td>
-                            <td class="td3"><p style="margin:0 auto">{$sx.department}</p></td>
-                            <td>{$sx.ywy}</td>
-                            <td>{$sx.sqmoney}</td>
-                            <td>{$sx.dhkje}</td>
-                            <td>{$sx.dhkje==NULL?0:$sx.sqmoney-$sx.dhkje}</td>
-                            <td>{$sx.status}</td>
-                            <td>{$sx.date1}</td>
-                        </tr>
-                    {/foreach}
-                </table>
-                <div>
-                    <ul class="pager" style="float:left;width:150px;margin:0">
-                        <li><a href="<?php echo $_SERVER['PHP_SELF']?>?page=<?php
-                            if($page>1)
-                                echo $page-1;
-                            else
-                                echo 1;  
-                        ?>&date1=<?=$date1?>&date2=<?=$date2?>&companyName=<?=$companyName?>">上一页</a></li>
-                        <li><a href="<?php echo $_SERVER['PHP_SELF']?>?page=<?php
-                            if($page<$pagecount)
-                                echo $page+1;
-                            else
-                                echo $pagecount;  
-                        ?>&date1=<?=$date1?>&date2=<?=$date2?>&companyName=<?=$companyName?>">下一页</a></li>
-                    </ul>
+{block name="container"}
+    <div style="border-radius: 6px;">
+        <div class="nav nav-pills">
+            <li role="presentation" class="active"><a href="#">待归档授信</a></li>
+            <li role="presentation"><a href="/index.php/Index/sx/sx_cw.html">待审核回款</a></li>
+        </div>
+    </div>
     
-                    <div style="float:left;margin-left:546px;width:321px;">
-                        <ul class="pagination" style="float:right;margin:0">
-                            <li><a href="<?php echo $_SERVER['PHP_SELF']?>?page=1">&laquo;</a></li>
-                            <?php
-                                if($pagecount<=5){
-                                    for($i=1;$i<=$pagecount;$i++){
-                                        if($i==$page){
-                                            ?>
-                                                <li  class="active"><a href="<?php echo $_SERVER['PHP_SELF']?>?page=<?=$i?>&date1=<?=$date1?>&date2=<?=$date2?>&companyName=<?=$companyName?>"><?=$i?></a></li>
-                                            <?php
-                                        }else{
-                                            ?>
-                                                <li><a href="<?php echo $_SERVER['PHP_SELF']?>?page=<?=$i?>&date1=<?=$date1?>&date2=<?=$date2?>&companyName=<?=$companyName?>"><?=$i?></a></li>
-                                            <?php
-                                        }
-                                    }
+    <h4 style="margin-top:20px;">
+        <span class="label label-info">共{$total}条</span>
+        <span class="label label-warning" style="margin-left:5px;">共{$pagecount}页</span>
+        <span class="label label-success" style="margin-left:5px;">第{$page}页</span>
+    </h4>
+
+    <div style="margin-top:17px">
+        <table class="table table-responsive table-bordered table-hover" style="width: 1020px;">
+            <tr>
+                <th>序号</th>
+                <th style="width: 150px;">授信编号</th>
+                <th>公司名称</th>
+                <th>事业部</th>
+                <th>业务员</th>
+                <th>授信金额</th>
+                <th>剩余应还</th>
+                <th>已使用额度</th>
+                <th>状态</th>
+                <th style="width:100px;">登记日期</th>
+            </tr>
+
+            {foreach name="sxs" item="sx" key="index"}
+                <tr>
+                    <td>{$pagesize*($page-1) + $index+1}</td>
+                    <td class="td1"><p style="margin:0 auto"><a href="/index.php/Index/sx/sx_line.html?id={$sx.id}" style="width: 50px;">{$sx.sqid}</a></p></td>
+                    <td class="td2"><p style="margin:0 auto">{$sx.companyName}</p></td>
+                    <td class="td3"><p style="margin:0 auto">{$sx.department}</p></td>
+                    <td>{$sx.ywy}</td>
+                    <td>{$sx.sqmoney}</td>
+                    <td>{$sx.dhkje}</td>
+                    <td>{$sx.dhkje==NULL?0:$sx.sqmoney-$sx.dhkje}</td>
+                    <td>{$sx.status}</td>
+                    <td>{$sx.date1}</td>
+                </tr>
+            {/foreach}
+        </table>
+        <div>
+            <ul class="pager" style="float:left;width:150px;margin:0">
+                <li><a href="<?php echo $_SERVER['PHP_SELF']?>?page=<?php
+                    if($page>1)
+                        echo $page-1;
+                    else
+                        echo 1;  
+                ?>&date1=<?=$date1?>&date2=<?=$date2?>&companyName=<?=$companyName?>">上一页</a></li>
+                <li><a href="<?php echo $_SERVER['PHP_SELF']?>?page=<?php
+                    if($page<$pagecount)
+                        echo $page+1;
+                    else
+                        echo $pagecount;  
+                ?>&date1=<?=$date1?>&date2=<?=$date2?>&companyName=<?=$companyName?>">下一页</a></li>
+            </ul>
+
+            <div style="float:left;margin-left:550px;width:321px;">
+                <ul class="pagination" style="float:right;margin:0">
+                    <li><a href="<?php echo $_SERVER['PHP_SELF']?>?page=1">&laquo;</a></li>
+                    <?php
+                        if($pagecount<=5){
+                            for($i=1;$i<=$pagecount;$i++){
+                                if($i==$page){
+                                    ?>
+                                        <li  class="active"><a href="<?php echo $_SERVER['PHP_SELF']?>?page=<?=$i?>&date1=<?=$date1?>&date2=<?=$date2?>&companyName=<?=$companyName?>"><?=$i?></a></li>
+                                    <?php
                                 }else{
-                                    for($i=1;$i<=$pagecount;$i++){
-                                        if($i==$page){
-                                            ?>
-                                                <li  class="active"><a href="<?php echo $_SERVER['PHP_SELF']?>?page=<?=$i?>&date1=<?=$date1?>&date2=<?=$date2?>&companyName=<?=$companyName?>"><?=$i?></a></li>
-                                            <?php
-                                        }elseif(($i>=$page-2 and $i<=$page+2 and $page>3) and $page !=$pagecount){
-                                            ?>
-                                                <li><a href="<?php echo $_SERVER['PHP_SELF']?>?page=<?=$i?>&date1=<?=$date1?>&date2=<?=$date2?>&companyName=<?=$companyName?>"><?=$i?></a></li>
-                                            <?php
-                                        }elseif($i<=5){
-                                            if($page<=3){
-                                            ?>
-                                                <li><a href="<?php echo $_SERVER['PHP_SELF']?>?page=<?=$i?>&date1=<?=$date1?>&date2=<?=$date2?>&companyName=<?=$companyName?>"><?=$i?></a></li>
-                                            <?php
-                                            }
-                                        }
+                                    ?>
+                                        <li><a href="<?php echo $_SERVER['PHP_SELF']?>?page=<?=$i?>&date1=<?=$date1?>&date2=<?=$date2?>&companyName=<?=$companyName?>"><?=$i?></a></li>
+                                    <?php
+                                }
+                            }
+                        }else{
+                            for($i=1;$i<=$pagecount;$i++){
+                                if($i==$page){
+                                    ?>
+                                        <li  class="active"><a href="<?php echo $_SERVER['PHP_SELF']?>?page=<?=$i?>&date1=<?=$date1?>&date2=<?=$date2?>&companyName=<?=$companyName?>"><?=$i?></a></li>
+                                    <?php
+                                }elseif(($i>=$page-2 and $i<=$page+2 and $page>3) and $page !=$pagecount){
+                                    ?>
+                                        <li><a href="<?php echo $_SERVER['PHP_SELF']?>?page=<?=$i?>&date1=<?=$date1?>&date2=<?=$date2?>&companyName=<?=$companyName?>"><?=$i?></a></li>
+                                    <?php
+                                }elseif($i<=5){
+                                    if($page<=3){
+                                    ?>
+                                        <li><a href="<?php echo $_SERVER['PHP_SELF']?>?page=<?=$i?>&date1=<?=$date1?>&date2=<?=$date2?>&companyName=<?=$companyName?>"><?=$i?></a></li>
+                                    <?php
                                     }
                                 }
-                                
-                            ?>
-                            
-                            <li><a href="<?php echo $_SERVER['PHP_SELF']?>?page=<?php echo $pagecount; ?>&date1=<?=$date1?>&date2=<?=$date2?>&companyName=<?=$companyName?>">&raquo;</a></li>
-                        </ul>
-                    </div>
-                </div>
+                            }
+                        }
+                        
+                    ?>
+                    
+                    <li><a href="<?php echo $_SERVER['PHP_SELF']?>?page=<?php echo $pagecount; ?>&date1=<?=$date1?>&date2=<?=$date2?>&companyName=<?=$companyName?>">&raquo;</a></li>
+                </ul>
             </div>
         </div>
-    </body>
-</html>
-
-<script type="text/javascript">  
-    $(".form_datetime").datetimepicker({
-        format: 'yyyy-mm-dd',
-        weekStart: 1,
-        autoclose: true,
-        todayBtn: true,
-        startView: 2,  
-        minView: 2, 
-        forceParse: false,
-        language:'cn',
-        pickerPosition: "bottom-left"
-    });
-
-    var excel=function(){
-        date1=$("#date1").val()
-        date2=$("#date2").val()
-        companyName=$("#companyName").val()
-
-        window.location.href='../../controller/sx/sc_form.php?date1=' + date1 + '&date2=' + date2 +"&companyName=" + companyName + "&option=0"
-    }
-
-    var search=function(){
-        date1=$("#date1").val()
-        date2=$("#date2").val()
-        companyName=$("#companyName").val()
-
-        window.location.href="<?php echo $_SERVER['PHP_SELF']?>?date1=" +date1 + "&date2=" + date2 +"&companyName=" + companyName
-
-    }
-
-    $("#chooseInfo").change(function(){
-        chooseInfo=$(this).val()
-
-        if(chooseInfo=="授信编号"){
-            $("#sqid").css("display","inline")
-            $("#companyName").css("display","none")
-            $("#department").css("display","none")
-        }else if(chooseInfo=="公司名称"){
-            $("#sqid").css("display","none")
-            $("#companyName").css("display","inline")
-            $("#department").css("display","none")
-        }else if(chooseInfo=="事业部"){
-            $("#sqid").css("display","none")
-            $("#companyName").css("display","none")
-            $("#department").css("display","inline")
-        }
-
-    })
-</script>
+    </div>
+{/block}

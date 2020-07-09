@@ -681,26 +681,29 @@ class Sx extends Controller
 
             $fls=Db::query("select a.*,b.id as fl_id from use_sx a left join flsqd b on a.fl_no=b.no  where a.sqid='$sqid' and a.fl_no <> '' order by a.id asc");
 
-            $this->assign('username',$username);
-            $this->assign('department',$department);
-            $this->assign('newLevel',$newLevel);
-            $this->assign('status',$status);
-            $this->assign('sx_line',$sx_line);
-            $this->assign('newLevel',$newLevel);
-            $this->assign('fls',$fls);
-            $this->assign('dateTime',$dateTime);
-            $this->assign('date2',$date2);
-            $this->assign('hkje',$hkje);
-            $this->assign('wyfl',$wyfl);
-            $this->assign('hkfsbz',$hkfsbz);
-            $this->assign('hkfs',$hkfs);
-            $this->assign('sjhkje',$sjhkje);
-            $this->assign('hkfs2',$hkfs2);
-            $this->assign('sjhkfs',$sjhkfs);
-            $this->assign('now',$now);     
-            $this->assign('id',$id);      
+            $data=[
+                'title' => '授信详情',
+                'username' => $username,
+                'department' => $department,
+                'newLevel' => $newLevel,
+                'status' => $status,
+                'sx_line' => $sx_line,
+                'newLevel' => $newLevel,
+                'fls' => $fls,
+                'dateTime' => $dateTime,
+                'date2' => $date2,
+                'hkje' => $hkje,
+                'wyfl' => $wyfl,
+                'hkfsbz' => $hkfsbz,
+                'hkfs' => $hkfs,
+                'sjhkje' => $sjhkje,
+                'hkfs2' => $hkfs2,
+                'sjhkfs' => $sjhkfs,
+                'now' => $now,
+                'id' => $id
+            ];   
             
-            return $this->fetch();
+            return $this->fetch('',$data);
         }else{
             return $this->redirect('/index.php/Index/Login/login');
         }
@@ -1241,18 +1244,20 @@ class Sx extends Controller
 
             $sxs=Db::query($sqlstr2);
 
+            $data=[
+                'title' => '作废授信',
+                'username' => $username,
+                'date1' => $date1,
+                'date2' => $date2,
+                'companyName' => $companyName,
+                'newLevel' => $newLevel,
+                "total" => $total,
+                'pagecount' => $pagecount,
+                'page' => $page,
+                'sxs' => $sxs
+            ];
 
-            $this->assign('username',$username);
-            $this->assign('date1',$date1);
-            $this->assign('date2',$date2);
-            $this->assign('companyName',$companyName);
-            $this->assign('newLevel',$newLevel);
-            $this->assign("total",$total);
-            $this->assign('pagecount',$pagecount);
-            $this->assign('page',$page);
-            $this->assign('sxs',$sxs);
-
-            return $this->fetch();
+            return $this->fetch('',$data);
         }else{
             return $this->redirect('/index.php/Index/Login/login');
         }

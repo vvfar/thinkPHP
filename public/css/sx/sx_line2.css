@@ -1,0 +1,13 @@
+span{
+    width:300px;
+}
+
+.base_list li{
+    float: left;
+    width: 270px;
+    list-style-type: none;
+}
+
+th{
+    background-color:#eff;
+}

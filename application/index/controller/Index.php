@@ -23,6 +23,7 @@ class Index extends Controller
             $files=Db::name('files')->field('id,title,fileName,createUser,time')->limit(7)->select();
 
             $data=[
+                'title' => '我的门户',
                 'username' => $username,
                 'news_dt' => $news_dt,
                 'files' => $files,
@@ -44,6 +45,7 @@ class Index extends Controller
             $fileName="";
 
             $data=[
+                'title' => '我的工作',
                 'username' => $username,
                 'fileName' => $fileName,
             ];
@@ -310,9 +312,12 @@ class Index extends Controller
         if(isset($_SESSION["username"])){
             $username=$_SESSION["username"];
 
-            $this->assign('username',$username);
+            $data=[
+                'username' => $username,
+                'title' => '数据平台'
+            ];
 
-            return $this->fetch();
+            return $this->fetch('',$data);
         }else{
             return $this->redirect('/index.php/Index/Login/login');
         }

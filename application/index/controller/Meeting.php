@@ -118,6 +118,7 @@ class Meeting extends Controller
             $meeting_line["dateTime"]=$meeting_line["date"]." ".$meeting_line["startTime"]."-".$meeting_line["endTime"];
             
             $data=[
+                'title' => '会议详情',
                 'username' => $username,
                 'meeting_line' => $meeting_line
             ];

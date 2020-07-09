@@ -1,121 +1,110 @@
-<!DOCTYPE html>
-<html lang="zh-CN">
-    <head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width,initial-scale=1">
-        <title>俞兆林_我的门户</title>
-        <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" media="screen" />
-        <link href="css\index.css" rel="stylesheet"/>
-        <link href="lib\bootstrap-3.3.7-dist/css/bootstrap.css" rel="stylesheet"/>
-        <script src="lib\bootstrap-3.3.7-dist/js/jquery-3.3.1.min.js"></script>
-    </head>
-    <body>
-        {include file="../application/index/view/common/header.html" /}
-        {include file="../application/index/view/common/leftBar.html" /}
+{extend name="base"/}
+{block name="link"}    
+    <link href="css\index\index.css" rel="stylesheet"/>
+    <script src="\lib\echarts\dist\echarts.min.js"></script>
+{/block}
 
-        <div class="container1" style="margin-top:60px">
-            <div class="dongtai" >
-                <p class="title">公司动态</p> 
-                <table class="table table-hover ggl_tb" style="width:280px;margin:0;margin-top:10px">
-                    <tr>
-                        {foreach $news_dt as $n}
-                            <td><a href="/home/news/news.php?id={$n.id}">{$n.title}</a></td>
-                            <td style="color:#cccccc;font-size:12px;text-align:right">{$n.time}</td>
-                        {/foreach}
-                    </tr>
-                </table>
-            </div>
+{block name="container"}
 
-            <div class="weather">
-                <div id="weather-view-he"></div>
-                    <script>
-                        WIDGET = {ID: 'mAYG2Y9l10'};
-                    </script>
-                    <script type="text/javascript" src="https://apip.weatherdt.com/view/static/js/r.js?v=1111"></script>
-                </div>
-            </div>
+    <div class="dongtai" >
+        <p class="title">公司动态</p> 
+        <table class="table table-hover ggl_tb" style="width:280px;margin:0;margin-top:10px">
+            <tr>
+                {foreach $news_dt as $n}
+                    <td><a href="/home/news/news.php?id={$n.id}">{$n.title}</a></td>
+                    <td style="color:#cccccc;font-size:12px;text-align:right">{$n.time}</td>
+                {/foreach}
+            </tr>
+        </table>
+    </div>
 
-            <div class="myfavor">
-                <p class="title">我的收藏</p>
-                <div>
-                    <a href="/index.php/Index/fl/flsq.html" target="_blank">
-                        <i class="layui-icon layui-icon-form"></i>
-                        <p style="text-align: center;">填辅料</p>
-                    </a>
-                </div>
-                <div>
-                    <a href="/index.php/Index/sx/write_sx.html" target="_blank">
-                        <i class="layui-icon layui-icon-form"></i>
-                        <p style="text-align: center;">填授信</p>
-                    </a>
-                </div>
-                <div>
-                    <a href="/index.php/Index/contract/contract.html">
-                        <i class="layui-icon layui-icon-form"></i>
-                        <p style="text-align: center;">填合同</p>
-                    </a>
-                </div>
-                <div>
-                    <a href="#">
-                        <i class="layui-icon layui-icon-form"></i>
-                        <p style="text-align: center;">填授权</p>
-                    </a>
-                </div>
-                <div>
-                    <a href="/index.php/Index/center/my_center.html">
-                        <i class="layui-icon layui-icon-form"></i>
-                        <p style="text-align: center;">改密码</p>
-                    </a>
-                </div>
-                <div>
-                    <a href="/index.php/Index/meeting/view_meeting.html">
-                        <i class="layui-icon layui-icon-form"></i>
-                        <p style="text-align: center;">订会议</p>
-                    </a>
-                </div>
-            </div>
-
-            <div  class="bd">
-                <div class="ggl_title" style="height:20px;">
-                    <p class="title" style="float:left">公共文档</p>
-                    <p style="float:right;margin-right:20px;"><a href="/index.php/Index/document/document_list.html" target="_blank" class="title">更多>></a></p>
-                </div>
-            
-                <table class="table table-hover ggl_tb" style="width:690px">
-                    <tr>
-                        <th>文档标题</th>
-                        <th>下载链接</th>
-                        <th>发布人</th>
-                        <th>发布时间</th>
-                    </tr>
-
-                    {foreach $files as $f}
-                        <tr>
-                            <td>{$f.title}</td>
-                            <td><a href="../../common/file/myfile/{$f.fileName}">点击下载</a></td>
-                            <td>{$f.createUser}</td>
-                            <td>{$f.time}</td>
-                        </tr>
-                    {/foreach}
-                </table>
-            </div>
-
-            <div class="ggl2">
-                <div class="ggl2_title" style="height:20px;">
-                    <p class="title" style="float:left">公告栏</p>
-                    <p style="float:right;margin-right:30px;"><a class="title" target="_blank" href="/index.php/Index/document/news_list.html">更多>></a></p>
-                </div>
-
-                <table class="table table-hover">
-                    {foreach $news_ggl as $n}
-                        <tr>
-                            <td><a href="/index.php/Index/document/news_line.html?id={$n.id}" style="color:#000000">{$n.title}</a></td>
-                            <td style="color:#cccccc;font-size:12px;text-align:right">{$n.time}</td>
-                        </tr>
-                    {/foreach}
-                </table>
-            </div>
+    <div class="weather">
+        <div id="weather-view-he">
+            <script>
+                WIDGET = {ID: 'mAYG2Y9l10'};
+            </script>
+            <script type="text/javascript" src="https://apip.weatherdt.com/view/static/js/r.js?v=1111"></script>
         </div>
-    </body>
-</html>
+    </div>
+
+    <div class="myfavor">
+        <p class="title">我的收藏</p>
+        <div>
+            <a href="/index.php/Index/fl/flsq.html" target="_blank">
+                <i class="layui-icon layui-icon-form"></i>
+                <p style="text-align: center;">填辅料</p>
+            </a>
+        </div>
+        <div>
+            <a href="/index.php/Index/sx/write_sx.html" target="_blank">
+                <i class="layui-icon layui-icon-form"></i>
+                <p style="text-align: center;">填授信</p>
+            </a>
+        </div>
+        <div>
+            <a href="/index.php/Index/contract/contract.html">
+                <i class="layui-icon layui-icon-form"></i>
+                <p style="text-align: center;">填合同</p>
+            </a>
+        </div>
+        <div>
+            <a href="#">
+                <i class="layui-icon layui-icon-form"></i>
+                <p style="text-align: center;">填授权</p>
+            </a>
+        </div>
+        <div>
+            <a href="/index.php/Index/center/my_center.html">
+                <i class="layui-icon layui-icon-form"></i>
+                <p style="text-align: center;">改密码</p>
+            </a>
+        </div>
+        <div>
+            <a href="/index.php/Index/meeting/view_meeting.html">
+                <i class="layui-icon layui-icon-form"></i>
+                <p style="text-align: center;">订会议</p>
+            </a>
+        </div>
+    </div>
+
+    <div class="bd">
+        <div class="ggl_title" style="height:20px;">
+            <p class="title" style="float:left">公共文档</p>
+            <p style="float:right;margin-right:20px;"><a href="/index.php/Index/document/document_list.html" target="_blank" class="title">更多>></a></p>
+        </div>
+    
+        <table class="table table-hover ggl_tb" style="width:690px">
+            <tr>
+                <th>文档标题</th>
+                <th>下载链接</th>
+                <th>发布人</th>
+                <th>发布时间</th>
+            </tr>
+
+            {foreach $files as $f}
+                <tr>
+                    <td>{$f.title}</td>
+                    <td><a href="../../common/file/myfile/{$f.fileName}">点击下载</a></td>
+                    <td>{$f.createUser}</td>
+                    <td>{$f.time}</td>
+                </tr>
+            {/foreach}
+        </table>
+    </div>
+
+    <div class="ggl2">
+        <div class="ggl2_title" style="height:20px;">
+            <p class="title" style="float:left">公告栏</p>
+            <p style="float:right;margin-right:30px;"><a class="title" target="_blank" href="/index.php/Index/document/news_list.html">更多>></a></p>
+        </div>
+
+        <table class="table table-hover">
+            {foreach $news_ggl as $n}
+                <tr>
+                    <td><a href="/index.php/Index/document/news_line.html?id={$n.id}" style="color:#000000">{$n.title}</a></td>
+                    <td style="color:#cccccc;font-size:12px;text-align:right">{$n.time}</td>
+                </tr>
+            {/foreach}
+        </table>
+    </div>
+{/block}

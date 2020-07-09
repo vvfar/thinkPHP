@@ -1,0 +1,28 @@
+.meetingBorder{
+    border:1px solid #cccccc;
+}
+
+.meetingBorder:hover{
+    border:1px solid orange;
+}
+
+.meetingUL ul li a{
+    color:#000000;
+}
+
+.meetingUL ul li a:hover{
+    color:blue;
+}
+
+a{
+    color:#000;
+}
+
+.meetingUL p{
+    padding:0;
+    margin:0;
+    width: 70px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow:ellipsis;
+}

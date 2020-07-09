@@ -19,7 +19,10 @@
     <table class="table table-responsive table-bordered table-hover" style="width: 1030px;position:relative;top:15px;">
         <tr>
             <th>序号</th>
-            <th>辅料名称</th>
+            <th>分类</th>
+            <th>名称</th>
+            <th>类别</th>
+            <th>尺码</th>
             <th>辅料单价</th>
             <th>辅料数量</th>
             {if $newLevel == "ADMIN"}
@@ -29,7 +32,10 @@
         {foreach name="fls" item="fl" key="index"}
             <tr>
                 <td>{$pagesize*($page-1) + $index+1}</td>
+                <td>{$fl.fl_category}</td>
                 <td>{$fl.fl_name}</td>
+                <td>{$fl.fl_note}</td>
+                <td>{$fl.fl_size}</td>
                 <td>{$fl.fl_price}</td>
                 <td>{$fl.fl_amount}</td>
                 {if $newLevel == "ADMIN"}
@@ -113,10 +119,25 @@
                         </h4>
                     </div>
                     
-                    <div class="modal-body" style="height: 220px;">
+                    <div class="modal-body" style="height: 430px;">
+                        <div style="margin-top:10px;">
+                            <p>辅料分类：</p>
+                            <input type="text" placeholder="请输入辅料分类" class="form-control" name="fl_category" style="width: 250px;margin-top:5px;">
+                        </div>
+                        
                         <div>
                             <p>辅料名称：</p>
                             <input type="text" placeholder="请输入辅料名称" class="form-control" name="fl_name" style="width: 250px;margin-top:5px;">
+                        </div>
+
+                        <div style="margin-top:10px;">
+                            <p>辅料类别：</p>
+                            <input type="text" placeholder="请输入辅料类别" class="form-control" name="fl_note" style="width: 250px;margin-top:5px;">
+                        </div>
+
+                        <div style="margin-top:10px;">
+                            <p>辅料尺码：</p>
+                            <input type="text" placeholder="请输入辅料尺码" class="form-control" name="fl_size" style="width: 250px;margin-top:5px;">
                         </div>
 
                         <div style="margin-top:10px;">

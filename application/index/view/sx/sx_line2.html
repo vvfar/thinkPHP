@@ -1,278 +1,195 @@
-<!DOCTYPE html>
-<html lang="zh-CN">
-    <head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width,initial-scale=1">
-        <title>{$title}</title>
-        <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" media="screen" />
-        <link href="\lib\bootstrap-3.3.7-dist\css\bootstrap.css" rel="stylesheet"/>
-        <link href="\lib\bootstrap-3.3.7-dist\css\bootstrap-datetimepicker.css" rel="stylesheet"/>
-        <link href="\css\leftbar.css" rel="stylesheet"/>
-        <link href="\css\header.css" rel="stylesheet"/>
-        <script src="\lib\bootstrap-3.3.7-dist\js\jquery-3.3.1.min.js"></script>
-        <script src="\lib\bootstrap-3.3.7-dist\js\bootstrap.min.js"></script>
-        <script src="\lib\bootstrap-3.3.7-dist\js\bootstrap-datetimepicker.js"></script>
-    </head>
-    <body>
-        {include file="../application/index/view/common/header.html" /}
-        {include file="../application/index/view/common/leftBar.html" /}
-        <?php error_reporting(E_ALL || ~E_NOTICE);?>
+{extend name="base"/}
+{block name="link"}    
+    <link href="/css/sx/sx_line2.css" rel="stylesheet"/>
+    <script src="/js/sx/sx_line2.js"></script>
+{/block}
 
-        <div style="margin-left: 180px;margin-top:50px;">
-            
-            <div style="clear: both;position:relative;top:20px;margin-left:40px;">
+{block name="container"}  
+    <?php error_reporting(E_ALL || ~E_NOTICE);?>
 
-                {if($status=="待生效")}
-                    <button class="btn btn-warning btn-sm" style="float: left;margin-left: 640px;margin-left: 10px;">待生效</button>
-                {elseif($status=="待归档")} 
-                    <button class="btn btn-info btn-sm" style="float: left;margin-left: 640px;margin-left: 10px;">待归档</button>
-                {elseif($status=="已生效")}  
-                    <button class="btn btn-success btn-sm" style="float: left;margin-left: 640px;margin-left: 10px;">已生效</button>
-                {elseif($status=="已作废")}  
-                    <button class="btn btn-danger btn-sm" style="float: left;margin-left: 640px;margin-left: 10px;">已作废</button>
-                {elseif($status=="已拒绝")}  
-                    <button class="btn btn-danger btn-sm" style="float: left;margin-left: 640px;margin-left: 10px;">已拒绝</button>
-                {elseif($status=="已完成")} 
-                    <button class="btn btn-info btn-sm" style="float: left;margin-left: 640px;margin-left: 10px;">已完成</button>
+    <p id="id" class="hidden">{$_GET["id"]}</p>
+    
+    <div>
+        {if($status=="待生效")}
+            <button class="btn btn-warning btn-sm" style="float: left;margin-left: 640px;margin-left: 10px;">待生效</button>
+        {elseif($status=="待归档")} 
+            <button class="btn btn-info btn-sm" style="float: left;margin-left: 640px;margin-left: 10px;">待归档</button>
+        {elseif($status=="已生效")}  
+            <button class="btn btn-success btn-sm" style="float: left;margin-left: 640px;margin-left: 10px;">已生效</button>
+        {elseif($status=="已作废")}  
+            <button class="btn btn-danger btn-sm" style="float: left;margin-left: 640px;margin-left: 10px;">已作废</button>
+        {elseif($status=="已拒绝")}  
+            <button class="btn btn-danger btn-sm" style="float: left;margin-left: 640px;margin-left: 10px;">已拒绝</button>
+        {elseif($status=="已完成")} 
+            <button class="btn btn-info btn-sm" style="float: left;margin-left: 640px;margin-left: 10px;">已完成</button>
+        {/if}
+
+        <div style="width:1030px">
+            <div style="float:left">
+                <p style="float: left;margin-left: 10px;font-size:16px;margin-top:5px"><strong>授信编号：{$sx_line.sqid}</strong></p>
+                <p style="float: left;margin-left:60px;font-size:16px;margin-left: 10px;margin-top:5px"><strong>有效期限：从 {$sx_line.startDate} 到 {$sx_line.endDate}</strong></p>   
+            </div>
+                
+            <div style="float:right">
+                
+                {if($newLevel=="ADMIN")}
+                    <button class="btn btn-danger btn-sm"  data-target="#myModal" data-toggle="modal" style="float:right;margin-left:10px">作废单据</button>
                 {/if}
 
-                <div style="width:1045px">
-                    <div style="float:left">
-                        <p style="float: left;margin-left: 10px;font-size:16px;margin-top:5px"><strong>授信编号：{$sx_line.sqid}</strong></p>
-                        <p style="float: left;margin-left:60px;font-size:16px;margin-left: 10px;margin-top:5px"><strong>有效期限：从 {$sx_line.startDate} 到 {$sx_line.endDate}</strong></p>   
-                    </div>
-                        
-                    <div style="float:right;margin-right:30px;">
-                        <button class="btn btn-info btn-sm" style="float:right;margin-left:10px" id="tomb">下载模板</button>
-                        
-                        {if($newLevel=="ADMIN")}
-                            <button class="btn btn-danger btn-sm"  data-target="#myModal" data-toggle="modal" style="float:right;margin-left:10px">作废单据</button>
-                        {/if}
-
-                        {if $sx_line.file_name ==""}
-                            <button class="btn btn-success btn-sm" style="float:right;margin-left:10px" onclick="alert('没有附件')">附件下载</button>
-                        {else\}
-                            <a class="btn btn-success btn-sm" style="float:right;margin-left:10px" href="/file/sx_file/{$sx_line.file_name}" target="_blank">查看附件</a>
-                        {/if}
-                    </div>
-                        
-
-                    <div style="clear:both"></div>
-                        <!-- Excel导入模态框,确认是否作废单据 -->
-                        <form method="POST" action="../../controller/sx/sxLiucheng.php?id={$sx_line.sqid}&option=3">
-                            <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="top:30%">
-                                <div class="modal-dialog">
-                                    <div class="modal-content" style="width:350px;">
-                                        <div class="modal-header">
-                                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
-                                                &times;
-                                            </button>
-                                            <h4 class="modal-title" id="myModalLabel">
-                                                是否作废此授信单据？
-                                            </h4>
-
-                                        </div>
-                                        <div class="modal-body" style="height: 120px;">
-                                            <div>
-                                                <input type="text" class="form-control" placeholder="请输入作废理由" style="width:280px;" name="note"/>
-                                            </div>
-                                            
-                                            <div style="clear: both;position: relative;top:20px;width:350px;">
-                                                <p>温馨提示：作废后单据将在已完成页面中显示</p>
-                                            </div>
-                                        </div>
-                                        <div class="modal-footer">
-                                            <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-                                            <button type="submit" class="btn btn-primary">确认</button>
-                                        </div> 
-                                    </div>
-                                </div>
-                            </div>
-                        </form>
-                        <hr>
-                    </div>   
-                    <table class="base_list table table-responsive table-bordered table-hover" style="clear:both;position:relative;width: 1000px;margin-top:10px;">
-                        <tr>
-                            <td>公司名称</td>
-                            <td>{$sx_line.companyName}</td>
-                            <td>事业部</td>
-                            <td>{$sx_line.department}</td>
-                            <td>申请人</td>
-                            <td>{$sx_line.ywy}</td>
-                            <td>保证人</td>
-                            <td>{$sx_line.bpeople}</td>
-                            <td>签署时间</td>
-                            <td>{$sx_line.date1}</td>
-                        </tr>
-                        <tr>
-                            <td>授信金额</td>
-                            <td>￥{$sx_line.sqmoney}</td>
-                            <td>手续费</td>
-                            <td>￥{$sx_line.sxf}</td>
-                            <td>已还款金额</td>
-                            <td>￥{$sx_line.sqmoney - $sx_line.dhkje}</td>
-                            <td>待还款金额</td>
-                            <td>￥{$sx_line.dhkje}</td>
-                            <td>共享事业部</td>
-                            <td>{$sx_line.gxDepartment == ""?"\":$sx_line.gxDepartment}</td>
-                        </tr>
-                    </table>
-                </div>
-
-                <p style="margin-left:50px;margin-top:50px;">计划与实际回款信息：</p>
-                <table class="table table-responsive table-bordered table-hover" style="clear:both;position:relative;width: 1000px;margin-left: 50px;">
-                    <tr>
-                        <th>期数</th>
-                        <th>计划回款日期</th>
-                        <th>回款金额</th>
-                        <th>违约费率</th>
-                        <th>小计</th>
-                        <th>回款方式</th>
-                        <th>实际回款日期</th>
-                        <th>回款金额</th>
-                        <th>回款方式</th>
-                        <th>是否逾期</th>
-                    </tr>
-
-                <?php
-                    for($i=0;$i<12;$i++){
-                        if($dateTime[$i] != "" || $date2[$i] != ""){
-                        ?>
-                            <tr>
-                                <td>第<?=$i+1?>期</td>
-                                <td><?=$dateTime[$i]?></td>
-                                <td><?=$hkje[$i]?></td>
-                                <?php
-                                    if($wyfl[$i] !=""){
-                                        ?>
-                                            <td><?=$wyfl[$i].'%'?></td>
-                                        <?php
-                                    }else{
-                                        ?>
-                                            <td></td>
-                                        <?php
-                                    }
-                                    ?>
-
-                                <td><?php echo $hkje[$i]*($wyfl[$i]/100+1)?></td>
-                                <td><a href="#" title="<?=$hkfsbz[$i]?>" style="color:#333"><?=$hkfs[$i]?></a></td>
-                                <td><?=$date2[$i]?></td>
-                                <td><?=$sjhkje[$i]?></td>
-                                <td><a href="#" title="<?=$hkfs2[$i]?>" style="color:#333"><?=$sjhkfs[$i]?></a></td>
-                                <?php
-                                    $D1 = strtotime($now);
-
-                                    if($dateTime[$i] !=""){
-                                        $D2 = strtotime($dateTime[$i]);
-                                    }else{
-                                        $D2="";
-                                    }
-                                    
-                                    if($D1>$D2 and $date2[$i]=="" and $syhkje !="0"){
-                                        ?>
-                                            <td style="color: darkred;">逾期</td>
-                                        <?php
-                                    }elseif($D1<=$D2 and $date2[$i]=="" and $syhkje !="0"){
-                                        ?>
-                                            <td style="color: darkyellow;">待还款</td>
-                                        <?php
-                                    }else{
-                                        ?>
-                                            <td style="color: darkgreen;">已还款</td>
-                                        <?php
-                                    }
-                                ?>
-                                
-                            </tr>
-                        <?php
-                        }
-                    }
-                ?>
-            </table>
-
-            <p style="margin-left:50px;">剩余金额回款方式：<?=$syjehkfs?></p>            
-
-            {if ($department == "财务部" or $newLevel == "ADMIN") and $sx_line.c_status =="待财务审批" }
-            
-                <div style="margin-left:950px;">
-                    <button class="btn btn-sm btn-success" style="float:left;" id="agree">同意</button>
-                    <button class="btn btn-sm btn-danger" style="float:left;margin-left:10px;" id="disagree">拒绝</button>
-                </div>
-            {/if}
-
-            <p style="margin-left:50px;clear:both;margin-top:50px;">扣款明细：</p>
-            
-            <table class="table table-responsive table-bordered table-hover" style="clear:both;position:relative;width: 1000px;margin-left: 50px;top:20px;">
-                <tr>
-                    <th>序号</th>
-                    <th>辅料编号</th>
-                    <th>总授信</th>
-                    <th>已使用金额</th>
-                    <th>本次使用金额</th>
-                    <th>剩余金额</th>
-                    <th>使用部门</th>
-                    <th>日期</th>
-                    <th>备注</th>
-                </tr>
-                {foreach name="fls" item="fl" key="index"}
-                        <tr>
-                            <td>{$index}</td>
-                            {if($fl.fl_id !="")}
-                                <td><a href="/index.php/Index/fl/fl_line.html?id={$fl.fl_id}">{$fl.fl_no}</a></td>
-                            {else\}
-                                <td>{$fl.fl_no}</td>
-                            {/if}
-                            
-                            <td>￥{$fl.sqmoney}</td>
-                            <td>￥{$fl.useMoney}</td>
-                            <td>￥{$fl.nowUseMoney}</td>
-                            <td>￥{$fl.remainMoney}</td>
-                            <td>{$fl.useDepartment}</td>
-                            <td>{$fl.date}</td>
-                            <td>{$fl.note}</td>
-                        </tr>
-                    {/foreach}                
-                </table>
-                <p style="margin-left:50px;clear:both;position:relative;top:45px;">备注信息：<?=$note?></p>
+                {if $sx_line.file_name ==""}
+                    <button class="btn btn-success btn-sm" style="float:right;margin-left:10px" onclick="alert('没有附件')">附件下载</button>
+                {else\}
+                    <a class="btn btn-success btn-sm" style="float:right;margin-left:10px" href="/file/sx_file/{$sx_line.file_name}" target="_blank">查看附件</a>
+                {/if}
             </div>
+                
+
+            <div style="clear:both"></div>
+                <hr>
+
+            <table class="base_list table table-responsive table-bordered table-hover" style="clear:both;position:relative;width: 1030px;margin-top:10px;">
+                <tr>
+                    <td>公司名称</td>
+                    <td>{$sx_line.companyName}</td>
+                    <td>事业部</td>
+                    <td>{$sx_line.department}</td>
+                    <td>申请人</td>
+                    <td>{$sx_line.ywy}</td>
+                    <td>保证人</td>
+                    <td>{$sx_line.bpeople}</td>
+                    <td>签署时间</td>
+                    <td>{$sx_line.date1}</td>
+                </tr>
+                <tr>
+                    <td>授信金额</td>
+                    <td>￥{$sx_line.sqmoney}</td>
+                    <td>手续费</td>
+                    <td>￥{$sx_line.sxf}</td>
+                    <td>已还款金额</td>
+                    <td>￥{$sx_line.sqmoney - $sx_line.dhkje}</td>
+                    <td>待还款金额</td>
+                    <td>￥{$sx_line.dhkje}</td>
+                    <td>共享事业部</td>
+                    <td>{$sx_line.gxDepartment == ""?"\":$sx_line.gxDepartment}</td>
+                </tr>
+            </table>
         </div>
-    </body>
-</html>
 
-<style>
-    span{
-        width:300px;
-    }
+        <p>计划与实际回款信息：</p>
+        <table class="table table-responsive table-bordered table-hover" style="width: 1030px;margin-top: 10px;">
+            <tr>
+                <th>期数</th>
+                <th>计划回款日期</th>
+                <th>回款金额</th>
+                <th>违约费率</th>
+                <th>小计</th>
+                <th>回款方式</th>
+                <th>实际回款日期</th>
+                <th>回款金额</th>
+                <th>回款方式</th>
+                <th>是否逾期</th>
+            </tr>
+
+            <?php
+                for($i=0;$i<12;$i++){
+                    if($dateTime[$i] != "" || $date2[$i] != ""){
+                    ?>
+                        <tr>
+                            <td>第<?=$i+1?>期</td>
+                            <td><?=$dateTime[$i]?></td>
+                            <td><?=$hkje[$i]?></td>
+                            <?php
+                                if($wyfl[$i] !=""){
+                                    ?>
+                                        <td><?=$wyfl[$i].'%'?></td>
+                                    <?php
+                                }else{
+                                    ?>
+                                        <td></td>
+                                    <?php
+                                }
+                                ?>
+
+                            <td><?php echo $hkje[$i]*($wyfl[$i]/100+1)?></td>
+                            <td><a href="#" title="<?=$hkfsbz[$i]?>" style="color:#333"><?=$hkfs[$i]?></a></td>
+                            <td><?=$date2[$i]?></td>
+                            <td><?=$sjhkje[$i]?></td>
+                            <td><a href="#" title="<?=$hkfs2[$i]?>" style="color:#333"><?=$sjhkfs[$i]?></a></td>
+                            <?php
+                                $D1 = strtotime($now);
+
+                                if($dateTime[$i] !=""){
+                                    $D2 = strtotime($dateTime[$i]);
+                                }else{
+                                    $D2="";
+                                }
+                                
+                                if($D1>$D2 and $date2[$i]=="" and $syhkje !="0"){
+                                    ?>
+                                        <td style="color: darkred;">逾期</td>
+                                    <?php
+                                }elseif($D1<=$D2 and $date2[$i]=="" and $syhkje !="0"){
+                                    ?>
+                                        <td style="color: darkyellow;">待还款</td>
+                                    <?php
+                                }else{
+                                    ?>
+                                        <td style="color: darkgreen;">已还款</td>
+                                    <?php
+                                }
+                            ?>
+                            
+                        </tr>
+                    <?php
+                    }
+                }
+            ?>
+        </table>
+
+        <p>剩余金额回款方式：{$syjehkfs}</p>            
+
+        {if ($department == "财务部" or $newLevel == "ADMIN") and $sx_line.c_status =="待财务审批" }
+        
+            <div style="margin-left:930px;">
+                <button class="btn btn-sm btn-success" style="float:left;" id="agree">同意</button>
+                <button class="btn btn-sm btn-danger" style="float:left;margin-left:10px;" id="disagree">拒绝</button>
+            </div>
+        {/if}
+
+        <p style="margin-top:50px;">扣款明细：</p>
     
-    .base_list{
-        margin-left: 12px;
-        padding: 0;
-    }
+        <table class="table table-responsive table-bordered table-hover" style="clear:both;position:relative;width: 1030px;top:10px;">
+            <tr>
+                <th>序号</th>
+                <th>辅料编号</th>
+                <th>总授信</th>
+                <th>已使用金额</th>
+                <th>本次使用金额</th>
+                <th>剩余金额</th>
+                <th>使用部门</th>
+                <th>日期</th>
+                <th>备注</th>
+            </tr>
+            {foreach name="fls" item="fl" key="index"}
+                <tr>
+                    <td>{$index}</td>
+                    {if($fl.fl_id !="")}
+                        <td><a href="/index.php/Index/fl/fl_line.html?id={$fl.fl_id}">{$fl.fl_no}</a></td>
+                    {else\}
+                        <td>{$fl.fl_no}</td>
+                    {/if}
+                    
+                    <td>￥{$fl.sqmoney}</td>
+                    <td>￥{$fl.useMoney}</td>
+                    <td>￥{$fl.nowUseMoney}</td>
+                    <td>￥{$fl.remainMoney}</td>
+                    <td>{$fl.useDepartment}</td>
+                    <td>{$fl.date}</td>
+                    <td>{$fl.note}</td>
+                </tr>
+            {/foreach}                
+        </table>
 
-    .base_list li{
-        float: left;
-        width: 270px;
-        list-style-type: none;
-    }
-
-    th{
-        background-color:#eff;
-    }
-</style>
-
-<script>
-    $("#agree").click(function(){
-        window.location.href="/index.php/Index/sx/sx_hkHandle?id={$sx_line.id}&option=1"
-    })
-
-    $("#disagree").click(function(){
-        window.location.href="/index.php/Index/sx/sx_hkHandle?id={$sx_line.id}&option=0"
-    })
-
-    $("#tomb").click(function(){
-        window.location.href="sxmb.php?id=<?=$sxid?>"
-    })
-
-    
-</script>
+        <p>备注信息：{$note}</p>
+    </div>
+{/block}

@@ -1,133 +1,64 @@
-<!DOCTYPE html>
-<html lang="zh-CN">
-    <head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width,initial-scale=1">
-        <title>{$title}</title>
-        <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" media="screen" />
-        <link href="\lib\bootstrap-3.3.7-dist\css\bootstrap-datetimepicker.min.css" rel="stylesheet" media="screen"/>
-        <link href="\lib\bootstrap-3.3.7-dist\css\bootstrap.css" rel="stylesheet"/>
-        <link href="\css\leftbar.css" rel="stylesheet"/>
-        <link href="\css\header.css" rel="stylesheet"/>
-        <script src="\lib\bootstrap-3.3.7-dist\js\jquery-3.3.1.min.js"></script>
-        <script src="\lib\bootstrap-3.3.7-dist\js\bootstrap-datetimepicker.js"></script>
-        <script src="\lib\bootstrap-3.3.7-dist\js\bootstrap.min.js"></script>
-    </head>
-    <body>
-        {include file="../application/index/view/common/header.html" /}
-        {include file="../application/index/view/common/leftBar.html" /}
-            
-        <div style="margin-left: 180px;margin-top:70px;">
-            <div style="margin-top:20px;margin-left:40px;">
-                <div>
-                    <h4 style="float:left">会议室概况</h4>
+{extend name="base"/}
+{block name="link"}    
+    <link href="/css/meeting/view_meeting.css" rel="stylesheet"/>
+    <script src="/lib/echarts/dist/echarts.min.js"></script>
+    <script src="/js/meeting/view_meeting.js"></script>
+{/block}
 
-                    <div style="float:left;margin-left:690px">
-                        <p style="float: left;position:relative;top:7px;">选择日期</p>
-                        <div style="width: 180px;font-size: 14px;float: left;margin-left:20px" class="input-group date form_datetime" data-date="" data-date-format="dd MM yyyy" data-link-field="dtp_input2" data-link-format="yyyy-mm-dd">
-                            <input class="form-control" id="dateTime" name="dateTime" size="16" type="text" value="<?=$date?>" readonly>
-                            <span class="input-group-addon"><span class="glyphicon glyphicon-remove"></span></span>
-                            <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
-                        </div>
-                    </div>
-                </div>
+{block name="container"}
+    <div>
+        <h4 style="float:left">会议室概况</h4>
 
-
-                <div style="clear:both;width:1080px;">
-                
-                    <?php 
-                        for($i=0;$i<6;$i++){
-                    ?>
-                
-                    <div style="width:318px;height:250px;float:left;margin-right:30px;margin-top:20px" class="meetingBorder">
-                        <span class="label label-success" style="position:relative;top:15px;left:10px;padding-top:5px;">会议室<?=$i+1?></span>
-                        <p style="float:right;margin-top:10px;margin-right:10px;">当前状态：空闲</p>
-
-                        <div style="margin-top:15px;" class="meetingUL">
-                            <div style="height:160px;">
-                                <table class="table" style="width:275px;margin-left:20px;margin-top:30px;">
-                                    <tr>
-                                        <th style="width:100px">时间</th>
-                                        <th style="width:100px">主题</th>
-                                        <th style="width:100px">申请人</th>
-                                    <tr>
-                                    
-                                    {foreach $meetings as $meeting}
-                                        {if $meeting.room == $i}
-                                            <tr>
-                                                <td><p>{$meeting.startTime}-{$meeting.endTime}</p></td>
-                                                <td><p><a href="/index.php/Index/meeting/meeting_line.html?id={$meeting.Id}">{$meeting.title}</a></p></td>
-                                                <td><p>{$meeting.people}</p></td>
-                                            <tr>
-                                        {/if}
-                                    {/foreach}
-                                </table>
-                            </div>
-                            
-                            {if($department =="人事行政部" or $newLevel =="ADMIN")}
-                                <a href="/index.php/Index/meeting/add_meeting.html?room=<?=$i+1?>" style="float:right;margin-right:10px;color:brown;margin-bottom:20px">新增会议</a>
-                            {/if}
-                        </div>
-                    </div>
-                    <?php
-                        }
-                    ?>
-
-                </div>
-                
+        <div style="float:left;margin-left:700px">
+            <p style="float: left;position:relative;top:7px;">选择日期</p>
+            <div style="width: 180px;font-size: 14px;float: left;margin-left:20px" class="input-group date form_datetime" data-date="" data-date-format="dd MM yyyy" data-link-field="dtp_input2" data-link-format="yyyy-mm-dd">
+                <input class="form-control" id="dateTime" name="dateTime" size="16" type="text" value="<?=$date?>" readonly>
+                <span class="input-group-addon"><span class="glyphicon glyphicon-remove"></span></span>
+                <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
             </div>
         </div>
-    </body>
-</html>
+    </div>
 
-<script>
-    $(".form_datetime").datetimepicker({
-        format: 'yyyy-mm-dd',
-        weekStart: 1,
-        autoclose: true,
-        todayBtn: true,
-        startView: 2,  
-        minView: 2, 
-        forceParse: false,
-        language:'cn',
-        pickerPosition: "bottom-left"
-    });
 
-    $(".date").change(function(){
-        date=$("#dateTime").val();
+    <div style="clear:both;width:1100px;">
+    
+        <?php 
+            for($i=0;$i<6;$i++){
+        ?>
+    
+        <div style="width:322px;height:250px;float:left;margin-right:30px;margin-top:20px" class="meetingBorder">
+            <span class="label label-success" style="position:relative;top:15px;left:10px;padding-top:5px;">会议室<?=$i+1?></span>
+            <p style="float:right;margin-top:10px;margin-right:10px;">当前状态：空闲</p>
 
-        window.location.href="view_meeting.html?date="+date;
-    })
-</script>
+            <div style="margin-top:15px;" class="meetingUL">
+                <div style="height:160px;">
+                    <table class="table" style="width:275px;margin-left:20px;margin-top:30px;">
+                        <tr>
+                            <th style="width:100px">时间</th>
+                            <th style="width:100px">主题</th>
+                            <th style="width:100px">申请人</th>
+                        <tr>
+                        
+                        {foreach $meetings as $meeting}
+                            {if $meeting.room == $i}
+                                <tr>
+                                    <td><p>{$meeting.startTime}-{$meeting.endTime}</p></td>
+                                    <td><p><a href="/index.php/Index/meeting/meeting_line.html?id={$meeting.Id}">{$meeting.title}</a></p></td>
+                                    <td><p>{$meeting.people}</p></td>
+                                <tr>
+                            {/if}
+                        {/foreach}
+                    </table>
+                </div>
+                
+                {if($department =="人事行政部" or $newLevel =="ADMIN")}
+                    <a href="/index.php/Index/meeting/add_meeting.html?room=<?=$i+1?>" style="float:right;margin-right:10px;color:brown;margin-bottom:20px">新增会议</a>
+                {/if}
+            </div>
+        </div>
+        <?php
+            }
+        ?>
 
-<style>
-    .meetingBorder{
-        border:1px solid #cccccc;
-    }
-
-    .meetingBorder:hover{
-        border:1px solid orange;
-    }
-
-    .meetingUL ul li a{
-        color:#000000;
-    }
-
-    .meetingUL ul li a:hover{
-        color:blue;
-    }
-
-    a{
-        color:#000;
-    }
-
-    .meetingUL p{
-        padding:0;
-        margin:0;
-        width: 70px;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow:ellipsis;
-    }
-</style>
+    </div>
+{/block}              

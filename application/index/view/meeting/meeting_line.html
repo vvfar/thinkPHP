@@ -1,67 +1,46 @@
-<!DOCTYPE html>
-<html lang="zh-CN">
-    <head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width,initial-scale=1">
-        <title>俞兆林_订会议室</title>
-        <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" media="screen" />
-        <link href="\lib\bootstrap-3.3.7-dist\css\bootstrap-datetimepicker.min.css" rel="stylesheet" media="screen"/>
-        <link href="\lib\bootstrap-3.3.7-dist\css\bootstrap.css" rel="stylesheet"/>
-        <link href="\css\leftbar.css" rel="stylesheet"/>
-        <link href="\css\header.css" rel="stylesheet"/>
-        <script src="\lib\bootstrap-3.3.7-dist\js\jquery-3.3.1.min.js"></script>
-        <script src="\lib\bootstrap-3.3.7-dist\js\bootstrap-datetimepicker.js"></script>
-        <script src="\lib\bootstrap-3.3.7-dist\js\bootstrap.min.js"></script>
-    </head>
-    <body>
-        {include file="../application/index/view/common/header.html" /}
-        {include file="../application/index/view/common/leftBar.html" /}
-            
-        <div style="margin-left: 180px;margin-top:50px;">
-            
-            <div style="margin-top:80px;margin-left:30px;">
- 
-                <div>
-                    <p style="float:left;font-size:16px;">会议详情</p>
-                    <button class="btn btn-sm btn-danger" style="float:left;margin-left:300px;position:relative;top:-5px;" id="delete">删除会议</button>
+{extend name="base"/}
+{block name="link"}    
+    <link href="/css/meeting/add_meeting.css" rel="stylesheet"/>
+    <script src="/lib/echarts/dist/echarts.min.js"></script>
+    <script src="/js/meeting/add_meeting.js"></script>
+{/block}
 
-                    <div style="clear:both">
-                        <hr>
+{block name="container"}
+    <p style="float:left;font-size:16px;">会议详情</p>
+    <button class="btn btn-sm btn-danger" style="float:left;margin-left:300px;position:relative;top:-5px;" id="delete">删除会议</button>
 
-                        <div style="margin-top: 10px;">
-                            <div class="form-group">
-                                <p style="float:left;margin-top:10px;">会议标题：{$meeting_line.title}</p>
-                            </div>
-                            <div class="form-group" style="clear:both;position:relative;">
-                                <p style="float:left;margin-top:10px;">会议日期：{$meeting_line.dateTime}</p>
-                            </div>
-                            <div class="form-group" style="clear:both;position:relative;">
-                                <p style="float:left;margin-top:10px;">会议室编号：{$meeting_line.room}</p>
+    <div style="clear:both">
+        <hr>
 
-                            </div>
-                            <div class="form-group" style="clear:both;position:relative;">
-                                <p style="float: left;margin-top:10px;">会议室资源：{$meeting_line.roomResource}</p>
-                            </div>
-                            <div class="form-group" style="clear: both;position:relative;">
-                                <p style="float: left;margin-top:10px;">特殊需求：{$meeting_line.apply}</p>
-                            </div>
-                            <div class="form-group" style="clear: both;position:relative;">
-                                <p style="float: left;margin-top:10px;">申请人：{$meeting_line.people}</p>
-                            </div>
-                            <div class="form-group" style="clear: both;position:relative;">
-                                <p style="float: left;margin-top:10px;">申请部门：{$meeting_line.department}</p>
-                            </div>
-                            <div class="form-group" style="clear: both;position:relative;">
-                                <p style="float: left;margin-top:10px;">申请状态：{$meeting_line.status}</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>       
+        <div style="margin-top: 10px;">
+            <div class="form-group">
+                <p style="float:left;margin-top:10px;">会议标题：{$meeting_line.title}</p>
+            </div>
+            <div class="form-group" style="clear:both;position:relative;">
+                <p style="float:left;margin-top:10px;">会议日期：{$meeting_line.dateTime}</p>
+            </div>
+            <div class="form-group" style="clear:both;position:relative;">
+                <p style="float:left;margin-top:10px;">会议室编号：{$meeting_line.room}</p>
+
+            </div>
+            <div class="form-group" style="clear:both;position:relative;">
+                <p style="float: left;margin-top:10px;">会议室资源：{$meeting_line.roomResource}</p>
+            </div>
+            <div class="form-group" style="clear: both;position:relative;">
+                <p style="float: left;margin-top:10px;">特殊需求：{$meeting_line.apply}</p>
+            </div>
+            <div class="form-group" style="clear: both;position:relative;">
+                <p style="float: left;margin-top:10px;">申请人：{$meeting_line.people}</p>
+            </div>
+            <div class="form-group" style="clear: both;position:relative;">
+                <p style="float: left;margin-top:10px;">申请部门：{$meeting_line.department}</p>
+            </div>
+            <div class="form-group" style="clear: both;position:relative;">
+                <p style="float: left;margin-top:10px;">申请状态：{$meeting_line.status}</p>
+            </div>
         </div>
-    </body>
-</html>
+    </div>
+{/block}
 
 
 

@@ -689,21 +689,23 @@ class Fl extends Controller{
 
         $fls=Db::query($sqlstr2);
 
-        $this->assign("username",$username);
-        $this->assign("time",$time);
-        $this->assign("input_time",$input_time);
-        $this->assign("input_time2",$input_time2);
-        $this->assign("clientName",$clientName);
-        $this->assign("status2",$status2);
-        $this->assign("newLevel",$newLevel);
-        $this->assign("total",$total);
-        $this->assign('pagecount',$pagecount);
-        $this->assign('page',$page);
-        $this->assign('pagesize',15);
-        $this->assign('i',1);
-        $this->assign('fls',$fls);
+        $data=[
+            'title' => '旧辅料单',
+            "username" => $username,
+            "time" => $time,
+            "input_time" => $input_time,
+            "input_time2" => $input_time2,
+            "clientName" => $clientName,
+            "status2" => $status2,
+            "newLevel" => $newLevel,
+            "total" => $total,
+            'pagecount' => $pagecount,
+            'page' => $page,
+            'pagesize' => 15,
+            'fls' => $fls
+        ];
 
-        return $this->fetch();
+        return $this->fetch('',$data);
     }
 
     public function fl_line($id){
@@ -1253,10 +1255,10 @@ class Fl extends Controller{
         $id=$this->request->param("id");
         $zf_note=$this->request->param("zf_note");
 
-        $notes=Db::name("flsqd")->field("note")->where("id",$id)->select();
-        $note=$notes[0]["flsqd"];
+        $notes=Db::name("flsqd")->field("note")->where("id",$id)->find();
+        $note=$notes["note"];
 
-        $note=$note."/辅料单作废，备注：".$zf_note;
+        $note=$note."//作废备注：".$zf_note;
 
         //重新编辑需要返还授信金额
         $sqlstr4=Db::query("select count(*) from use_sx where fl_no = (select no from flsqd where id=$id)");
@@ -1276,7 +1278,7 @@ class Fl extends Controller{
 
         $update_zf=Db::query("update flsqd set note='$note',status='作废' where id=$id");
         
-        return redirect("/index.php/Index/fl/fl_line.php?id=".$id);
+        return $this->success("作废成功！","/index.php/Index/fl/fl_line.html?id=".$id,"","1");
           
     }
 
@@ -1302,7 +1304,7 @@ class Fl extends Controller{
         $status=$result["status"];
         $shr=$result["shr"];
         $date=$result["date"];
-        $shTime="";
+        $shTime=$result["allTime"];
         
         //1：同意 3：义乌同意 8：义乌修改
         if($option == 1 || $option == 3 || $option == 8){
@@ -1714,6 +1716,9 @@ class Fl extends Controller{
         $fl_name=trim($this->request->param('fl_name'));
         $fl_price=$this->request->param('fl_price');
         $fl_amount=$this->request->param('fl_amount');
+        $fl_size=$this->request->param('fl_size');
+        $fl_note=$this->request->param('fl_note');
+        $fl_category=$this->request->param('fl_category');
 
         $fl_dups=DB::name("fl")->field("count(*)")->where("fl_name",$fl_name)->find();
         $fl_dup=$fl_dups["count(*)"];
@@ -1722,7 +1727,10 @@ class Fl extends Controller{
             $result1=Db::table("fl")->insert([
                 'fl_name' => $fl_name,
                 'fl_price' => $fl_price,
-                'fl_amount' => $fl_amount
+                'fl_amount' => $fl_amount,
+                'fl_size' => $fl_size,
+                'fl_note' => $fl_note,
+                'fl_category' => $fl_category
             ]);
                 
             $fl_name=$fl_name."(赠)";
@@ -1730,7 +1738,10 @@ class Fl extends Controller{
             $result2=Db::table("fl")->insert([
                 'fl_name' => $fl_name,
                 'fl_price' => $fl_price,
-                'fl_amount' => $fl_amount
+                'fl_amount' => $fl_amount,
+                'fl_size' => $fl_size,
+                'fl_note' => $fl_note,
+                'fl_category' => $fl_category
             ]);
         }
 
@@ -1749,11 +1760,17 @@ class Fl extends Controller{
             $fl_name=$this->request->param('fl_name');
             $fl_price=$this->request->param('fl_price');
             $fl_amount=$this->request->param('fl_amount');
+            $fl_size=$this->request->param('fl_size');
+            $fl_note=$this->request->param('fl_note');
+            $fl_category=$this->request->param('fl_category');
     
             $result=Db::table("fl")->where("id",$id)->update([
                 'fl_name' => $fl_name,
                 'fl_price' =>$fl_price,
-                'fl_amount' => $fl_amount
+                'fl_amount' => $fl_amount,
+                'fl_size' => $fl_size,
+                'fl_note' => $fl_note,
+                'fl_category' => $fl_category
             ]);
         
             return $this->redirect('/index.php/Index/Fl/query_amount.html');
@@ -1809,7 +1826,7 @@ class Fl extends Controller{
             }
         }
     
-        $header=array('辅料名称','辅料价格','辅料数量');
+        $header=array('辅料名称','辅料价格','辅料数量','辅料尺码','辅料类别','辅料分类');
         
         function createtable($list,$filename,$header=array(),$index = array()){ 
             header("Content-type:application/vnd.ms-excel"); 
@@ -1827,7 +1844,7 @@ class Fl extends Controller{
                 exit($strexport);  
         }
     
-        $list2=range(1,3);
+        $list2=range(1,6);
     
         createtable($data,'辅料信息',$header,$list2);
         mysqli_free_result($result);
